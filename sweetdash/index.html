@@ -1181,8 +1181,11 @@ function collide() {
   const [bx0, bx1, by0, by1] = playerBox();
   const cx = P.x, cy = P.y - (P.slide ? 30 : 56) * P.k;
   const magR = magT > 0 ? 330 : coinT > 0 ? 200 : 0;
-  const pickR = 46 * P.k;
-  const reach = Math.max(magR, 120 * P.k) + 60;
+  // 젤리 먹는 범위 = 보이는 몸 모양 (서 있으면 발끝~머리, 슬라이드면 낮고 넓게). 뒤로 흩날리는 머리카락은 빼고 앞쪽 손·발까지
+  const k = P.k;
+  PB[0] = P.x + (P.slide ? -60 : -45) * k; PB[1] = P.x + (P.slide ? 66 : 62) * k;
+  PB[2] = P.y - (P.slide ? 100 : 168) * k; PB[3] = P.y + 4;
+  const reach = Math.max(magR, 70 * k) + 60;
   for (let i = head; i < ents.length; i++) {
     const e = ents[i];
     if (e.x > P.x + reach + 60) break;
@@ -1191,16 +1194,19 @@ function collide() {
       if (e.broken || e.hx1 < bx0 - 4 || e.hx0 > bx1) continue;
       if (bx1 > e.hx0 && bx0 < e.hx1 && by1 > e.hy0 && by0 < e.hy1) hitObstacle(e);
     } else if (e.k === 'j' || e.k === 'i') {
-      pickUp(e, cx, cy, pickR, magR);
+      pickUp(e, cx, cy, magR);
     }
   }
-  for (const e of extra) if (!e.gone) pickUp(e, cx, cy, pickR, Math.max(magR, e.t === 'coin' || e.t === 'gold' ? 200 : 0));
+  for (const e of extra) if (!e.gone) pickUp(e, cx, cy, Math.max(magR, e.t === 'coin' || e.t === 'gold' ? 200 : 0));
 }
-function pickUp(e, cx, cy, pickR, magR) {
-  const dx = e.x - cx, dy = e.y - cy, dd = dx * dx + dy * dy;
-  if (magR && dd < magR * magR && e.k === 'j') e.mag = true;
-  const rr = pickR + e.r;
-  if (dd < rr * rr) collect(e);
+const PB = [0, 0, 0, 0];
+function pickUp(e, cx, cy, magR) {
+  const dx = e.x - cx, dy = e.y - cy;
+  if (magR && e.k === 'j' && dx * dx + dy * dy < magR * magR) e.mag = true;
+  // 몸 상자에서 젤리 가운데까지 가장 가까운 거리가 젤리 반지름(보이는 크기의 약 절반)보다 가까우면 먹음
+  const qx = e.x < PB[0] ? PB[0] : e.x > PB[1] ? PB[1] : e.x, qy = e.y < PB[2] ? PB[2] : e.y > PB[3] ? PB[3] : e.y;
+  const ex = e.x - qx, ey = e.y - qy, rr = e.r * .6;
+  if (ex * ex + ey * ey < rr * rr) collect(e);
 }
 function collect(e) {
   e.gone = true;

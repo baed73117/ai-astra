@@ -149,6 +149,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 .podium .sc{font:800 italic 18px var(--f-num);letter-spacing:.03em}
 .podium .sc small{font:700 11px var(--f-kr);color:var(--soft);margin-left:2px}
 .podium li.empty{display:block;color:var(--soft);font-size:13px}
+.podium[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -359,15 +360,17 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
 })();
 </script>
 <script>
-// 게임별 1·2·3등 (구글 시트). 주소가 비어 있거나 못 불러오면 칸을 숨긴다
+// 게임별 1·2·3등 (구글 시트). 주소가 비어 있으면 '준비 중', 못 불러오면 칸을 숨긴다
 (async () => {
-  const RANK_URL = '';
+  const RANK_URL = 'https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec';
   const boxes = [...document.querySelectorAll('.podium')];
   const HEAD = '<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';
   if (!RANK_URL) { boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">🏆 랭킹 준비 중이에요 · 곧 열려요!</li>'; b.hidden = false; }); return; }
   boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
   let top = null;
-  try { const r = await fetch(RANK_URL, {cache: 'no-store'}); const j = await r.json(); if (j && j.ok && j.top) top = j.top; } catch (e) {}
+  const ac = typeof AbortController === 'function' ? new AbortController() : null;
+  if (ac) setTimeout(() => ac.abort(), 15000);
+  try { const r = await fetch(RANK_URL, Object.assign({cache: 'no-store'}, ac ? {signal: ac.signal} : {})); const j = await r.json(); if (j && j.ok && j.top) top = j.top; } catch (e) {}
   boxes.forEach(b => {
     if (!top) { b.hidden = true; return; }
     const list = (top[b.dataset.game] || []).slice(0, 3);

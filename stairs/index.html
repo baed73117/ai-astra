@@ -151,6 +151,7 @@ button{font:inherit;color:inherit}
 @media (max-height:640px){.pad{height:92px}.scorebox b{font-size:34px}}
 @media (prefers-reduced-motion:reduce){.t-dog img.dog,.r-dog,.newbest,.gauge.danger,.gauge.fever i{animation:none!important}}
 /* 홈페이지 랭킹 */
+.rank-row input{user-select:text;-webkit-user-select:text}
 .rankbox{display:grid;gap:6px;padding:10px;border:2.5px dashed var(--ink);border-radius:16px;background:var(--cream)}
 .rank-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
 .rank-row input{width:140px;padding:9px 10px;border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:700 16px var(--f-display);color:var(--ink);text-align:center}
@@ -227,7 +228,7 @@ button{font:inherit;color:inherit}
         <div><dt>뼈다귀</dt><dd id="rBones">+0</dd></div>
       </dl>
       <div class="rankbox" id="rankBox" hidden>
-        <div class="rank-row"><input id="rankName" maxlength="10" placeholder="랭킹에 쓸 이름" aria-label="랭킹에 쓸 이름" autocomplete="nickname"><button class="btn pink" id="btnRankUp" type="button">🏆 랭킹에 올리기</button></div>
+        <div class="rank-row"><input id="rankName" maxlength="10" placeholder="카톡방 닉네임" aria-label="랭킹에 쓸 이름 (카톡방 닉네임)" autocomplete="nickname"><button class="btn pink" id="btnRankUp" type="button">🏆 랭킹에 올리기</button></div>
         <p class="rank-msg" id="rankMsg"></p>
       </div>
       <div class="r-btns">
@@ -626,7 +627,7 @@ function endRun(timeout) {
 }
 function tier(n) { return n < 30 ? '산책 나온 대장님' : n < 100 ? '동네 순찰 대장님' : n < 250 ? '아파트 정복 대장님' : n < 500 ? '구름 위 대장님' : n < 900 ? '우주 대장님' : '전설의 대장님'; }
 /* ---------- 홈페이지 랭킹 (구글 시트) · 깃허브 홈페이지에서만 켜짐 ---------- */
-const RANK_URL = '';
+const RANK_URL = 'https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec';
 const RankNet = {
   on: !!RANK_URL && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname),
   id() {
@@ -639,13 +640,18 @@ const RankNet = {
   get name() { try { return localStorage.getItem('astra-rank-name') || ''; } catch (e) { return ''; } },
   set name(v) { try { localStorage.setItem('astra-rank-name', v); } catch (e) {} },
   sent(game) { try { return Number(localStorage.getItem('astra-rank-sent-' + game)) || 0; } catch (e) { return 0; } },
+  // 15초 넘게 답이 없으면 그만 기다린다 (폰 인터넷이 끊겨도 버튼이 멈추지 않게)
+  async req(opt) {
+    const ac = typeof AbortController === 'function' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 15000);
+    try { const r = await fetch(RANK_URL, Object.assign({}, opt, ac ? {signal: ac.signal} : {})); return await r.json(); }
+    finally { if (t) clearTimeout(t); }
+  },
   async send(game, name, score, info) {
-    const r = await fetch(RANK_URL, {method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
-    const j = await r.json();
+    const j = await this.req({method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
     if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
     return j;
   },
-  async top() { const r = await fetch(RANK_URL, {cache: 'no-store'}); return r.json(); },
+  top() { return this.req({cache: 'no-store'}); },
 };
 // 결과 화면의 '랭킹에 올리기' 상자. 이름이 저장돼 있고 새 최고 기록이면 자동으로 올린다
 const RankUI = {
@@ -660,14 +666,14 @@ const RankUI = {
     const btn = $('#btnRankUp');
     $('#rankName').value = RankNet.name;
     btn.disabled = false; btn.textContent = '🏆 랭킹에 올리기';
-    $('#rankMsg').textContent = '1·2·3등은 홈페이지에 이름이 나와요';
+    $('#rankMsg').textContent = RankNet.name ? '1·2·3등은 홈페이지에 이름이 나와요' : '카톡방 닉네임을 적고 올려 주세요 · 1·2·3등은 홈페이지에 나와요';
     if (RankNet.name && this.score > RankNet.sent(game)) this.up(true);
   },
   async up(auto) {
     const inp = $('#rankName'), btn = $('#btnRankUp'), msg = $('#rankMsg'), run = this.run;
     if (btn.disabled) return;
     const name = Array.from(inp.value.replace(/[\u0000-\u001f<>]/g, '').trim()).slice(0, 10).join('');
-    if (!name) { if (!auto) { msg.textContent = '랭킹에 쓸 이름을 먼저 적어 주세요.'; inp.focus(); } return; }
+    if (!name) { if (!auto) { msg.textContent = '카톡방 닉네임을 먼저 적어 주세요.'; inp.focus(); } return; }
     RankNet.name = name;
     if (this.onName) this.onName(name);
     btn.disabled = true; btn.textContent = '올리는 중…';
@@ -678,6 +684,11 @@ const RankUI = {
         if (run !== this.run) return;
         msg.textContent = r.rank <= 3 ? `🏆 전체 ${r.rank}등! 홈페이지에 이름이 올라가요` : `전체 ${r.rank}등이에요 · 내 최고 ${Number(r.best).toLocaleString('ko-KR')}`;
         btn.textContent = '✔ 랭킹에 올렸어요';
+        return;
+      }
+      if (r && r.why === 'slow' && auto === true && run === this.run) {
+        msg.textContent = '잠시 후 자동으로 다시 올려요…'; btn.disabled = false; btn.textContent = '🏆 랭킹에 올리기';
+        setTimeout(() => { if (run === this.run) this.up('retry'); }, 5500);
         return;
       }
       text = r && r.why === 'slow' ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';

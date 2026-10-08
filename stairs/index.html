@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="왼쪽! 오른쪽! 강아지 대장님과 식빵 계단을 끝없이 올라가는 무료 게임">
-<meta name="theme-color" content="#070815">
+<meta name="theme-color" content="#FBF2FF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="대장님의 무한계단 · AI아스트라 공유방">
@@ -75,11 +75,13 @@ button{font:inherit;color:inherit}
 .scorebox span{font-family:var(--f-hand);font-weight:700;font-size:16px;color:var(--ink-soft)}
 .hud-right{display:flex;gap:8px;align-items:center;pointer-events:auto}
 .gauge{height:20px;border:var(--line);border-radius:999px;background:rgba(255,253,247,.92);overflow:hidden;box-shadow:0 3px 0 var(--ink);position:relative}
-.gauge i{position:absolute;left:0;top:0;bottom:0;width:100%;transform-origin:left;background:linear-gradient(90deg,#7ED957,#B8E04A)}
+.gauge i{position:absolute;left:0;top:0;bottom:0;width:100%;transform-origin:left;overflow:hidden;will-change:transform;background:linear-gradient(90deg,#7ED957,#B8E04A)}
 .gauge.warn i{background:linear-gradient(90deg,#FFC23C,#FFD966)}
 .gauge.danger i{background:linear-gradient(90deg,#FF5B5B,#FF8A7A)}
 .gauge.danger{animation:shakeX .25s linear infinite}
-.gauge.fever i{background:linear-gradient(90deg,#FF8FA3,#FFD23F,#6FD3AE,#8ED6F8,#B49BFF,#FF8FA3);background-size:200% 100%;animation:slide .6s linear infinite}
+.gauge.fever i{background:#FF8FA3}
+.gauge.fever i::after{content:"";position:absolute;top:0;bottom:0;left:0;width:200%;background:linear-gradient(90deg,#FF8FA3,#FFD23F,#6FD3AE,#8ED6F8,#B49BFF,#FF8FA3,#FFD23F,#6FD3AE,#8ED6F8,#B49BFF,#FF8FA3);animation:slideT .6s linear infinite;will-change:transform}
+@keyframes slideT{to{transform:translateX(-50%)}}
 .combo{justify-self:center;font-size:18px;background:var(--pink);color:#fff;border:var(--line);border-radius:999px;padding:2px 12px;box-shadow:0 3px 0 var(--ink);text-shadow:0 1px 0 #D9607A}
 #landmark{position:absolute;left:50%;top:calc(196px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:3;pointer-events:none;background:var(--paper);border:var(--line);border-radius:16px;padding:6px 14px;box-shadow:0 4px 0 var(--ink);font-size:17px;white-space:nowrap;opacity:0}
 #landmark.show{animation:toastIn 2.4s ease forwards}
@@ -97,12 +99,12 @@ button{font:inherit;color:inherit}
 /* overlays */
 .overlay{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:16px;overflow-y:auto}
 .overlay.veil{background:var(--veil)}
-#title{background:linear-gradient(180deg,rgba(255,244,226,0) 0,rgba(255,244,226,.55) 55%,rgba(255,244,226,.95) 100%),var(--bg-town,none) center/cover no-repeat,var(--cream);align-content:center;gap:12px;text-align:center}
+#title{background:linear-gradient(180deg,rgba(255,244,226,0) 0,rgba(255,244,226,.55) 55%,rgba(255,244,226,.95) 100%),var(--bg-town,none) center/cover no-repeat,var(--cream);align-content:center;align-content:safe center;gap:12px;text-align:center;padding-top:calc(68px + env(safe-area-inset-top,0px))}
 .t-top{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:14px;right:14px;display:flex;gap:8px;align-items:center}
 .t-top .icon{margin-left:auto}
-.logo{font-size:clamp(56px,17vw,82px);line-height:.95;color:var(--toast);margin:0;font-weight:400;text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 8px 0 var(--ink)}
+.logo{font-size:clamp(40px,min(17vw,11vh),82px);line-height:.95;color:var(--toast);margin:0;font-weight:400;text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 8px 0 var(--ink)}
 .logo small{display:block;font-size:.5em;color:#fff;margin-bottom:6px}
-.t-dog{position:relative;width:min(56vw,230px);margin:4px auto 0}
+.t-dog{position:relative;width:min(56vw,230px,30vh);margin:4px auto 0}
 .t-dog img.dog{width:100%;display:block;animation:hop 1.1s ease-in-out infinite;position:relative;z-index:1}
 .t-dog img.toast{width:110%;margin:-18% 0 0 -5%;display:block}
 .t-sub{font-family:var(--f-hand);font-weight:700;font-size:20px;margin:0}
@@ -121,7 +123,19 @@ button{font:inherit;color:inherit}
 .stats dd{margin:0;font-size:22px}
 .newbest{justify-self:center;background:var(--toast);color:#fff;border:var(--line);border-radius:999px;padding:3px 16px;font-size:18px;animation:pulse .7s ease-in-out infinite;text-shadow:0 2px 0 var(--toast-deep)}
 .r-btns{display:grid;gap:10px}
-.r-btns.lock{pointer-events:none}
+.r-btns.lock,.tap-lock{pointer-events:none}
+@media (max-height:760px){
+  .card{gap:8px;padding:14px 16px}
+  .card h2{font-size:28px}
+  .r-dog{width:92px;margin:-4px auto -2px}
+  .caption{font-size:18px}
+  .r-score{font-size:46px}
+  .stats div{padding:4px}
+  .stats dd{font-size:19px}
+  .r-btns{gap:8px}
+  .r-btns .btn.big{font-size:26px;padding:12px 20px}
+}
+html,body{overscroll-behavior:none}
 .r-btns .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn .bonei{width:24px;height:24px;vertical-align:-5px;margin-left:4px}
 .brag-text{user-select:text;-webkit-user-select:text;width:100%;border:2.5px solid var(--ink);border-radius:14px;padding:8px 10px;font:16px/1.4 var(--f-hand);font-weight:700;color:var(--ink);background:var(--cream);resize:none}
@@ -149,7 +163,7 @@ button{font:inherit;color:inherit}
 @keyframes flash{0%{opacity:0}15%{opacity:.85}100%{opacity:0}}
 @keyframes toastIn{0%{opacity:0;transform:translate(-50%,-10px) scale(.8)}12%{opacity:1;transform:translate(-50%,0) scale(1.05)}20%{transform:translate(-50%,0) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-8px)}}
 @media (max-height:640px){.pad{height:92px}.scorebox b{font-size:34px}}
-@media (prefers-reduced-motion:reduce){.t-dog img.dog,.r-dog,.newbest,.gauge.danger,.gauge.fever i{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.t-dog img.dog,.r-dog,.newbest,.gauge.danger,.gauge.fever i,.gauge.fever i::after{animation:none!important}}
 /* 홈페이지 랭킹 */
 .rank-row input{user-select:text;-webkit-user-select:text}
 .rankbox{display:grid;gap:6px;padding:10px;border:2.5px dashed var(--ink);border-radius:16px;background:var(--cream)}
@@ -272,6 +286,7 @@ button{font:inherit;color:inherit}
 (() => {
 'use strict';
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/stairs/';
 const M_PER_STAIR = 0.5;
 
@@ -322,10 +337,11 @@ function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save));
 /* ---------- 소리 (Codex가 만든 audio.js · 없으면 조용히 넘어가요) ---------- */
 const AU = {
   get a() { return window.StairsAudio; },
-  init() { try { if (this.a) { this.a.init(); this.a.setMuted({music: save.muted, sfx: save.muted}); } } catch (e) {} },
+  ms: null,
+  init() { try { if (this.a) { this.a.init(); if (this.ms !== save.muted) { this.ms = save.muted; this.a.setMuted({music: save.muted, sfx: save.muted}); } } } catch (e) {} },
   sfx(name, arg) { try { const a = this.a; if (a && a.sfx && typeof a.sfx[name] === 'function') a.sfx[name](arg); } catch (e) {} },
   music(fn, arg) { try { const a = this.a; if (a && a.music && typeof a.music[fn] === 'function') a.music[fn](arg); } catch (e) {} },
-  mute() { try { if (this.a) this.a.setMuted({music: save.muted, sfx: save.muted}); } catch (e) {} },
+  mute() { try { if (this.a) { this.ms = save.muted; this.a.setMuted({music: save.muted, sfx: save.muted}); } } catch (e) {} },
   suspend() { try { if (this.a) this.a.suspend(); } catch (e) {} },
   resume() { try { if (this.a) this.a.resume(); } catch (e) {} },
 };
@@ -366,10 +382,10 @@ function updateTweens(dt) {
 }
 let ADD = 1;
 class Fx {
-  constructor(parent) { this.c = new PIXI.Container(); parent.addChild(this.c); this.ps = []; }
+  constructor(parent) { this.c = new PIXI.Container(); parent.addChild(this.c); this.ps = []; this.pool = []; }
   spawn(tex, o) {
-    if (this.ps.length > 400) return null;
-    const s = new PIXI.Sprite(tex); s.anchor.set(.5); s.blendMode = o.add ? ADD : PIXI.BLEND_MODES.NORMAL; s.tint = o.tint ?? 0xFFFFFF; s.rotation = o.rot || 0; this.c.addChild(s);
+    if (this.ps.length > (TOUCH ? 260 : 400)) return null;
+    const s = this.pool.pop() || new PIXI.Sprite(tex); s.texture = tex; s.anchor.set(.5); s.blendMode = o.add ? ADD : PIXI.BLEND_MODES.NORMAL; s.tint = o.tint ?? 0xFFFFFF; s.rotation = o.rot || 0; this.c.addChild(s);
     const p = {s, x: o.x, y: o.y, vx: o.vx || 0, vy: o.vy || 0, g: o.g || 0, drag: o.drag ?? 1, life: o.life || .6, age: -(o.delay || 0), s0: o.s0 ?? 1, s1: o.s1 ?? 0, a0: o.a0 ?? 1, a1: o.a1 ?? 0, vr: o.vr || 0, flipX: o.flipX ? -1 : 1};
     s.visible = p.age >= 0; this.apply(p, 0); this.ps.push(p); return p;
   }
@@ -377,12 +393,13 @@ class Fx {
   update(dt) {
     for (let i = this.ps.length - 1; i >= 0; i--) {
       const p = this.ps[i]; p.age += dt; if (p.age < 0) continue; p.s.visible = true;
-      const t = p.age / p.life; if (t >= 1) { p.s.destroy(); this.ps.splice(i, 1); continue; }
+      const t = p.age / p.life; if (t >= 1) { this.recycle(p.s); this.ps[i] = this.ps[this.ps.length - 1]; this.ps.pop(); continue; }
       const k = Math.pow(p.drag, dt * 60); p.vx *= k; p.vy *= k; p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.s.rotation += p.vr * dt;
       this.apply(p, t);
     }
   }
-  clear() { this.ps.forEach(p => p.s.destroy()); this.ps = []; }
+  recycle(sp) { this.c.removeChild(sp); if (this.pool.length < 300) this.pool.push(sp); else sp.destroy(); }
+  clear() { this.ps.forEach(p => this.recycle(p.s)); this.ps = []; }
 }
 function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); return PIXI.Texture.from(c); }
 const rr = (a, b) => a + Math.random() * (b - a);
@@ -432,7 +449,7 @@ function initGraphics() {
     const names = ['dog_idle', 'dog_stand', 'dog_step', 'dog_fall', 'dog_cheer', 'dog_panic', 'bg_town', 'bg_sky', 'bg_space', 'stair_toast', 'bone'];
     const imgs = await Promise.all(names.map(n => loadImg(A(`assets/${n}.webp`))));
     buildTextures(imgs);
-    app = new PIXI.Application({resizeTo: $('#stage'), backgroundColor: 0xBFE8FA, antialias: true, autoDensity: true, resolution: Math.min(2, window.devicePixelRatio || 1), sharedTicker: true});
+    app = new PIXI.Application({resizeTo: $('#stage'), backgroundColor: 0xBFE8FA, antialias: !TOUCH, autoDensity: true, resolution: Math.min(TOUCH ? 1.5 : 2, window.devicePixelRatio || 1), sharedTicker: true});
     $('#stage').prepend(app.view);
     L.bg = new PIXI.Container(); app.stage.addChild(L.bg);
     L.bgs = ['bg_town', 'bg_sky', 'bg_space'].map(n => { const s = new PIXI.Sprite(TEX[n] || PIXI.Texture.WHITE); s.anchor.set(.5, 0); L.bg.addChild(s); return s; });
@@ -462,7 +479,10 @@ function initGraphics() {
 function resize() {
   if (!app) return;
   viewW = app.screen.width; viewH = app.screen.height;
-  W = Math.max(72, Math.min(118, viewW * .25)); H = W * .46; SX = W * .62;
+  const oldW = W;
+  const land = viewW > viewH;
+  W = Math.max(land ? 56 : 72, Math.min(118, viewW * .25, land ? viewH * .14 : 118)); H = W * .46; SX = W * .62;
+  if (Math.round(oldW) !== Math.round(W)) for (const k in wordCache) delete wordCache[k];
   L.bgs.forEach(s => { const sc = Math.max(viewW / s.texture.width, viewH * 1.25 / s.texture.height); s.scale.set(sc); s.x = viewW / 2; });
   stairs.forEach(layoutStair);
   bones.forEach(layoutBone);
@@ -476,6 +496,7 @@ function resize() {
 /* ---------- 계단 ---------- */
 let stairs = [], bones = [];
 let bonusPaid = 0, runBonus = 0;
+let inputGate = 0, runStartBest = 0;
 let dir = 1, idx = 0, score = 0, timeLeft = 1, state = 'title', fever = 0, feverOn = 0, streak = 0, lastStepAt = 0, runBones = 0, revived = false, landmarkI = 0;
 const dogV = {x: 0, y: 0, hop: 0, sx: 1, sy: 1, rot: 0};
 const cam = {x: 0, y: 0};
@@ -506,6 +527,7 @@ function resetWorld() {
   clearTransient();
   addStair(0, 0, 1);
   for (let i = 0; i < 40; i++) genNext();
+  runStartBest = save.best;
   dir = 1; idx = 0; score = 0; timeLeft = 1; fever = 0; feverOn = 0; streak = 0; runBones = 0; revived = false; landmarkI = 0; bonusPaid = 0;
   const p = stairPos(0); dogV.x = p.x; dogV.y = p.y; dogV.hop = 0; dogV.sx = dogV.sy = 1; dogV.rot = 0;
   cam.x = dogV.x; cam.y = dogV.y;
@@ -530,7 +552,12 @@ function layoutDog() {
 let poseTimer = 0;
 function setPose(name, hold) { L.dog.texture = TEX[name]; poseTimer = hold || 0; }
 function act(side) {
-  if (state === 'ready') { state = 'play'; $('#hint').hidden = true; AU.music('start', 'game'); }
+  if (state === 'ready') {
+    // 시작·부활 직후의 두 번째 터치나 첫 계단 반대쪽 터치는 무시 (바로 떨어지지 않게)
+    const nx = stairs[idx + 1 - stairs[0].i];
+    if (performance.now() < inputGate || !nx || nx.d !== side) return;
+    state = 'play'; $('#hint').hidden = true; AU.music('start', 'game');
+  }
   if (state !== 'play') return;
   const next = stairs[idx + 1 - stairs[0].i];
   if (!next) return;
@@ -573,6 +600,7 @@ function act(side) {
   if (score % 100 === 0) milestone();
   else if (score % 17 === 0) word(['영차!', '댕!', '뾱!', '헥헥', '가즈아!', '빠르다!', '오예!'][rnd(7)], p.x, p.y - W * 1.4, '#5A3E2B', .42);
   checkLandmark();
+  if (score % 100 === 60) bannerTex(`${score + 40}계단!`, '#F2A541');
   updateHud();
 }
 function startFever() {
@@ -581,10 +609,11 @@ function startFever() {
   AU.music('setFever', true); AU.sfx('milestone');
   $('#gauge').classList.add('fever');
 }
+const ghostPool = [];
 function trail() {
-  const ghost = new PIXI.Sprite(L.dog.texture); ghost.anchor.copyFrom(L.dog.anchor); ghost.position.copyFrom(L.dog.position); ghost.scale.copyFrom(L.dog.scale); ghost.rotation = L.dog.rotation;
+  const ghost = ghostPool.pop() || new PIXI.Sprite(L.dog.texture); ghost.texture = L.dog.texture; ghost.anchor.copyFrom(L.dog.anchor); ghost.position.copyFrom(L.dog.position); ghost.scale.copyFrom(L.dog.scale); ghost.rotation = L.dog.rotation;
   ghost.tint = feverOn ? hsv((T * 1.5) % 1, .5, 1) : 0xFFE38A; ghost.alpha = .55; L.trail.addChild(ghost);
-  tween(ghost, {alpha: 0}, .35).then(() => kill(ghost));
+  tween(ghost, {alpha: 0}, .35).then(() => { if (ghost.destroyed) return; L.trail.removeChild(ghost); if (ghostPool.length < 12) ghostPool.push(ghost); else kill(ghost); });
 }
 
 /* ---------- 실패 ---------- */
@@ -611,11 +640,11 @@ async function fall(timeout) {
   endRun(timeout);
 }
 function settleRun() {
-  const isBest = score > save.best;
+  const isBest = score > runStartBest;
   const bonus = Math.max(0, Math.floor(score / 25) - bonusPaid);
   bonusPaid += bonus;
   save.bones += bonus;
-  if (isBest) save.best = score;
+  if (score > save.best) save.best = score;
   persist();
   return {isBest, bonus};
 }
@@ -716,8 +745,7 @@ function showResult() {
   $('#btnRevive').hidden = !canRevive;
   $('#bragText').hidden = true;
   RankUI.show('stairs', score, '대장님과 ' + fmtM(score));
-  const btns = $('#result .r-btns');
-  btns.classList.add('lock'); setTimeout(() => btns.classList.remove('lock'), 450);
+  tapLock($('#result .card'), 600);
   $('#result').hidden = false;
   showPads(false);
   if (isBest) { AU.sfx('newRecord'); confetti(); }
@@ -740,6 +768,7 @@ async function revive() {
   showPads(true); updateHud();
   state = 'ready';
   $('#hint').hidden = false; $('#hint').innerHTML = '<span>부활했댕! 버튼을 누르면 다시 출발!</span>';
+  inputGate = performance.now() + 350;
 }
 
 /* ---------- 연출 ---------- */
@@ -773,8 +802,25 @@ function bubble(text) {
   L.bubble.addChild(c); tween(c, {k: 1}, .3, E.outBack);
   tween(c, {alpha: 0}, .35, E.linear, 1.3).then(() => kill(c));
 }
+const bannerCache = new Map();
+function bannerTex(text, color) {
+  const k = text + '|' + color + '|' + Math.round(Math.min(viewW * .13, 60));
+  let tex = bannerCache.get(k);
+  if (tex) { bannerCache.delete(k); bannerCache.set(k, tex); return tex; }
+  {
+    const t = new PIXI.Text(text, {fontFamily: 'Jua, sans-serif', fontSize: Math.round(Math.min(viewW * .13, 60)), fill: '#FFFFFF', stroke: '#5A3E2B', strokeThickness: 8, lineJoin: 'round', dropShadow: true, dropShadowColor: color, dropShadowDistance: 6, dropShadowAngle: Math.PI / 2, dropShadowBlur: 0});
+    t.resolution = app ? app.renderer.resolution : 2; t.updateText(true);
+    tex = t.texture;
+    if (bannerCache.size >= 12) {
+      const old = [...bannerCache.keys()].find(x => !x.startsWith('대장님 부스터') && !x.startsWith('시간 초과'));
+      if (old) { const ot = bannerCache.get(old); bannerCache.delete(old); setTimeout(() => { if (ot && !ot.destroyed) ot.destroy(true); }, 4000); }
+    }
+    bannerCache.set(k, tex);
+  }
+  return tex;
+}
 function banner(text, color) {
-  const t = new PIXI.Text(text, {fontFamily: 'Jua, sans-serif', fontSize: Math.round(Math.min(viewW * .13, 60)), fill: '#FFFFFF', stroke: '#5A3E2B', strokeThickness: 8, lineJoin: 'round', dropShadow: true, dropShadowColor: color, dropShadowDistance: 6, dropShadowAngle: Math.PI / 2, dropShadowBlur: 0});
+  const t = new PIXI.Sprite(bannerTex(text, color));
   t.anchor.set(.5); t.position.set(viewW / 2, viewH * .36); t.scale.set(.2); t.rotation = -.06; L.topTrans.addChild(t);
   t.k = .2;
   tween(t, {k: 1}, .35, E.outBack);
@@ -788,18 +834,19 @@ function milestone() {
 }
 function confetti() {
   if (!ui || REDUCED) return;
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0, n = TOUCH ? 32 : 70; i < n; i++) {
     ui.spawn(i % 4 ? TEX.confetti : TEX.heart, {x: rr(0, viewW), y: rr(-60, -10), vx: rr(-50, 50), vy: rr(160, 360), g: 120, delay: rr(0, .6), tint: [0xFF8FA3, 0xFFD23F, 0x6FD3AE, 0x8ED6F8, 0xB49BFF][i % 5], s0: i % 4 ? rr(.8, 1.3) : rr(.4, .6), s1: i % 4 ? .7 : .3, a0: 1, a1: .6, life: rr(1.8, 2.6), vr: rr(-6, 6), rot: rr(0, 6)});
   }
 }
-function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
+function replay(el, cls) { el.classList.remove(cls); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add(cls))); }
+function flash() { replay($('#flash'), 'go'); }
 const LANDMARKS = [[5, '기린 키 (5m) 돌파!'], [15, '아파트 5층 높이댕'], [50, '아파트 17층 높이댕'], [93, '자유의 여신상 (93m) 돌파!'], [147, '피라미드 (147m) 돌파!'], [237, '남산타워 (237m) 돌파!'], [249, '63빌딩 (249m) 돌파!'], [330, '에펠탑 (330m) 돌파!'], [555, '롯데월드타워 (555m) 돌파!'], [828, '부르즈 할리파 (828m) 돌파!'], [1947, '한라산 (1947m) 정상!']];
 function fmtM(n) { const m = n * M_PER_STAIR; return (m >= 100 ? Math.round(m) : m.toFixed(1)) + 'm'; }
 function checkLandmark() {
   const m = score * M_PER_STAIR;
   if (landmarkI < LANDMARKS.length && m >= LANDMARKS[landmarkI][0]) {
     const el = $('#landmark'); el.textContent = LANDMARKS[landmarkI][1];
-    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    replay(el, 'show');
     landmarkI++;
   }
 }
@@ -810,7 +857,8 @@ function updateBg(snap) {
   L.bgs[0].alpha = 1;
   L.bgs[1].alpha = Math.max(0, Math.min(1, bgMix));
   L.bgs[2].alpha = Math.max(0, Math.min(1, bgMix - 1));
-  const par = ((score * H * .06) % (viewH * .2));
+  L.bgs[0].visible = bgMix < .999; L.bgs[1].visible = bgMix > .001 && bgMix < 1.999; L.bgs[2].visible = bgMix > 1.001;
+  const par = viewH * .2 * Math.min(1, score / 600);
   L.bgs.forEach(s => { s.y = -viewH * .2 + par; });
 }
 let ambT = 0;
@@ -855,7 +903,7 @@ function tickFrame() {
     if (timeLeft <= 0) { timeLeft = 0; fall(true); }
   }
   // 플레이 중에는 가는 방향을 바라보고 서 있고, 시간이 거의 없으면 정면으로 땀 흘리는 자세
-  if (poseTimer > 0) { poseTimer -= dt; if (poseTimer <= 0 && state !== 'falling') L.dog.texture = (state === 'play' && timeLeft < .25) ? TEX.dog_panic : (state === 'play' || state === 'ready') ? TEX.dog_stand : TEX.dog_idle; }
+  if (poseTimer > 0) { poseTimer -= dt; if (poseTimer <= 0 && state !== 'falling') L.dog.texture = (state === 'play' && timeLeft < .25) ? TEX.dog_panic : (state === 'play' || state === 'ready' || state === 'paused') ? TEX.dog_stand : TEX.dog_idle; }
   if (skinObj().tint === 'rainbow') L.dog.tint = hsv((T * .25) % 1, .35, 1);
   // 카메라
   const k = 1 - Math.exp(-dt * (state === 'falling' ? 2 : 11));
@@ -899,6 +947,8 @@ async function startGame() {
   $('#bonesHud').textContent = save.bones;
   $('#hint').hidden = false; $('#hint').innerHTML = '<span>다음 계단이 있는 쪽 버튼을 눌러요!</span>';
   updateHud();
+  inputGate = performance.now() + 350;
+  bannerTex('대장님 부스터!!', '#FF8FA3'); bannerTex('시간 초과!', '#FF5B5B'); bannerTex('100계단!', '#F2A541');
 }
 function resetMusicFlags() { AU.music('setFever', false); AU.music('setDanger', false); AU.music('setSpeed', 0); }
 function goTitle() {
@@ -907,9 +957,11 @@ function goTitle() {
   if (app) setTimeout(() => { if (state === 'title' && app) app.stop(); }, 60);
   ['#result', '#pause', '#skinsBox', '#how', '#hud', '#pads', '#hint'].forEach(s => { $(s).hidden = true; });
   $('#title').hidden = false;
+  tapLock($('#title'), 400);
   renderTitle();
   AU.music('start', 'title');
 }
+function tapLock(el, ms) { el.classList.add('tap-lock'); clearTimeout(el._tl); el._tl = setTimeout(() => el.classList.remove('tap-lock'), ms); }
 function renderTitle() { $('#bonesT').textContent = save.bones; $('#bestT').textContent = save.best.toLocaleString('ko-KR'); syncSound(); }
 let pausedFrom = null;
 function pauseGame() {

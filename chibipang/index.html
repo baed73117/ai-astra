@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="귀여운 SD 캐릭터 매치-3 퍼즐 · 오늘의 챌린지와 친구 도전장으로 같은 판 점수 대결">
-<meta name="theme-color" content="#070815">
+<meta name="theme-color" content="#FBF2FF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="치비팡 · AI아스트라 공유방">
@@ -130,8 +130,10 @@ button{font:inherit;color:inherit}
 .fv-lbl{font-family:var(--f-num);font-weight:700;font-size:13px;letter-spacing:.16em;color:var(--pink-deep)}
 body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
 .gauge{flex:1;height:14px;border-radius:999px;background:rgba(255,255,255,.6);border:1.5px solid #fff;overflow:hidden;position:relative;box-shadow:inset 0 1px 3px rgba(110,80,170,.2)}
-.gauge i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:linear-gradient(90deg,#FFA9CF,#FF6AA8 60%,#FFD36E)}
-.gauge.on i{background:linear-gradient(90deg,#FF7EB6,#FFD36E,#6FDDBB,#8FD3FF,#A992FF,#FF7EB6);background-size:200% 100%;animation:slide 1s linear infinite}
+.gauge i{position:absolute;left:0;top:0;bottom:0;width:100%;transform:scaleX(0);transform-origin:left;will-change:transform;overflow:hidden;background:linear-gradient(90deg,#FFA9CF,#FF6AA8 60%,#FFD36E)}
+.gauge.on i{background:#FF7EB6}
+.gauge.on i::after{content:"";position:absolute;top:0;bottom:0;left:0;width:200%;background:linear-gradient(90deg,#FF7EB6,#FFD36E,#6FDDBB,#8FD3FF,#A992FF,#FF7EB6,#FFD36E,#6FDDBB,#8FD3FF,#A992FF,#FF7EB6);animation:slideT 1s linear infinite;will-change:transform}
+@keyframes slideT{to{transform:translateX(-50%)}}
 
 /* board */
 .board{position:relative;width:100%;width:min(100%,max(300px,calc(100dvh - 430px)));margin-inline:auto;padding:5px;border-radius:26px;border:3px solid transparent;
@@ -308,14 +310,14 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
 .pause-row{display:grid;gap:10px}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:24}
 #flash.go{animation:flash .7s ease-out}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:rgba(74,63,107,.92);color:#fff;padding:10px 18px;border-radius:16px;font-size:15px;z-index:30;width:max-content;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:rgba(74,63,107,.92);color:#fff;padding:10px 18px;border-radius:16px;font-size:15px;z-index:30;width:max-content;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
 
 @keyframes bob{50%{transform:translateY(-10px)}}
 @keyframes floaty{50%{transform:translateY(-10px) rotate(-3deg)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slide{to{background-position:-200% 0}}
 @keyframes throb{50%{transform:scale(1.1)}}
-@keyframes shine{0%,55%{left:-60%}85%,100%{left:130%}}
+@keyframes shine{0%,55%{transform:translateX(0) skewX(-20deg)}85%,100%{transform:translateX(560%) skewX(-20deg)}}
 @keyframes flash{0%{opacity:0}12%{opacity:.95}100%{opacity:0}}
 @keyframes rise{0%{transform:translate(-50%,-30%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-170%) scale(1);opacity:0}}
 @keyframes banner{0%{transform:translate(-50%,-50%) scale(.3) rotate(-8deg);opacity:0}18%{transform:translate(-50%,-50%) scale(1.12) rotate(-3deg);opacity:1}30%{transform:translate(-50%,-50%) scale(1) rotate(-3deg)}80%{opacity:1}100%{transform:translate(-50%,-62%) rotate(-3deg);opacity:0}}
@@ -367,8 +369,9 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
   .detail{grid-template-columns:84px 1fr}
 }
 @media (prefers-reduced-motion:reduce){
-  .parade .por,.rays,.btn.shine::after,.board.fever,.board.fever .fevring,.timer.hurry b,.newbest,.gauge.on i,.capsule.idle,body.fever .fv-lbl{animation:none!important}
+  .parade .por,.rays,.btn.shine::after,.board.fever,.board.fever .fevring,.timer.hurry b,.newbest,.gauge.on i,.gauge.on i::after,.capsule.idle,body.fever .fv-lbl{animation:none!important}
 }
+html,body{overscroll-behavior-y:none}
 /* 홈페이지 랭킹 */
 .rank-row input{user-select:text;-webkit-user-select:text}
 .rankbox{display:grid;gap:6px;padding:10px;border-radius:18px;background:rgba(255,236,170,.6);border:1.5px solid #fff}
@@ -702,6 +705,7 @@ function normalizeSave(s) {
   STARTERS.forEach(id => { if (!out.owned[id]) out.owned[id] = 1; });
   out.party = (Array.isArray(out.party) ? out.party : []).filter((id, i, a) => BY_ID[id] && out.owned[id] && a.indexOf(id) === i).slice(0, 6);
   if (!out.att || typeof out.att !== 'object') out.att = {count: 0, last: ''};
+  out.att = {count: Math.max(0, Math.floor(Number(out.att.count) || 0)), last: typeof out.att.last === 'string' ? out.att.last : ''};
   out.history = (Array.isArray(out.history) ? out.history : []).filter(h => h && typeof h.s === 'number' && BY_ID[h.c]).slice(0, 10);
   ['coins', 'best', 'tickets', 'updatedAt'].forEach(k => { out[k] = Math.max(0, Number(out[k]) || 0); });
   if (!BY_ID[out.leader] || !out.party.includes(out.leader)) out.leader = out.party[0] || STARTERS[0];
@@ -744,7 +748,8 @@ function seeded(str) {
 }
 function ensureDaily() {
   const today = todayStr();
-  if (save.daily && save.daily.date === today && Array.isArray(save.daily.list) && save.daily.list.every(it => MDEF[it.id])) return false;
+  const d0 = save.daily;
+  if (d0 && d0.date === today && Array.isArray(d0.list) && d0.list.every(it => it && MDEF[it.id]) && d0.prog && typeof d0.prog === 'object' && Array.isArray(d0.claimed) && d0.claimed.length === d0.list.length) return false;
   const rand = seeded(today), pool = MISSIONS.slice(), list = [];
   while (list.length < 3 && pool.length) {
     const m = pool.splice(Math.floor(rand() * pool.length), 1)[0];
@@ -927,10 +932,10 @@ const S = {
   ctx: null,
   init() {
     if (!this.ctx) { try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); } catch (e) {} }
-    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
+    if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed') this.ctx.resume().catch(() => {});
   },
   tone(f, d = .12, type = 'sine', vol = .16, slide = 1, delay = 0) {
-    if (save.muted || !this.ctx) return;
+    if (save.muted || !this.ctx || document.hidden) return;
     const t = this.ctx.currentTime + delay, o = this.ctx.createOscillator(), g = this.ctx.createGain();
     o.type = type; o.frequency.setValueAtTime(f, t);
     if (slide !== 1) o.frequency.exponentialRampToValueAtTime(Math.max(30, f * slide), t + d);
@@ -980,7 +985,7 @@ const M = {
     this.applyVol();
   },
   applyVol() { if (this.bus) this.bus.gain.setTargetAtTime(save.musicOff ? 0 : (this.track === 'game' ? .55 : .5), S.ctx.currentTime, .2); },
-  resumeIfNeeded() { if (S.ctx && S.ctx.state === 'suspended' && !document.hidden) S.ctx.resume().catch(() => {}); },
+  resumeIfNeeded() { if (S.ctx && S.ctx.state !== 'running' && S.ctx.state !== 'closed' && !document.hidden) S.ctx.resume().catch(() => {}); },
   tempo() { return this.track === 'game' ? (this.hurry ? 150 : 128) : 92; },
   schedule() {
     const c = S.ctx; if (!c || !this.track || c.state !== 'running') return;
@@ -1068,7 +1073,12 @@ function toast(msg) {
 }
 function replay(el, cls) { el.classList.remove(cls); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add(cls))); }
 function flash() { replay($('#flash'), 'go'); }
-function loadImg(src) { return new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
+function loadImg(src) {
+  return new Promise(res => {
+    const im = new Image(), t = setTimeout(() => { im.onload = im.onerror = null; res(null); }, 8000);
+    im.onload = () => { clearTimeout(t); res(im); }; im.onerror = () => { clearTimeout(t); res(null); }; im.src = src;
+  });
+}
 function hsvNum(h, s, v) {
   const i = Math.floor(h * 6), f = h * 6 - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
   const [r, g, b] = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i % 6];
@@ -1086,6 +1096,7 @@ const E = {
 };
 const tweens = [];
 function tween(obj, to, dur, ease = E.outCubic, delay = 0) {
+  for (const w of tweens) if (w.obj === obj) for (const k in to) delete w.to[k];
   return new Promise(res => tweens.push({obj, to, from: null, dur: Math.max(.001, dur), ease, t: -delay, res}));
 }
 function updateTweens(dt) {
@@ -1324,6 +1335,14 @@ function initGraphics() {
     new ResizeObserver(resizeBoard).observe($('#field'));
     resizeBoard();
     PIXI.Ticker.shared.add(tick);
+    // 게임판은 게임 화면일 때만, 전체 화면 효과층은 효과가 있을 때만 그린다
+    PIXI.Ticker.shared.remove(boardApp.render, boardApp);
+    PIXI.Ticker.shared.remove(scrApp.render, scrApp);
+    let scrIdle = 0;
+    PIXI.Ticker.shared.add(() => {
+      if (!screens.game.hidden) boardApp.render();
+      if (scrFx.ps.length) { scrIdle = 0; scrApp.render(); } else if (scrIdle < 2) { scrIdle++; scrApp.render(); }
+    }, null, PIXI.UPDATE_PRIORITY.LOW);
   })();
   return readyPromise;
 }
@@ -1443,7 +1462,7 @@ function confetti() {
 }
 let ambT = 0;
 function ambient(dt) {
-  if (REDUCED || !scrFx) return;
+  if (REDUCED || !scrFx || (screens.title.hidden && screens.game.hidden)) return;
   ambT -= dt;
   if (ambT > 0) return;
   ambT = rr(.25, .6) * (TOUCH ? 1.8 : 1);
@@ -1676,15 +1695,15 @@ function cellFromEvent(e) {
   return {r, c, size: rect.width / N};
 }
 field.addEventListener('pointerdown', e => {
-  if (state !== 'play' || paused) return;
+  if (state !== 'play' || paused || e.button > 0) return;
   S.init();
   const hit = cellFromEvent(e); if (!hit) return;
   e.preventDefault();
-  drag = {r: hit.r, c: hit.c, x: e.clientX, y: e.clientY, th: hit.size * .32, moved: false};
+  drag = {id: e.pointerId, r: hit.r, c: hit.c, x: e.clientX, y: e.clientY, th: hit.size * .32, moved: false};
   try { field.setPointerCapture(e.pointerId); } catch (_) {}
 });
 field.addEventListener('pointermove', e => {
-  if (!drag || drag.moved) return;
+  if (!drag || drag.moved || e.pointerId !== drag.id) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
   if (Math.max(Math.abs(dx), Math.abs(dy)) < drag.th) return;
   drag.moved = true;
@@ -1694,7 +1713,8 @@ field.addEventListener('pointermove', e => {
   clearSel();
   trySwap(drag.r, drag.c, r2, c2);
 });
-field.addEventListener('pointerup', () => {
+field.addEventListener('pointerup', e => {
+  if (drag && e.pointerId !== drag.id) return;
   const d = drag; drag = null;
   if (!d || d.moved || busy || state !== 'play' || paused) return;
   if (selected) {
@@ -1704,7 +1724,7 @@ field.addEventListener('pointerup', () => {
   }
   select(d.r, d.c); S.tap();
 });
-field.addEventListener('pointercancel', () => { drag = null; });
+field.addEventListener('pointercancel', e => { if (drag && e.pointerId === drag.id) drag = null; });
 function select(r, c) { clearSel(); const p = grid[r][c]; if (!p) return; selected = {r, c}; p.sel = true; }
 function clearSel() {
   if (selected) { const p = grid[selected.r] && grid[selected.r][selected.c]; if (p) p.sel = false; }
@@ -1773,9 +1793,9 @@ async function resolveRuns(runs) {
   });
   await blast(remove, creates);
 }
-function mostCommonType() {
+function mostCommonType(skip) {
   const cnt = new Array(6).fill(0);
-  eachPiece(p => { if (p.type >= 0 && !p.fired) cnt[p.type]++; });
+  eachPiece((p, r, c) => { if (p.type >= 0 && !p.fired && !(skip && skip.has(key(r, c)))) cnt[p.type]++; });
   let best = 0; for (let i = 1; i < 6; i++) if (cnt[i] > cnt[best]) best = i;
   return best;
 }
@@ -1802,7 +1822,7 @@ async function blast(initial, creates = new Map(), extraFx = []) {
       }
       fxs.push({kind: 'bomb', r, c});
     } else if (p.special === 'rainbow') {
-      const t = mostCommonType();
+      const t = mostCommonType(remove);
       eachPiece((q, y, x) => { if (q.type === t) cells.push(key(y, x)); });
       fxs.push({kind: 'rainbow', r, c, targets: cells.slice()});
     }
@@ -2034,10 +2054,13 @@ function updateTally() {
 }
 
 function bumpTally(i) { const el = $('#tl' + i); if (!el) return; replay(el, 'bump'); }
+let flyRects = null, flyRectsAt = 0;
 function flyToTally(p) {
   if (REDUCED || p.type < 0 || state === 'idle' || screens.game.hidden) return;
   const slot = document.querySelector(`#tl${p.type} .tlsd`); if (!slot) return;
-  const fr = field.getBoundingClientRect(), cs = fr.width / N, tr = slot.getBoundingClientRect();
+  const now = performance.now();
+  if (!flyRects || now - flyRectsAt > 120) { flyRects = {fr: field.getBoundingClientRect(), slots: {}}; flyRectsAt = now; }
+  const fr = flyRects.fr, cs = fr.width / N, tr = flyRects.slots[p.type] || (flyRects.slots[p.type] = slot.getBoundingClientRect());
   if (!tr.width) return;
   const sx = fr.left + (p.c + .5) * cs, sy = fr.top + (p.r + .5) * cs, sz = cs * .85;
   const dx = tr.left + tr.width / 2 - sx, dy = tr.top + tr.height / 2 - sy;
@@ -2194,6 +2217,7 @@ async function startGame(opt) {
   if (state !== 'intro') { busy = false; return; }
   banner('START!', 'gold'); S.start(); cheer('start');
   state = 'play'; busy = false; lastAction = performance.now();
+  if (document.hidden) pauseGame();
 }
 function openDuel() {
   if (!duel) return;
@@ -2351,7 +2375,7 @@ function pauseGame() {
 function resumeGame() {
   if (!paused) return;
   const d = performance.now() - pauseAt;
-  lastMatchAt += d; lastAction = performance.now();
+  lastMatchAt = Math.min(lastMatchAt + d, performance.now()); lastAction = performance.now();
   paused = false; $('#pauseModal').hidden = true;
   S.init(); M.resumeIfNeeded();
 }
@@ -2365,6 +2389,7 @@ async function leaveGame(to) {
 }
 
 /* ---------- 매 프레임 ---------- */
+let uiTime = -1;
 function tick() {
   let dt = Math.min(.05, PIXI.Ticker.shared.deltaMS / 1000);
   if (hitStop > 0) { hitStop -= dt; dt = 0; }
@@ -2408,13 +2433,13 @@ function tick() {
   }
   if (!screens.game.hidden) {
     timeFill.style.transform = `scaleX(${Math.min(1, timeLeft / gameTime).toFixed(4)})`;
-    timeTxt.textContent = Math.ceil(timeLeft);
+    const tt = Math.ceil(timeLeft); if (tt !== uiTime) { uiTime = tt; timeTxt.textContent = tt; }
     if (shownScore !== score) {
       shownScore += Math.ceil((score - shownScore) * .2);
       if (Math.abs(score - shownScore) < 2) shownScore = score;
       scoreEl.textContent = fmt(shownScore);
     }
-    feverFill.style.width = (feverOn ? feverLeft / feverTime * 100 : fever) + '%';
+    feverFill.style.transform = `scaleX(${Math.max(0, Math.min(1, (feverOn ? feverLeft / feverTime * 100 : fever) / 100)).toFixed(4)})`;
   }
 }
 
@@ -2450,9 +2475,10 @@ async function pull(useTicket) {
   if (scrFx) scrGather(x, y, rare);
   S.roll();
   await sleep(1250);
+  const away = screens.gacha.hidden;
   cap.className = 'capsule open';
-  flash();
-  if (scrFx) scrBurst(x, y, {n: rare ? 90 : 50, big: rare, glow: rare ? 0xFFD36E : 0xFFFFFF, tints: rare ? [0xFFD36E, 0xFFF1B8, 0xFFFFFF, 0xFFB347] : PASTEL, speed: rare ? 700 : 520});
+  if (!away) flash();
+  if (scrFx && !away) scrBurst(x, y, {n: rare ? 90 : 50, big: rare, glow: rare ? 0xFFD36E : 0xFFFFFF, tints: rare ? [0xFFD36E, 0xFFF1B8, 0xFFFFFF, 0xFFB347] : PASTEL, speed: rare ? 700 : 520});
   rays.classList.add('on'); if (rare) rays.classList.add('gold');
   const prev = lvOf(ch.id);
   let tag;
@@ -2465,7 +2491,8 @@ async function pull(useTicket) {
   $('#revName').textContent = ch.name;
   $('#revTag').textContent = tag;
   $('#revLine').textContent = ch.line;
-  rev.hidden = false; S.reveal(rare);
+  rev.hidden = false;
+  if (away) toast(`뽑기 결과: ${ch.name} · ${tag}`); else S.reveal(rare);
   await sleep(400);
   pulling = false;
   $('#coinG').textContent = fmt(save.coins); $('#btnPull').disabled = false;

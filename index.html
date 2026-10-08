@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI아스트라 공유방</title>
+<meta name="description" content="AI로 만든 게임과 영상을 함께 즐기는 공간. 설치 없이 바로, 전부 무료.">
+<meta name="theme-color" content="#070815">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI아스트라 공유방">
+<meta property="og:title" content="AI아스트라 공유방">
+<meta property="og:description" content="AI로 만든 게임 3종 · 설치 없이 바로, 전부 무료">
+<meta property="og:image" content="https://baed73117.github.io/ai-astra/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://baed73117.github.io/ai-astra/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://baed73117.github.io/ai-astra/og.jpg">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Michroma&family=Saira+Condensed:ital,wght@1,800&display=swap">
+<style>
+/* AI아스트라: 깊은 밤하늘(남색) 위에 별빛 그라데이션(보라·분홍·하늘)을 쓰는 한 가지 어두운 세계.
+   제목은 Noto Sans KR 900, 영문 작은 라벨은 Michroma, 숫자는 Saira Condensed 이탤릭. */
+:root{
+  --bg:#070815;
+  --panel:rgba(16,18,40,.72);
+  --line:rgba(255,255,255,.12);
+  --ink:#F4F5FF;
+  --soft:#A3A9CC;
+  --violet:#8B6CFF;
+  --pink:#FF5FB8;
+  --cyan:#5EE7FF;
+  --gold:#FFD86B;
+  --f-kr:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-tech:"Michroma","Noto Sans KR",sans-serif;
+  --f-num:"Saira Condensed","Noto Sans KR",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-kr);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.aurora{position:fixed;inset:-20%;z-index:0;pointer-events:none;background:radial-gradient(40% 30% at 20% 15%,rgba(139,108,255,.28),transparent 70%),radial-gradient(35% 28% at 85% 30%,rgba(255,95,184,.18),transparent 70%),radial-gradient(45% 35% at 50% 100%,rgba(94,231,255,.12),transparent 70%)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 20px}
+.tech{font-family:var(--f-tech);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--soft)}
+
+/* 헤더 */
+header{position:sticky;top:0;z-index:10;backdrop-filter:none;background:linear-gradient(180deg,rgba(7,8,21,.92),rgba(7,8,21,.6) 70%,transparent)}
+.bar{display:flex;align-items:center;gap:12px;height:64px;padding-top:env(safe-area-inset-top,0px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;letter-spacing:-.02em}
+.logo svg{width:26px;height:26px;color:#fff;filter:drop-shadow(0 0 8px var(--pink))}
+.logo small{font-weight:500;font-size:12px;color:var(--soft);letter-spacing:0;margin-left:2px}
+nav{margin-left:auto;display:flex;gap:6px}
+nav a{padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700;color:var(--soft);transition:color .2s,background .2s}
+nav a:hover,nav a:focus-visible{color:#fff;background:rgba(255,255,255,.07)}
+
+/* 히어로 */
+.hero{min-height:min(88vh,760px);display:grid;align-content:center;justify-items:center;text-align:center;padding:40px 0 60px}
+.hero h1{position:relative;margin:14px 0 0;font:900 clamp(64px,15vw,150px)/.95 var(--f-kr);letter-spacing:-.06em;background:linear-gradient(180deg,#fff 30%,#D9CCFF 62%,#FF9AD5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(139,108,255,.45))}
+.hero h1 .spark{position:absolute;width:.32em;height:.32em;right:-.18em;top:-.12em;color:#fff;filter:drop-shadow(0 0 10px var(--pink)) drop-shadow(0 0 20px var(--cyan));animation:twinkle 2.6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{transform:scale(.6) rotate(0);opacity:.6}50%{transform:scale(1.1) rotate(90deg);opacity:1}}
+.hero .sub{margin-top:14px;font:900 clamp(30px,8vw,52px)/1 var(--f-kr);letter-spacing:.3em;margin-right:-.3em;color:#fff;text-shadow:0 0 18px rgba(94,231,255,.6)}
+.hero p{max-width:560px;margin:18px auto 0;font-size:clamp(15px,3.8vw,18px);line-height:1.7;color:var(--soft);text-wrap:balance}
+.cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border-radius:14px;font-weight:900;font-size:16px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;transition:transform .15s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.1)}
+.btn:active{transform:scale(.97)}
+.btn.main{border:0;background:linear-gradient(90deg,var(--violet),var(--pink));box-shadow:0 12px 34px rgba(255,95,184,.35)}
+.btn svg{width:18px;height:18px}
+.stats{display:flex;gap:clamp(20px,6vw,56px);justify-content:center;margin-top:44px}
+.stat b{display:block;font:800 italic clamp(34px,8vw,48px)/1 var(--f-num);background:linear-gradient(180deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:13px;color:var(--soft);font-weight:700}
+.scroll{margin-top:40px;width:26px;height:42px;border:2px solid rgba(255,255,255,.3);border-radius:14px;position:relative}
+.scroll::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.6s ease-in-out infinite}
+@keyframes wheel{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(14px)}}
+
+/* 섹션 제목 */
+section{padding:40px 0 70px;scroll-margin-top:64px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:26px}
+.head h2{margin:6px 0 0;font:900 clamp(28px,6vw,40px)/1.15 var(--f-kr);letter-spacing:-.03em}
+.head p{margin:0;color:var(--soft);font-size:14px;max-width:340px;line-height:1.6}
+
+/* 게임 카드 */
+.games{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;perspective:1200px}
+.game{--glow:rgba(139,108,255,.5);position:relative;display:flex;flex-direction:column;border-radius:20px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transform-style:preserve-3d;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;will-change:transform}
+.game:hover,.game:focus-visible{box-shadow:0 24px 60px var(--glow),0 0 0 1px rgba(255,255,255,.18)}
+.game .art{position:relative;aspect-ratio:1200/630;overflow:hidden;background:#111}
+.game .art img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.game:hover .art img{transform:scale(1.05)}
+.game .art::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.25) 48%,transparent 60%);transform:translateX(-120%);transition:transform .8s}
+.game:hover .art::after{transform:translateX(120%)}
+.game .body{display:grid;gap:8px;padding:18px 18px 20px;flex:1}
+.genre{justify-self:start;font:400 10px var(--f-tech);letter-spacing:.2em;text-transform:uppercase;padding:5px 9px;border-radius:999px;border:1px solid currentColor}
+.game h3{margin:2px 0 0;font:900 24px/1.2 var(--f-kr);letter-spacing:-.02em}
+.game p{margin:0;color:var(--soft);font-size:14px;line-height:1.6}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.meta span{font-size:12px;font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);color:#D7DBF5}
+.play{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between}
+.play b{font:800 italic 20px var(--f-num);letter-spacing:.14em}
+.play i{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 6px 18px var(--glow);transition:transform .2s}
+.game:hover .play i{transform:translateX(4px)}
+.play i svg{width:16px;height:16px;color:#fff;margin-left:2px}
+.g1{--c1:#FF8CC6;--c2:#E8549C;--glow:rgba(232,84,156,.45)}.g1 .genre{color:#FF9AD0}
+.g2{--c1:#FFC25C;--c2:#F08A24;--glow:rgba(240,138,36,.42)}.g2 .genre{color:#FFC27A}
+.g3{--c1:#3EE6C1;--c2:#FF3FC4;--glow:rgba(255,63,196,.42)}.g3 .genre{color:#7DF9FF}
+.badge{position:absolute;top:12px;right:12px;z-index:2;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:rgba(7,8,21,.75);color:var(--gold);border:1px solid rgba(255,216,107,.4)}
+
+/* 영상 */
+.video{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center;padding:22px;border-radius:22px;background:var(--panel);border:1px solid var(--line)}
+.thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#111}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.thumb:hover img{transform:scale(1.04)}
+.thumb .pl{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.45))}
+.thumb .pl span{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.thumb .pl svg{width:24px;height:24px;color:#070815;margin-left:4px}
+.video h3{margin:6px 0 8px;font:900 26px/1.25 var(--f-kr)}
+.video p{margin:0 0 18px;color:var(--soft);line-height:1.7;font-size:15px}
+
+/* 공유 · 바닥글 */
+.share{margin-top:10px;text-align:center;padding:40px 20px;border-radius:24px;background:linear-gradient(135deg,rgba(139,108,255,.18),rgba(255,95,184,.14));border:1px solid var(--line)}
+.share h2{margin:0;font:900 clamp(24px,5.5vw,34px)/1.25 var(--f-kr)}
+.share p{color:var(--soft);margin:10px 0 22px}
+footer{position:relative;z-index:1;text-align:center;padding:40px 20px calc(40px + env(safe-area-inset-bottom,0px));color:var(--soft);font-size:13px;line-height:1.8}
+footer b{color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:50;background:#fff;color:#070815;padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;transition:opacity .25s,transform .25s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 스크롤하면 나타나기 */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}
+
+@media (max-width:900px){.games{grid-template-columns:1fr 1fr}.games .game:last-child{grid-column:1/-1}.video{grid-template-columns:1fr}}
+@media (max-width:620px){.games{grid-template-columns:1fr}.games .game:last-child{grid-column:auto}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#top" aria-label="AI아스트라 공유방 처음으로">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.6 7.2 16.8 11.4 24 12 16.8 12.6 12.6 16.8 12 24 11.4 16.8 7.2 12.6 0 12 7.2 11.4 11.4 7.2 12 0Z" fill="currentColor"/></svg>
+      AI아스트라 공유방
+    </a>
+    <nav>
+      <a href="#games">게임</a>
+      <a href="#video" class="hide-s">영상</a>
+      <a href="https://youtube.com/@reframe_studio0089" target="_blank" rel="noopener">유튜브</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <span class="tech reveal">AI ASTRA · SHARE LOUNGE</span>
+    <h1 class="reveal">AI아스트라<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.6 7.2 16.8 11.4 24 12 16.8 12.6 12.6 16.8 12 24 11.4 16.8 7.2 12.6 0 12 7.2 11.4 11.4 7.2 12 0Z" fill="currentColor"/></svg></h1>
+    <div class="sub reveal">공유방</div>
+    <p class="reveal">AI로 만든 게임과 영상을 함께 즐기는 공간이에요.<br>설치 없이 바로, 전부 무료로 플레이하세요.</p>
+    <div class="cta reveal">
+      <a class="btn main" href="#games"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>게임 하러 가기</a>
+      <button class="btn" type="button" data-share><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.8-4M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>친구에게 공유</button>
+    </div>
+    <div class="stats reveal">
+      <div class="stat"><b data-count="3">0</b><span>무료 게임</span></div>
+      <div class="stat"><b data-count="13">0</b><span>자작곡</span></div>
+      <div class="stat"><b data-count="100" data-suffix="%">0</b><span>설치 없이 바로</span></div>
+    </div>
+    <a class="scroll reveal" href="#games" aria-label="게임 목록으로"></a>
+  </div>
+
+  <section id="games">
+    <div class="wrap">
+      <div class="head reveal">
+        <div><span class="tech">GAMES</span><h2>지금 바로 플레이</h2></div>
+        <p>폰과 PC 모두 돼요. 링크만 누르면 브라우저에서 바로 시작해요.</p>
+      </div>
+      <div class="games">
+        <a class="game g3 reveal" href="https://baed73117.github.io/starbeat/" data-tilt>
+          <span class="badge">NEW</span>
+          <div class="art"><img src="cards/starbeat.jpg" alt="별빛 비트 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
+          <div class="body">
+            <span class="genre">Rhythm</span>
+            <h3>별빛 비트</h3>
+            <p>자작곡 13곡으로 즐기는 4라인 리듬게임. 노트를 칠 때마다 드럼이 살아나요.</p>
+            <div class="meta"><span>EASY~EXPERT</span><span>폰·PC</span><span>곡당 3분</span></div>
+            <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
+          </div>
+        </a>
+        <a class="game g1 reveal" href="chibipang/" data-tilt>
+          <div class="art"><img src="chibipang/og.jpg" alt="치비팡 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
+          <div class="body">
+            <span class="genre">Puzzle</span>
+            <h3>치비팡</h3>
+            <p>귀여운 SD 캐릭터를 3개씩 맞춰 팡팡 터뜨리는 퍼즐. 캐릭터 도감도 모아 보세요.</p>
+            <div class="meta"><span>매치-3</span><span>폰·PC</span><span>판당 1분</span></div>
+            <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
+          </div>
+        </a>
+        <a class="game g2 reveal" href="stairs/" data-tilt>
+          <div class="art"><img src="stairs/og.jpg" alt="대장님의 무한계단 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
+          <div class="body">
+            <span class="genre">Arcade</span>
+            <h3>대장님의 무한계단</h3>
+            <p>왼쪽, 오른쪽! 강아지 대장님과 식빵 계단을 끝없이 올라가요. 최고 기록에 도전!</p>
+            <div class="meta"><span>순발력</span><span>폰·PC</span><span>판당 1분</span></div>
+            <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="video">
+    <div class="wrap">
+      <div class="head reveal">
+        <div><span class="tech">AI VIDEO</span><h2>AI영상</h2></div>
+        <p>RE:FRAME STUDIO 채널에서 AI로 만든 뮤직비디오를 볼 수 있어요.</p>
+      </div>
+      <div class="video reveal">
+        <a class="thumb" href="https://youtu.be/U7kq5UDlyw8" target="_blank" rel="noopener" aria-label="플라시보 MV 유튜브에서 보기">
+          <img src="https://img.youtube.com/vi/U7kq5UDlyw8/hqdefault.jpg" alt="플라시보 MV 썸네일" width="480" height="360" loading="lazy" decoding="async">
+          <span class="pl"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span></span>
+        </a>
+        <div>
+          <span class="tech">MUSIC VIDEO</span>
+          <h3>플라시보 MV</h3>
+          <p>별빛 비트에도 들어 있는 곡 「플라시보」의 뮤직비디오예요. 게임으로 치고, 영상으로도 즐겨 보세요.</p>
+          <a class="btn main" href="https://youtube.com/@reframe_studio0089" target="_blank" rel="noopener">유튜브 채널 보러 가기</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="share reveal">
+        <h2>친구랑 같이 하면 더 재밌어요</h2>
+        <p>링크 하나면 끝. 최고 기록을 자랑해 보세요.</p>
+        <button class="btn main" type="button" data-share>친구에게 공유하기</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <b>AI아스트라 공유방</b><br>
+  모든 게임은 무료이고, 설치 없이 브라우저에서 바로 실행돼요.<br>
+  Made with RE:FRAME STUDIO
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const touch = matchMedia('(pointer: coarse)').matches;
+
+/* 별하늘: 반짝이는 별 + 가끔 별똥별. 화면이 안 보이면 멈춘다 */
+const cv = document.getElementById('sky'), g = cv.getContext('2d');
+let W = 0, H = 0, stars = [], shoot = null, last = 0, nextShoot = 2500;
+function size() {
+  const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+  W = innerWidth; H = innerHeight;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const n = Math.round(Math.min(touch ? 90 : 160, W * H / 9000));
+  stars = Array.from({length: n}, () => ({x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .3, p: Math.random() * 6.28, s: .6 + Math.random() * 1.6, d: .02 + Math.random() * .06}));
+}
+function draw(t) {
+  const dt = Math.min(50, t - last); last = t;
+  g.clearRect(0, 0, W, H);
+  const sy = scrollY * .04;
+  for (const s of stars) {
+    s.y -= s.d * dt * .05; if (s.y < -4) { s.y = H + 4; s.x = Math.random() * W; }
+    const a = reduce ? .7 : .35 + .65 * (.5 + .5 * Math.sin(s.p + t * .001 * s.s));
+    g.globalAlpha = a; g.fillStyle = '#fff';
+    g.beginPath(); g.arc(s.x, (s.y - sy + H) % H, s.r, 0, 6.283); g.fill();
+  }
+  if (!reduce) {
+    nextShoot -= dt;
+    if (!shoot && nextShoot <= 0) { shoot = {x: Math.random() * W * .7 + W * .2, y: Math.random() * H * .35, l: 0}; nextShoot = 3500 + Math.random() * 5000; }
+    if (shoot) {
+      shoot.l += dt; const k = shoot.l / 900, x = shoot.x - k * 360, y = shoot.y + k * 160;
+      const gr = g.createLinearGradient(x, y, x + 120, y - 54); gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+      g.globalAlpha = Math.max(0, 1 - k); g.strokeStyle = gr; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 120, y - 54); g.stroke();
+      if (k >= 1) shoot = null;
+    }
+  }
+  g.globalAlpha = 1;
+  if (!reduce && !document.hidden) requestAnimationFrame(draw);
+}
+size();
+addEventListener('resize', () => { size(); if (reduce) draw(performance.now()); }, {passive: true});
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !reduce) { last = performance.now(); requestAnimationFrame(draw); } });
+requestAnimationFrame(t => { last = t; draw(t); });
+
+/* 스크롤하면 나타나기 + 숫자 올라가기 */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  e.target.querySelectorAll('[data-count]').forEach(countUp);
+}), {threshold: .15}) : null;
+document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+if (!io) document.querySelectorAll('[data-count]').forEach(countUp);
+// 안전장치: 어떤 브라우저에서 나타나기 신호가 안 와도 화면 위쪽 내용은 2.5초 뒤 보이게
+setTimeout(() => document.querySelectorAll('.reveal:not(.in)').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) { el.classList.add('in'); el.querySelectorAll('[data-count]').forEach(countUp); } }), 2500);
+function countUp(el) {
+  const to = +el.dataset.count, suf = el.dataset.suffix || '', t0 = performance.now(), dur = reduce ? 0 : 900;
+  const step = t => { const k = dur ? Math.min(1, (t - t0) / dur) : 1; el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))) + suf; if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+/* 카드 입체 기울이기 (마우스는 따라가고, 터치는 누를 때만) */
+if (!reduce) document.querySelectorAll('[data-tilt]').forEach(card => {
+  let raf = 0, rx = 0, ry = 0;
+  const apply = () => { raf = 0; card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(${rx || ry ? -4 : 0}px)`; };
+  const move = e => {
+    const r = card.getBoundingClientRect();
+    ry = ((e.clientX - r.left) / r.width - .5) * 10; rx = -((e.clientY - r.top) / r.height - .5) * 8;
+    if (!raf) raf = requestAnimationFrame(apply);
+  };
+  const reset = () => { rx = ry = 0; if (!raf) raf = requestAnimationFrame(apply); };
+  if (!touch) { card.addEventListener('pointermove', move); card.addEventListener('pointerleave', reset); }
+  else { card.addEventListener('pointerdown', move, {passive: true}); card.addEventListener('pointerup', reset); card.addEventListener('pointercancel', reset); }
+});
+
+/* 공유: 폰은 공유 창, PC 는 링크 복사 */
+const toast = document.getElementById('toast');
+let tt = 0;
+const say = m => { toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 2200); };
+document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', async () => {
+  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 3종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
+  try { if (navigator.share) { await navigator.share(data); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
+  catch (e) { prompt('아래 링크를 복사하세요', data.url); }
+}));
+})();
+</script>
+</body>
+</html>

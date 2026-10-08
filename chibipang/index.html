@@ -794,7 +794,7 @@ const RankNet = {
   },
   async send(game, name, score, info) {
     // 0428, 1/2 처럼 숫자·날짜로 보이는 닉네임은 시트가 바꿔 버리지 않게 앞에 보이지 않는 글자를 붙인다
-    if (/^[\d\s.,:\/+\-]+$|^(true|false)$/i.test(name)) name = '​' + Array.from(name).slice(0, 9).join('');
+    if (/^[\d\s.,:\/+\-]+$|^(true|false)$/i.test(name)) name = '\u200B' + Array.from(name).slice(0, 9).join('');
     const j = await this.req({method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
     if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
     return j;

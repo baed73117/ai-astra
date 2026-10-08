@@ -365,6 +365,7 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
   const RANK_URL = 'https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec';
   const boxes = [...document.querySelectorAll('.podium')];
   const HEAD = '<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';
+  const stairM = n => { const m = (Number(n) || 0) * 0.5; return (m >= 100 ? Math.round(m) : m.toFixed(1)) + 'm'; }; // 무한계단 한 칸 = 0.5m
   if (!RANK_URL) { boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">🏆 랭킹 준비 중이에요 · 곧 열려요!</li>'; b.hidden = false; }); return; }
   boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
   let top = null;
@@ -381,7 +382,8 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
       li.innerHTML = `<span class="md">${['🥇', '🥈', '🥉'][i]}</span><span class="nm"></span><span class="sc"></span>`;
       const nm = li.querySelector('.nm'), sc = li.querySelector('.sc');
       nm.textContent = r.name;
-      if (r.info) { const s = document.createElement('small'); s.textContent = r.info; nm.appendChild(s); }
+      const info = b.dataset.game === 'stairs' ? '대장님과 ' + stairM(r.score) : r.info;
+      if (info) { const s = document.createElement('small'); s.textContent = info; nm.appendChild(s); }
       sc.textContent = (Number(r.score) || 0).toLocaleString('ko-KR');
       if (b.dataset.game === 'stairs') { const u = document.createElement('small'); u.textContent = '계단'; sc.appendChild(u); }
       b.appendChild(li);

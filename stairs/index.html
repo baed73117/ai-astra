@@ -150,6 +150,12 @@ button{font:inherit;color:inherit}
 @keyframes toastIn{0%{opacity:0;transform:translate(-50%,-10px) scale(.8)}12%{opacity:1;transform:translate(-50%,0) scale(1.05)}20%{transform:translate(-50%,0) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-8px)}}
 @media (max-height:640px){.pad{height:92px}.scorebox b{font-size:34px}}
 @media (prefers-reduced-motion:reduce){.t-dog img.dog,.r-dog,.newbest,.gauge.danger,.gauge.fever i{animation:none!important}}
+/* 홈페이지 랭킹 */
+.rankbox{display:grid;gap:6px;padding:10px;border:2.5px dashed var(--ink);border-radius:16px;background:var(--cream)}
+.rank-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+.rank-row input{width:140px;padding:9px 10px;border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:700 16px var(--f-display);color:var(--ink);text-align:center}
+.rank-row .btn{font-size:17px;padding:9px 12px;box-shadow:0 3px 0 var(--ink)}
+.rank-msg{margin:0;font-size:14px;line-height:1.4}
 </style>
 
 <div id="stage">
@@ -220,6 +226,10 @@ button{font:inherit;color:inherit}
         <div><dt>최고</dt><dd id="rBest">0</dd></div>
         <div><dt>뼈다귀</dt><dd id="rBones">+0</dd></div>
       </dl>
+      <div class="rankbox" id="rankBox" hidden>
+        <div class="rank-row"><input id="rankName" maxlength="10" placeholder="랭킹에 쓸 이름" aria-label="랭킹에 쓸 이름" autocomplete="nickname"><button class="btn pink" id="btnRankUp" type="button">🏆 랭킹에 올리기</button></div>
+        <p class="rank-msg" id="rankMsg"></p>
+      </div>
       <div class="r-btns">
         <button class="btn mint" id="btnRevive" type="button">부활하기 · 30<img class="bonei bone-img" alt=""></button>
         <button class="btn toast big" id="btnRetry" type="button">다시 하기</button>
@@ -615,6 +625,67 @@ function endRun(timeout) {
   showResult();
 }
 function tier(n) { return n < 30 ? '산책 나온 대장님' : n < 100 ? '동네 순찰 대장님' : n < 250 ? '아파트 정복 대장님' : n < 500 ? '구름 위 대장님' : n < 900 ? '우주 대장님' : '전설의 대장님'; }
+/* ---------- 홈페이지 랭킹 (구글 시트) · 깃허브 홈페이지에서만 켜짐 ---------- */
+const RANK_URL = '';
+const RankNet = {
+  on: !!RANK_URL && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname),
+  id() {
+    try {
+      let v = localStorage.getItem('astra-rank-id');
+      if (!v || !/^[0-9a-f]{16,32}$/.test(v)) { v = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => b.toString(16).padStart(2, '0')).join(''); localStorage.setItem('astra-rank-id', v); }
+      return v;
+    } catch (e) { return this.tmp || (this.tmp = Array.from({length: 24}, () => Math.floor(Math.random() * 16).toString(16)).join('')); }
+  },
+  get name() { try { return localStorage.getItem('astra-rank-name') || ''; } catch (e) { return ''; } },
+  set name(v) { try { localStorage.setItem('astra-rank-name', v); } catch (e) {} },
+  sent(game) { try { return Number(localStorage.getItem('astra-rank-sent-' + game)) || 0; } catch (e) { return 0; } },
+  async send(game, name, score, info) {
+    const r = await fetch(RANK_URL, {method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
+    const j = await r.json();
+    if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
+    return j;
+  },
+  async top() { const r = await fetch(RANK_URL, {cache: 'no-store'}); return r.json(); },
+};
+// 결과 화면의 '랭킹에 올리기' 상자. 이름이 저장돼 있고 새 최고 기록이면 자동으로 올린다
+const RankUI = {
+  game: '', score: 0, info: '', run: 0, onName: null,
+  show(game, score, info) {
+    const box = $('#rankBox');
+    if (!box) return;
+    this.run++;
+    box.hidden = !RankNet.on || !(score > 0);
+    if (box.hidden) return;
+    Object.assign(this, {game, score: Math.floor(score), info});
+    const btn = $('#btnRankUp');
+    $('#rankName').value = RankNet.name;
+    btn.disabled = false; btn.textContent = '🏆 랭킹에 올리기';
+    $('#rankMsg').textContent = '1·2·3등은 홈페이지에 이름이 나와요';
+    if (RankNet.name && this.score > RankNet.sent(game)) this.up(true);
+  },
+  async up(auto) {
+    const inp = $('#rankName'), btn = $('#btnRankUp'), msg = $('#rankMsg'), run = this.run;
+    if (btn.disabled) return;
+    const name = Array.from(inp.value.replace(/[\u0000-\u001f<>]/g, '').trim()).slice(0, 10).join('');
+    if (!name) { if (!auto) { msg.textContent = '랭킹에 쓸 이름을 먼저 적어 주세요.'; inp.focus(); } return; }
+    RankNet.name = name;
+    if (this.onName) this.onName(name);
+    btn.disabled = true; btn.textContent = '올리는 중…';
+    let text;
+    try {
+      const r = await RankNet.send(this.game, name, this.score, this.info);
+      if (r && r.ok) {
+        if (run !== this.run) return;
+        msg.textContent = r.rank <= 3 ? `🏆 전체 ${r.rank}등! 홈페이지에 이름이 올라가요` : `전체 ${r.rank}등이에요 · 내 최고 ${Number(r.best).toLocaleString('ko-KR')}`;
+        btn.textContent = '✔ 랭킹에 올렸어요';
+        return;
+      }
+      text = r && r.why === 'slow' ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';
+    } catch (e) { text = '지금은 연결이 안 돼요. 잠시 후 다시 눌러 주세요.'; }
+    if (run !== this.run) return;
+    msg.textContent = text; btn.disabled = false; btn.textContent = '🏆 랭킹에 올리기';
+  },
+};
 function showResult() {
   const {timeout, isBest, bonus} = endInfo;
   $('#rTitle').textContent = timeout ? '대장님 탈진!' : '대장님 추락!';
@@ -630,6 +701,7 @@ function showResult() {
   const canRevive = !revived && save.bones >= 30 && score > 0;
   $('#btnRevive').hidden = !canRevive;
   $('#bragText').hidden = true;
+  RankUI.show('stairs', score, tier(score));
   const btns = $('#result .r-btns');
   btns.classList.add('lock'); setTimeout(() => btns.classList.remove('lock'), 450);
   $('#result').hidden = false;
@@ -916,6 +988,8 @@ $('#btnRetry').addEventListener('click', () => { AU.sfx('button'); startGame(); 
 $('#btnRevive').addEventListener('click', revive);
 $('#btnHome').addEventListener('click', () => { AU.sfx('button'); goTitle(); });
 $('#btnBrag').addEventListener('click', brag);
+$('#btnRankUp').addEventListener('click', () => RankUI.up(false));
+$('#rankName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); RankUI.up(false); } });
 $('#btnSkins').addEventListener('click', () => { AU.init(); AU.sfx('button'); $('#skinsBox').hidden = false; renderSkins(); });
 $('#btnSkinsClose').addEventListener('click', () => { $('#skinsBox').hidden = true; renderTitle(); });
 $('#btnHow').addEventListener('click', () => { AU.init(); AU.sfx('button'); $('#how').hidden = false; });

@@ -139,6 +139,16 @@ footer b{color:#fff}
 @media (max-width:620px){.games{grid-template-columns:1fr}.games .game:last-child{grid-column:auto}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+/* 게임별 1·2·3등 */
+.podium{list-style:none;margin:4px 0 0;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:grid;gap:7px}
+.podium .ph{display:flex;justify-content:space-between;font:400 10px var(--f-tech);letter-spacing:.2em;color:var(--soft)}
+.podium li:not(.ph){display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14px}
+.podium .md{font-size:17px;line-height:1}
+.podium .nm{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podium .nm small{display:block;font-weight:400;font-size:11px;color:var(--soft);overflow:hidden;text-overflow:ellipsis}
+.podium .sc{font:800 italic 18px var(--f-num);letter-spacing:.03em}
+.podium .sc small{font:700 11px var(--f-kr);color:var(--soft);margin-left:2px}
+.podium li.empty{display:block;color:var(--soft);font-size:13px}
 </style>
 </head>
 <body>
@@ -191,6 +201,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
             <h3>별빛 비트</h3>
             <p>오리지널 15곡으로 즐기는 4라인 리듬게임. 노트를 칠 때마다 드럼이 살아나요.</p>
             <div class="meta"><span>EASY~EXPERT</span><span>폰·PC</span><span>곡당 3분</span></div>
+            <ol class="podium" data-game="starbeat" aria-label="별빛 비트 랭킹 1·2·3등" hidden></ol>
             <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
           </div>
         </a>
@@ -201,6 +212,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
             <h3>치비팡</h3>
             <p>귀여운 SD 캐릭터를 3개씩 맞춰 팡팡 터뜨리는 퍼즐. 오늘의 챌린지로 친구와 같은 판 점수 대결!</p>
             <div class="meta"><span>매치-3</span><span>친구 대결</span><span>폰·PC</span></div>
+            <ol class="podium" data-game="chibipang" aria-label="치비팡 랭킹 1·2·3등" hidden></ol>
             <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
           </div>
         </a>
@@ -211,6 +223,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
             <h3>대장님의 무한계단</h3>
             <p>왼쪽, 오른쪽! 강아지 대장님과 식빵 계단을 끝없이 올라가요. 최고 기록에 도전!</p>
             <div class="meta"><span>순발력</span><span>폰·PC</span><span>판당 1분</span></div>
+            <ol class="podium" data-game="stairs" aria-label="대장님의 무한계단 랭킹 1·2·3등" hidden></ol>
             <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
           </div>
         </a>
@@ -343,6 +356,34 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
   try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
   catch (e) { prompt('아래 링크를 복사하세요', data.url); }
 }));
+})();
+</script>
+<script>
+// 게임별 1·2·3등 (구글 시트). 주소가 비어 있거나 못 불러오면 칸을 숨긴다
+(async () => {
+  const RANK_URL = '';
+  const boxes = [...document.querySelectorAll('.podium')];
+  const HEAD = '<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';
+  if (!RANK_URL) { boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">🏆 랭킹 준비 중이에요 · 곧 열려요!</li>'; b.hidden = false; }); return; }
+  boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
+  let top = null;
+  try { const r = await fetch(RANK_URL, {cache: 'no-store'}); const j = await r.json(); if (j && j.ok && j.top) top = j.top; } catch (e) {}
+  boxes.forEach(b => {
+    if (!top) { b.hidden = true; return; }
+    const list = (top[b.dataset.game] || []).slice(0, 3);
+    b.innerHTML = HEAD;
+    if (!list.length) { b.insertAdjacentHTML('beforeend', '<li class="empty">아직 1등이 없어요 · 첫 1등에 도전!</li>'); return; }
+    list.forEach((r, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="md">${['🥇', '🥈', '🥉'][i]}</span><span class="nm"></span><span class="sc"></span>`;
+      const nm = li.querySelector('.nm'), sc = li.querySelector('.sc');
+      nm.textContent = r.name;
+      if (r.info) { const s = document.createElement('small'); s.textContent = r.info; nm.appendChild(s); }
+      sc.textContent = (Number(r.score) || 0).toLocaleString('ko-KR');
+      if (b.dataset.game === 'stairs') { const u = document.createElement('small'); u.textContent = '계단'; sc.appendChild(u); }
+      b.appendChild(li);
+    });
+  });
 })();
 </script>
 </body>

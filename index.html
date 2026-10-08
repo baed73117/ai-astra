@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="AI아스트라 공유방">
-<meta property="og:description" content="AI로 만든 게임 3종 · 설치 없이 바로, 전부 무료">
+<meta property="og:description" content="AI로 만든 게임 4종 · 설치 없이 바로, 전부 무료">
 <meta property="og:image" content="https://baed73117.github.io/ai-astra/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -85,7 +85,7 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .head p{margin:0;color:var(--soft);font-size:14px;max-width:340px;line-height:1.6}
 
 /* 게임 카드 */
-.games{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;perspective:1200px}
+.games{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;perspective:1200px}
 .game{--glow:rgba(139,108,255,.5);position:relative;display:flex;flex-direction:column;border-radius:20px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transform-style:preserve-3d;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;will-change:transform}
 .game:hover,.game:focus-visible{box-shadow:0 24px 60px var(--glow),0 0 0 1px rgba(255,255,255,.18)}
 .game .art{position:relative;aspect-ratio:1200/630;overflow:hidden;background:#111}
@@ -93,8 +93,8 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .game:hover .art img{transform:scale(1.05)}
 .game .art::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.25) 48%,transparent 60%);transform:translateX(-120%);transition:transform .8s}
 .game:hover .art::after{transform:translateX(120%)}
-.game .body{display:grid;gap:8px;padding:18px 18px 20px;flex:1}
-.genre{justify-self:start;font:400 10px var(--f-tech);letter-spacing:.2em;text-transform:uppercase;padding:5px 9px;border-radius:999px;border:1px solid currentColor}
+.game .body{display:flex;flex-direction:column;gap:8px;padding:18px 18px 20px;flex:1}
+.genre{align-self:flex-start;font:400 10px var(--f-tech);letter-spacing:.2em;text-transform:uppercase;padding:5px 9px;border-radius:999px;border:1px solid currentColor}
 .game h3{margin:2px 0 0;font:900 24px/1.2 var(--f-kr);letter-spacing:-.02em}
 .game p{margin:0;color:var(--soft);font-size:14px;line-height:1.6}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
@@ -107,6 +107,7 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .g1{--c1:#FF8CC6;--c2:#E8549C;--glow:rgba(232,84,156,.45)}.g1 .genre{color:#FF9AD0}
 .g2{--c1:#FFC25C;--c2:#F08A24;--glow:rgba(240,138,36,.42)}.g2 .genre{color:#FFC27A}
 .g3{--c1:#3EE6C1;--c2:#FF3FC4;--glow:rgba(255,63,196,.42)}.g3 .genre{color:#7DF9FF}
+.g4{--c1:#FFC36B;--c2:#FF6FAE;--glow:rgba(255,111,174,.45)}.g4 .genre{color:#FFB3D6}
 .badge{position:absolute;top:12px;right:12px;z-index:2;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:rgba(7,8,21,.75);color:var(--gold);border:1px solid rgba(255,216,107,.4)}
 
 /* 아스트라 신규 영상 */
@@ -133,10 +134,10 @@ footer b{color:#fff}
 /* 스크롤하면 나타나기 */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
 .reveal.in{opacity:1;transform:none}
-.games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}
+.games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}.games .reveal:nth-child(4){transition-delay:.24s}
 
-@media (max-width:900px){.games{grid-template-columns:1fr 1fr}.games .game:last-child{grid-column:1/-1}.video{grid-template-columns:1fr}}
-@media (max-width:620px){.games{grid-template-columns:1fr}.games .game:last-child{grid-column:auto}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
+@media (max-width:900px){.video{grid-template-columns:1fr}}
+@media (max-width:620px){.games{grid-template-columns:1fr}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 /* 게임별 1·2·3등 */
@@ -180,7 +181,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
       <button class="btn" type="button" data-share><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.8-4M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>친구에게 공유</button>
     </div>
     <div class="stats reveal">
-      <div class="stat"><b data-count="3">0</b><span>무료 게임</span></div>
+      <div class="stat"><b data-count="4">0</b><span>무료 게임</span></div>
       <div class="stat"><b data-count="15">0</b><span>오리지널 곡</span></div>
       <div class="stat"><b data-count="100" data-suffix="%">0</b><span>설치 없이 바로</span></div>
     </div>
@@ -194,8 +195,19 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
         <p>폰과 PC 모두 돼요. 링크만 누르면 브라우저에서 바로 시작해요.</p>
       </div>
       <div class="games">
-        <a class="game g3 reveal" href="https://baed73117.github.io/starbeat/" data-tilt>
+        <a class="game g4 reveal" href="chibimerge/" data-tilt>
           <span class="badge">NEW</span>
+          <div class="art"><img src="chibimerge/og.jpg" alt="치비 머지 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
+          <div class="body">
+            <span class="genre">Merge</span>
+            <h3>치비 머지</h3>
+            <p>애니 작화 동물 친구들을 떨어뜨려 같은 친구끼리 합치는 퍼즐. 병아리부터 고래까지 키워 보세요!</p>
+            <div class="meta"><span>머지 퍼즐</span><span>폰·PC</span><span>판당 3분</span></div>
+            <ol class="podium" data-game="chibimerge" data-wait aria-label="치비 머지 랭킹 1·2·3등" hidden></ol>
+            <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
+          </div>
+        </a>
+        <a class="game g3 reveal" href="https://baed73117.github.io/starbeat/" data-tilt>
           <div class="art"><img src="cards/starbeat.jpg" alt="별빛 비트 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
           <div class="body">
             <span class="genre">Rhythm</span>
@@ -352,7 +364,7 @@ const toast = document.getElementById('toast');
 let tt = 0;
 const say = m => { toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 2200); };
 document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', async () => {
-  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 3종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
+  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 4종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
   try { if (navigator.share) { await navigator.share(data); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
   try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
   catch (e) { prompt('아래 링크를 복사하세요', data.url); }
@@ -367,14 +379,16 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
   const HEAD = '<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';
   const stairM = n => { const m = (Number(n) || 0) * 0.5; return (m >= 100 ? Math.round(m) : m.toFixed(1)) + 'm'; }; // 무한계단 한 칸 = 0.5m
   if (!RANK_URL) { boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">🏆 랭킹 준비 중이에요 · 곧 열려요!</li>'; b.hidden = false; }); return; }
-  boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
+  boxes.forEach(b => { if (b.hasAttribute('data-wait')) return; b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
   let top = null;
   const ac = typeof AbortController === 'function' ? new AbortController() : null;
   if (ac) setTimeout(() => ac.abort(), 15000);
   try { const r = await fetch(RANK_URL, Object.assign({cache: 'no-store'}, ac ? {signal: ac.signal} : {})); const j = await r.json(); if (j && j.ok && j.top) top = j.top; } catch (e) {}
   boxes.forEach(b => {
     if (!top) { b.hidden = true; return; }
-    const list = (top[b.dataset.game] || []).slice(0, 3);
+    if (!Object.prototype.hasOwnProperty.call(top, b.dataset.game)) { b.hidden = true; return; }
+    b.hidden = false;
+    const list = top[b.dataset.game].slice(0, 3);
     b.innerHTML = HEAD;
     if (!list.length) { b.insertAdjacentHTML('beforeend', '<li class="empty">아직 1등이 없어요 · 첫 1등에 도전!</li>'); return; }
     list.forEach((r, i) => {

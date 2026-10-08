@@ -357,7 +357,8 @@ const CHARS = [
   {key: 'minto', en: 'MINT CHOCOLATE', name: '민토', dessert: '민트초코', c1: '#3FCBA8', c2: '#7A4B36', tint: 0x3FCBA8, price: 1000, cd: 16, dur: 5, ab: 'giant', abName: '민트 거대화', desc: '몸이 거대해져서 부딪히는 장애물을 모두 부수며 달려요.'},
 ];
 const byKey = k => CHARS.find(c => c.key === k) || CHARS[0];
-const SD_URL = k => `assets/sd_${k}.webp`, PT_URL = k => `assets/portrait_${k}.webp`;
+const AV = '?v=c3093869';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈 → 그림을 고쳐 올리면 폰이 예전 그림 대신 새 그림을 바로 받음
+const SD_URL = k => `assets/sd_${k}.webp${AV}`, PT_URL = k => `assets/portrait_${k}.webp${AV}`;
 const LETTERS = [['S', '#FF7EB6'], ['W', '#FFB84D'], ['E', '#5ED6B4'], ['E', '#6FA8FF'], ['T', '#B38CFF']];
 
 /* ---------- 저장 ---------- */
@@ -474,7 +475,7 @@ const BGM = {
   async getBuf(id) {
     if (this.buf[id]) return this.buf[id];
     try {
-      if (!this.raw[id]) { const r = await fetch(`assets/bgm_${id}.m4a`); if (!r.ok) throw 0; this.raw[id] = await r.arrayBuffer(); }
+      if (!this.raw[id]) { const r = await fetch(`assets/bgm_${id}.m4a${AV}`); if (!r.ok) throw 0; this.raw[id] = await r.arrayBuffer(); }
       const ab = this.raw[id].slice(0);
       const b = await new Promise((res, rej) => { const pr = S.ctx.decodeAudioData(ab, res, rej); if (pr && pr.catch) pr.catch(rej); });
       this.buf[id] = b; this.order = this.order.filter(k => k !== id); this.order.push(id);
@@ -486,7 +487,7 @@ const BGM = {
       return b;
     } catch (e) { return null; }
   },
-  prefetch(ids) { this.getMeta().then(m => ids.map(id => (m[id] && m[id].alias) || id).forEach(id => { if (m[id] && !this.raw[id]) fetch(`assets/bgm_${id}.m4a`).then(r => r.ok ? r.arrayBuffer() : null).then(ab => { if (ab) this.raw[id] = ab; }).catch(() => {}); })); },
+  prefetch(ids) { this.getMeta().then(m => ids.map(id => (m[id] && m[id].alias) || id).forEach(id => { if (m[id] && !this.raw[id]) fetch(`assets/bgm_${id}.m4a${AV}`).then(r => r.ok ? r.arrayBuffer() : null).then(ab => { if (ab) this.raw[id] = ab; }).catch(() => {}); })); },
   async play(id, fade = .8) {
     this.want = id;
     if (!S.ctx) return;
@@ -719,7 +720,7 @@ function initGraphics() {
     const within = (pr, ms) => Promise.race([pr, new Promise(r => setTimeout(() => r(null), ms))]);
     try { SHEET = await within(fetch('assets/sheet.json', {cache: 'no-cache'}).then(r => r.json()), 4000); } catch (e) { SHEET = null; }
     const load = u => PIXI.Assets.load(u).catch(() => null);
-    const [items, obs, bg1, bg2, bg3, gr1, gr2, gr3] = await Promise.all(['assets/items.webp', 'assets/obstacles.webp', 'assets/bg1.webp', 'assets/bg2.webp', 'assets/bg3.webp', 'assets/ground1.webp', 'assets/ground2.webp', 'assets/ground3.webp'].map(load));
+    const [items, obs, bg1, bg2, bg3, gr1, gr2, gr3] = await Promise.all(['assets/items.webp', 'assets/obstacles.webp', 'assets/bg1.webp', 'assets/bg2.webp', 'assets/bg3.webp', 'assets/ground1.webp', 'assets/ground2.webp', 'assets/ground3.webp'].map(u => u + AV).map(load));
     TEX.items = items || fallbackItems();
     TEX.obs = obs || fallbackObs();
     TEX.bg = [bg1 || fallbackBg('#9FD8FF', '#FFE3F1'), bg2 || fallbackBg('#FFB27A', '#FFD9C2'), bg3 || fallbackBg('#2A2363', '#B48CE0')];

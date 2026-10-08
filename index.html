@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="AI아스트라 공유방">
-<meta property="og:description" content="AI로 만든 게임 4종 · 설치 없이 바로, 전부 무료">
+<meta property="og:description" content="AI로 만든 게임 5종 · 설치 없이 바로, 전부 무료">
 <meta property="og:image" content="https://baed73117.github.io/ai-astra/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -108,6 +108,11 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .g2{--c1:#FFC25C;--c2:#F08A24;--glow:rgba(240,138,36,.42)}.g2 .genre{color:#FFC27A}
 .g3{--c1:#3EE6C1;--c2:#FF3FC4;--glow:rgba(255,63,196,.42)}.g3 .genre{color:#7DF9FF}
 .g4{--c1:#FFC36B;--c2:#FF6FAE;--glow:rgba(255,111,174,.45)}.g4 .genre{color:#FFB3D6}
+.g5{--c1:#FF9BC8;--c2:#8F7BFF;--glow:rgba(255,120,190,.5)}.g5 .genre{color:#FFB8DA}
+.game.wide{grid-column:1/-1;flex-direction:row}
+.game.wide .art{flex:1.25;aspect-ratio:auto;min-height:100%}
+.game.wide .body{flex:1;padding:22px 22px 22px}
+.game.wide h3{font-size:30px}
 .badge{position:absolute;top:12px;right:12px;z-index:2;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:rgba(7,8,21,.75);color:var(--gold);border:1px solid rgba(255,216,107,.4)}
 
 /* 아스트라 신규 영상 */
@@ -134,10 +139,10 @@ footer b{color:#fff}
 /* 스크롤하면 나타나기 */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
 .reveal.in{opacity:1;transform:none}
-.games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}.games .reveal:nth-child(4){transition-delay:.24s}
+.games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}.games .reveal:nth-child(4){transition-delay:.24s}.games .reveal:nth-child(5){transition-delay:.32s}
 
 @media (max-width:900px){.video{grid-template-columns:1fr}}
-@media (max-width:620px){.games{grid-template-columns:1fr}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
+@media (max-width:620px){.games{grid-template-columns:1fr}.game.wide{flex-direction:column}.game.wide .art{aspect-ratio:1200/630;min-height:0}.game.wide h3{font-size:24px}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 /* 게임별 1·2·3등 */
@@ -181,7 +186,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
       <button class="btn" type="button" data-share><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a3 3 0 1 0-2.8-4M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>친구에게 공유</button>
     </div>
     <div class="stats reveal">
-      <div class="stat"><b data-count="4">0</b><span>무료 게임</span></div>
+      <div class="stat"><b data-count="5">0</b><span>무료 게임</span></div>
       <div class="stat"><b data-count="15">0</b><span>오리지널 곡</span></div>
       <div class="stat"><b data-count="100" data-suffix="%">0</b><span>설치 없이 바로</span></div>
     </div>
@@ -195,8 +200,19 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
         <p>폰과 PC 모두 돼요. 링크만 누르면 브라우저에서 바로 시작해요.</p>
       </div>
       <div class="games">
-        <a class="game g4 reveal" href="chibimerge/" data-tilt>
+        <a class="game g5 wide reveal" href="sweetdash/" data-tilt>
           <span class="badge">NEW</span>
+          <div class="art"><img src="sweetdash/og.jpg" alt="스윗 대시 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
+          <div class="body">
+            <span class="genre">Runner</span>
+            <h3>스윗 대시</h3>
+            <p>디저트 소녀들이 과자 왕국을 달리는 러너 게임. 점프·슬라이드로 젤리를 모으고, 캐릭터마다 다른 특수능력으로 멀리멀리!</p>
+            <div class="meta"><span>러너</span><span>캐릭터 8명</span><span>폰·PC</span></div>
+            <ol class="podium" data-game="sweetdash" data-wait aria-label="스윗 대시 랭킹 1·2·3등" hidden></ol>
+            <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
+          </div>
+        </a>
+        <a class="game g4 reveal" href="chibimerge/" data-tilt>
           <div class="art"><img src="chibimerge/og.jpg" alt="치비 머지 게임 이미지" width="1200" height="630" loading="lazy" decoding="async"></div>
           <div class="body">
             <span class="genre">Merge</span>
@@ -364,7 +380,7 @@ const toast = document.getElementById('toast');
 let tt = 0;
 const say = m => { toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 2200); };
 document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', async () => {
-  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 4종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
+  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 5종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
   try { if (navigator.share) { await navigator.share(data); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
   try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
   catch (e) { prompt('아래 링크를 복사하세요', data.url); }

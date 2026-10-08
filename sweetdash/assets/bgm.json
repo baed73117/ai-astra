@@ -1,0 +1,29 @@
+{
+ "stage1": {
+  "loop": 51.1997,
+  "xf": 0.25,
+  "bpm": 149.8,
+  "start": 13.075
+ },
+ "title": {
+  "loop": 29.5047,
+  "xf": 0.25,
+  "bpm": 130.85,
+  "start": 21.099
+ },
+ "bonus": {
+  "loop": 29.2377,
+  "xf": 0.25,
+  "bpm": 130.85,
+  "start": 88.504
+ },
+ "stage2": {
+  "alias": "stage1"
+ },
+ "stage3": {
+  "alias": "stage1"
+ },
+ "result": {
+  "alias": "title"
+ }
+}

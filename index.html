@@ -109,17 +109,6 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .g3{--c1:#3EE6C1;--c2:#FF3FC4;--glow:rgba(255,63,196,.42)}.g3 .genre{color:#7DF9FF}
 .badge{position:absolute;top:12px;right:12px;z-index:2;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:rgba(7,8,21,.75);color:var(--gold);border:1px solid rgba(255,216,107,.4)}
 
-/* 영상 */
-.video{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center;padding:22px;border-radius:22px;background:var(--panel);border:1px solid var(--line)}
-.thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#111}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
-.thumb:hover img{transform:scale(1.04)}
-.thumb .pl{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.45))}
-.thumb .pl span{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.thumb .pl svg{width:24px;height:24px;color:#070815;margin-left:4px}
-.video h3{margin:6px 0 8px;font:900 26px/1.25 var(--f-kr)}
-.video p{margin:0 0 18px;color:var(--soft);line-height:1.7;font-size:15px}
-
 /* 공유 · 바닥글 */
 .share{margin-top:10px;text-align:center;padding:40px 20px;border-radius:24px;background:linear-gradient(135deg,rgba(139,108,255,.18),rgba(255,95,184,.14));border:1px solid var(--line)}
 .share h2{margin:0;font:900 clamp(24px,5.5vw,34px)/1.25 var(--f-kr)}
@@ -134,7 +123,7 @@ footer b{color:#fff}
 .reveal.in{opacity:1;transform:none}
 .games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}
 
-@media (max-width:900px){.games{grid-template-columns:1fr 1fr}.games .game:last-child{grid-column:1/-1}.video{grid-template-columns:1fr}}
+@media (max-width:900px){.games{grid-template-columns:1fr 1fr}.games .game:last-child{grid-column:1/-1}}
 @media (max-width:620px){.games{grid-template-columns:1fr}.games .game:last-child{grid-column:auto}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
@@ -152,7 +141,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
     </a>
     <nav>
       <a href="#games">게임</a>
-      <a href="#video" class="hide-s">영상</a>
       <a href="https://youtube.com/@reframe_studio0089" target="_blank" rel="noopener">유튜브</a>
     </nav>
   </div>
@@ -214,27 +202,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
             <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
           </div>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="video">
-    <div class="wrap">
-      <div class="head reveal">
-        <div><span class="tech">AI VIDEO</span><h2>AI영상</h2></div>
-        <p>RE:FRAME STUDIO 채널에서 AI로 만든 뮤직비디오를 볼 수 있어요.</p>
-      </div>
-      <div class="video reveal">
-        <a class="thumb" href="https://youtu.be/U7kq5UDlyw8" target="_blank" rel="noopener" aria-label="플라시보 MV 유튜브에서 보기">
-          <img src="https://img.youtube.com/vi/U7kq5UDlyw8/hqdefault.jpg" alt="플라시보 MV 썸네일" width="480" height="360" loading="lazy" decoding="async">
-          <span class="pl"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span></span>
-        </a>
-        <div>
-          <span class="tech">MUSIC VIDEO</span>
-          <h3>플라시보 MV</h3>
-          <p>별빛 비트에도 들어 있는 곡 「플라시보」의 뮤직비디오예요. 게임으로 치고, 영상으로도 즐겨 보세요.</p>
-          <a class="btn main" href="https://youtube.com/@reframe_studio0089" target="_blank" rel="noopener">유튜브 채널 보러 가기</a>
-        </div>
       </div>
     </div>
   </section>

@@ -633,9 +633,10 @@ const RankNet = {
   id() {
     try {
       let v = localStorage.getItem('astra-rank-id');
-      if (!v || !/^[0-9a-f]{16,32}$/.test(v)) { v = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => b.toString(16).padStart(2, '0')).join(''); localStorage.setItem('astra-rank-id', v); }
+      // 맨 앞을 글자(r)로 해서 시트가 숫자로 읽는 일이 없게
+      if (!v || !/^r[0-9a-f]{15,31}$/.test(v)) { v = 'r' + Array.from(crypto.getRandomValues(new Uint8Array(11)), b => b.toString(16).padStart(2, '0')).join(''); localStorage.setItem('astra-rank-id', v); }
       return v;
-    } catch (e) { return this.tmp || (this.tmp = Array.from({length: 24}, () => Math.floor(Math.random() * 16).toString(16)).join('')); }
+    } catch (e) { return this.tmp || (this.tmp = 'r' + Array.from({length: 22}, () => Math.floor(Math.random() * 16).toString(16)).join('')); }
   },
   get name() { try { return localStorage.getItem('astra-rank-name') || ''; } catch (e) { return ''; } },
   set name(v) { try { localStorage.setItem('astra-rank-name', v); } catch (e) {} },
@@ -647,6 +648,8 @@ const RankNet = {
     finally { if (t) clearTimeout(t); }
   },
   async send(game, name, score, info) {
+    // 0428, 1/2 처럼 숫자·날짜로 보이는 닉네임은 시트가 바꿔 버리지 않게 앞에 보이지 않는 글자를 붙인다
+    if (/^[\d\s.,:\/+\-]+$|^(true|false)$/i.test(name)) name = '​' + Array.from(name).slice(0, 9).join('');
     const j = await this.req({method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
     if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
     return j;

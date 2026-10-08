@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="귀여운 SD 캐릭터를 3개씩 맞춰 팡팡 터뜨리는 무료 퍼즐 게임">
+<meta name="description" content="귀여운 SD 캐릭터 매치-3 퍼즐 · 오늘의 챌린지와 친구 도전장으로 같은 판 점수 대결">
 <meta name="theme-color" content="#070815">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="치비팡 · AI아스트라 공유방">
-<meta property="og:description" content="귀여운 SD 캐릭터를 3개씩 맞춰 팡팡 터뜨리는 무료 퍼즐 게임">
+<meta property="og:description" content="귀여운 SD 캐릭터 매치-3 퍼즐 · 오늘의 챌린지와 친구 도전장으로 같은 판 점수 대결">
 <meta property="og:image" content="https://baed73117.github.io/ai-astra/chibipang/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -324,6 +324,42 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
 @keyframes reveal{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
 @keyframes fevglow{from{box-shadow:0 14px 36px rgba(110,80,170,.25),0 0 0 4px rgba(255,126,182,.55),0 0 28px rgba(255,126,182,.6)}to{box-shadow:0 14px 36px rgba(110,80,170,.25),0 0 0 7px rgba(255,211,110,.7),0 0 40px rgba(255,211,110,.7)}}
 
+/* 오늘의 챌린지 · 도전장 · 리더 · 호감도 */
+.btn.challenge{display:grid;gap:2px;line-height:1.15;padding:11px 18px}
+.btn.challenge small{font-family:var(--f-num);font-weight:600;font-size:13px;opacity:.85}
+.duel-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;border-radius:20px;padding:12px;background:rgba(255,255,255,.7);border:1.5px solid #fff}
+.duel-vs b{display:block;font-family:var(--f-num);font-weight:700;font-size:26px}
+.duel-vs span{font-family:var(--f-ui);font-size:14px;color:var(--ink-soft)}
+.duel-vs i{font-family:var(--f-logo);font-style:normal;font-size:22px;color:var(--pink-deep)}
+.duel-vs .win{color:var(--pink-deep)}
+.fair{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.5}
+.nick{display:flex;gap:8px;align-items:center;justify-content:center}
+.nick span{font-family:var(--f-ui);font-size:14px;color:var(--ink-soft)}
+.nick input{width:150px;padding:9px 12px;border-radius:999px;border:2px solid #fff;background:rgba(255,255,255,.9);font-family:var(--f-ui);font-size:16px;color:var(--ink);text-align:center}
+.slots>.por,.slots>span{position:relative}
+.crown{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:15px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2));z-index:2}
+.skill{margin:2px 0;padding:6px 10px;border-radius:12px;background:rgba(255,236,170,.75);font-family:var(--f-ui);font-size:14px;line-height:1.4}
+.skill b{color:#B26B00}
+.aff{display:grid;gap:4px;margin:4px 0}
+.aff .bar{height:8px;border-radius:9px;background:rgba(255,126,182,.18);overflow:hidden}
+.aff .bar i{display:block;height:100%;background:linear-gradient(90deg,#FFAFD2,#FF68A6)}
+.aff small{font-family:var(--f-ui);font-size:13px;color:var(--ink-soft)}
+.title-tag{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:linear-gradient(90deg,#FFE3F1,#EDE4FF);font-family:var(--f-ui);font-size:12px;color:var(--pink-deep);vertical-align:2px}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row-btns .title-tag{margin:4px 0 0;padding:6px 12px;font-size:14px}
+.row-btns .btn{font-size:15px;padding:9px 14px}
+/* 폰: 흐림 효과 대신 반투명 바탕 (움직이는 화면 위에서 매 프레임 다시 흐리게 계산되는 걸 막아 렉 방지) */
+@media (pointer:coarse){
+  .glass,.icon-btn{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .glass{background:rgba(255,255,255,.86)}
+  .icon-btn{background:rgba(255,255,255,.88)}
+  .modal{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(74,63,107,.55)}
+  .board{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(rgba(255,255,255,.8),rgba(255,255,255,.8)) padding-box,linear-gradient(140deg,#FFC2DD,#CDB9FF 50%,#A9DCFF) border-box}
+  .board.fever{animation:none}
+  .board.fever .fevring{animation:fevpulse .6s ease-in-out infinite alternate}
+}
+.fevring{position:absolute;inset:-3px;border-radius:26px;pointer-events:none;opacity:0;box-shadow:0 0 0 6px rgba(255,200,120,.8),0 0 36px rgba(255,126,182,.75);will-change:opacity}
+@keyframes fevpulse{from{opacity:.35}to{opacity:1}}
 @media (max-width:400px){
   .bookgrid{grid-template-columns:repeat(3,1fr)}
   .odds{grid-template-columns:1fr 1fr}
@@ -331,7 +367,7 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
   .detail{grid-template-columns:84px 1fr}
 }
 @media (prefers-reduced-motion:reduce){
-  .parade .por,.rays,.btn.shine::after,.board.fever,.timer.hurry b,.newbest,.gauge.on i,.capsule.idle,body.fever .fv-lbl{animation:none!important}
+  .parade .por,.rays,.btn.shine::after,.board.fever,.board.fever .fevring,.timer.hurry b,.newbest,.gauge.on i,.capsule.idle,body.fever .fv-lbl{animation:none!important}
 }
 </style>
 
@@ -354,6 +390,8 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
     <div class="parade" id="parade"></div>
     <div class="menu">
       <button id="btnStart" class="btn pink xl shine" type="button">게임 시작</button>
+      <button id="btnDaily" class="btn lav challenge" type="button"><span>오늘의 챌린지 <b id="dailyNo"></b></span><small id="dailyBest">모두 같은 판으로 겨뤄요</small></button>
+      <button id="btnDuel" class="btn pink challenge" type="button" hidden><span>⚔️ 도착한 도전장</span><small id="duelBtnTxt"></small></button>
       <div class="row2">
         <button id="btnGacha" class="btn gold" type="button">캡슐 뽑기</button>
         <button id="btnBook" class="btn" type="button">도감 · 파티</button>
@@ -371,6 +409,8 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
         <li><span class="ico"><img data-asset="assets/item_bomb.webp" alt=""></span><span><b>ㄱ·T자 → 폭탄</b>주변 13칸을 한 번에 날려요.</span></li>
         <li><span class="ico"><img data-asset="assets/item_prism.webp" alt=""></span><span><b>5개 → 무지개 별</b>바꾼 캐릭터를 판에서 전부 지워요.</span></li>
         <li><span class="ico ico-fever">×2</span><span><b>콤보와 피버</b>쉬지 않고 맞추면 콤보가 쌓이고, 게이지가 차면 점수가 두 배예요.</span></li>
+        <li><span class="ico ico-fever">👑</span><span><b>리더와 호감도</b>도감에서 리더를 정하면 그 캐릭터의 스킬이 켜져요. 많이 터뜨릴수록 호감도가 올라 새 대사·칭호가 열려요.</span></li>
+        <li><span class="ico ico-fever">VS</span><span><b>오늘의 챌린지 · 도전장</b>하루 한 판, 모두 같은 판으로 겨뤄요. 끝나면 링크로 친구에게 도전장을 보낼 수 있어요.</span></li>
       </ul>
     </section>
   </section>
@@ -380,11 +420,12 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
     <div class="hud">
       <button id="btnPause" class="icon-btn" type="button" aria-label="일시정지"></button>
       <div class="scorebox glass"><span class="eyebrow">Score</span><b id="score">0</b></div>
-      <div class="best"><span class="eyebrow">Best</span><b id="bestG">0</b></div>
+      <div class="best"><span class="eyebrow" id="bestLbl">Best</span><b id="bestG">0</b></div>
       <button class="icon-btn btn-mute" type="button" aria-label="소리 끄기"></button>
     </div>
     <div class="feverrow"><span class="fv-lbl">FEVER</span><div class="gauge" id="gauge"><i id="feverFill"></i></div></div>
     <div class="board" id="board">
+      <i class="fevring" aria-hidden="true"></i>
       <div class="field" id="field"></div>
       <div id="over"></div>
       <div id="banner" class="banner"></div>
@@ -487,6 +528,7 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
     <div class="res-score" id="resScore">0</div>
     <p class="res-sub">최고 <span id="resBest">0</span></p>
     <div class="newbest" id="newBest" hidden>최고 기록 갱신!</div>
+    <div class="duel-vs" id="duelVs" hidden></div>
     <div class="mvp"><span id="mvpFace"></span><div><span class="eyebrow">Today's MVP</span><b id="mvpName"></b><span id="mvpCount"></span></div></div>
     <dl class="stats">
       <div><dt>최대 콤보</dt><dd id="resCombo">0</dd></div>
@@ -494,6 +536,7 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
       <div><dt>받은 코인</dt><dd id="resCoins">+0</dd></div>
     </dl>
     <p class="res-extra" id="resExtra" hidden></p>
+    <label class="nick" id="nickRow" hidden><span>도전장에 쓸 이름</span><input id="nickInput" maxlength="10" placeholder="내 이름"></label>
     <button id="btnBrag" class="btn lav shine" type="button">점수 자랑하기 · 문구 복사</button>
     <textarea class="brag-text" id="bragText" rows="3" readonly hidden aria-label="자랑하기 문구"></textarea>
     <div class="row">
@@ -517,6 +560,18 @@ body.fever .fv-lbl{animation:throb .45s ease-in-out infinite}
       </div>
       <button id="btnQuit" class="btn" type="button">그만하고 메인으로</button>
     </div>
+  </div>
+</div>
+
+<!-- 도전장 -->
+<div class="modal" id="duelModal" hidden>
+  <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="duelTitle">
+    <span class="eyebrow">Challenge</span>
+    <h2 id="duelTitle">도전장이 도착했어요!</h2>
+    <div class="duel-vs"><div><span id="dmName">친구</span><b id="dmScore">0</b></div><i>VS</i><div><span>나</span><b>?</b></div></div>
+    <p class="fair">같은 판으로 대결해요.<br>공정 대결이라 캐릭터 보너스와 리더 스킬은 꺼져요.</p>
+    <button id="btnDuelGo" class="btn pink xl shine" type="button">도전하기</button>
+    <button id="btnDuelLater" class="btn" type="button">나중에</button>
   </div>
 </div>
 
@@ -546,6 +601,43 @@ const CH = [
 ];
 const BY_ID = Object.fromEntries(CH.map(c => [c.id, c]));
 const STARTERS = CH.filter(c => c.star === 2).map(c => c.id);
+// 리더 스킬: 파티의 리더 한 명의 스킬이 그 판에 적용된다. [기본, 호감도 Lv4 이상] 값
+const SKILLS = {
+  shiro: {name: '반짝이 줍기', kind: 'coin', v: [25, 40], d: v => `받는 코인 +${v}%`},
+  yuri: {name: '낮잠 연장', kind: 'time', v: [3, 5], d: v => `시간 +${v}초`},
+  mizuki: {name: '빗줄기 연쇄', kind: 'chain', v: [50, 80], d: v => `연쇄 점수 +${v}%`},
+  koko: {name: '리본 충전', kind: 'feverFast', v: [30, 50], d: v => `피버 게이지 ${v}% 빨리`},
+  aoi: {name: '빠른 서빙', kind: 'combo', v: [1, 1.5], d: v => `콤보 유지 시간 +${v}초`},
+  hana: {name: '언니의 응원', kind: 'feverLong', v: [2, 3], d: v => `피버 시간 +${v}초`},
+  rei: {name: '다시 일어서기', kind: 'time', v: [5, 8], d: v => `시간 +${v}초`},
+  yuki: {name: '막판 기상', kind: 'lastSpurt', v: [1.5, 1.8], d: v => `마지막 10초 점수 ×${v}`},
+  ruru: {name: '깜짝 장난', kind: 'startBomb', v: [2, 3], d: v => `시작할 때 폭탄 ${v}개`},
+  nene: {name: '클리어 각', kind: 'startLine', v: [3, 4], d: v => `시작할 때 줄 폭탄 ${v}개`},
+  sera: {name: '작은 축복', kind: 'startRainbow', v: [1, 2], d: v => `시작할 때 무지개 별 ${v}개`},
+  lily: {name: '소악마의 실력', kind: 'score', v: [15, 25], d: v => `점수 +${v}%`},
+};
+// 호감도: 그 캐릭터를 터뜨린 누적 수. Lv2 새 대사 · Lv3 칭호 · Lv4 리더 스킬 강화 · Lv5 특별 대사
+const AFF_AT = [0, 80, 250, 600, 1200];
+const AFF_TALK = {
+  shiro: ['…오늘도 와 줬네. 기뻐.', '조용한 단짝', '…너라면, 앞머리 넘겨도 괜찮아.'],
+  yuri: ['같이 하면 하나도 안 졸려~', '낮잠 친구', '오늘은… 끝까지 안 졸았어. 칭찬해 줘.'],
+  mizuki: ['오늘은 맑아도 기분 좋아.', '우산 나눠 쓰는 사이', '세 번째 우산은 너 주려고 산 거야.'],
+  koko: ['오늘 리본은 너랑 맞췄어!', '리본 단짝', '부, 부끄럽지만… 제일 좋아!'],
+  aoi: ['단골손님이시네요! 서비스예요!', 'VIP 손님', '이제 컵 안 떨어뜨려! 네 덕분이야.'],
+  hana: ['오늘 꽃은 너를 위해 골랐어~', '언니의 자랑', '언제든 기대도 돼. 언니니까.'],
+  rei: ['또 넘어졌지만 웃고 있지?', '반창고 콤비', '이 반창고, 너랑 커플이야!'],
+  yuki: ['담요 밖도 나쁘지 않네…', '겨울잠 동료', '너 보려고 하루 두 번 나왔어.'],
+  ruru: ['오늘은 너한테만 장난 안 칠게!', '장난 공범', '토끼 후드, 한 번만 빌려줄까?'],
+  nene: ['헤드폰 꺼 둘게. 너랑 얘기하려고.', '듀오 파트너', '너랑이면 랭크 1위도 문제없어.'],
+  sera: ['오늘 링이 반듯하지? 기분 좋아서!', '축복받은 사람', '견습 졸업하면 제일 먼저 축복해 줄게.'],
+  lily: ['흥, 너라면 칭찬해 줄 수도 있어.', '소악마의 계약자', '뿔, 빨개진 거 아니거든…!'],
+};
+const affPts = id => Math.max(0, Number((save.aff || {})[id]) || 0);
+function affLv(id) { const v = affPts(id); let lv = 1; AFF_AT.forEach((t, i) => { if (v >= t) lv = i + 1; }); return lv; }
+const affTitle = id => (affLv(id) >= 3 ? AFF_TALK[id][1] : '');
+const skillVal = id => SKILLS[id].v[affLv(id) >= 4 ? 1 : 0];
+const iga = w => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return w + (c >= 0 && c < 11172 && c % 28 ? '이' : '가'); };
+const skillText = id => `${SKILLS[id].name} · ${SKILLS[id].d(skillVal(id))}`;
 const ASSET_BASE = new URL('.', document.baseURI).href;
 const assetUrl = {};
 const A = path => assetUrl[path] || ASSET_BASE + path;
@@ -588,7 +680,8 @@ const ICON = {
 /* ---------- 저장 (이 브라우저에만 남아요) ---------- */
 const SAVE_KEY = 'chibipang-save-v2';
 const freshSave = () => ({coins: 100, best: 0, owned: Object.fromEntries(STARTERS.map(id => [id, 1])), party: [...STARTERS],
-  muted: false, musicOff: false, tickets: 0, att: {count: 0, last: ''}, daily: null, history: [], updatedAt: 0});
+  muted: false, musicOff: false, tickets: 0, att: {count: 0, last: ''}, daily: null, history: [], updatedAt: 0,
+  leader: STARTERS[0], aff: {}, nick: '', dailyCh: null});
 function normalizeSave(s) {
   const out = Object.assign(freshSave(), s || {});
   out.owned = Object.fromEntries(Object.entries(out.owned || {}).filter(([id, lv]) => BY_ID[id] && lv > 0).map(([id, lv]) => [id, Math.min(MAX_LV, Math.floor(lv))]));
@@ -597,6 +690,11 @@ function normalizeSave(s) {
   if (!out.att || typeof out.att !== 'object') out.att = {count: 0, last: ''};
   out.history = (Array.isArray(out.history) ? out.history : []).filter(h => h && typeof h.s === 'number' && BY_ID[h.c]).slice(0, 10);
   ['coins', 'best', 'tickets', 'updatedAt'].forEach(k => { out[k] = Math.max(0, Number(out[k]) || 0); });
+  if (!BY_ID[out.leader] || !out.party.includes(out.leader)) out.leader = out.party[0] || STARTERS[0];
+  out.aff = Object.fromEntries(Object.entries(out.aff && typeof out.aff === 'object' ? out.aff : {}).filter(([id]) => BY_ID[id]).map(([id, v]) => [id, Math.max(0, Math.floor(Number(v) || 0))]));
+  out.nick = typeof out.nick === 'string' ? Array.from(out.nick).slice(0, 10).join('') : '';
+  if (!out.dailyCh || typeof out.dailyCh !== 'object' || typeof out.dailyCh.date !== 'string') out.dailyCh = null;
+  else out.dailyCh = {date: out.dailyCh.date, best: Math.max(0, Number(out.dailyCh.best) || 0), plays: Math.max(0, Number(out.dailyCh.plays) || 0)};
   return out;
 }
 let save = freshSave();
@@ -879,7 +977,8 @@ function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2400);
 }
-function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
+function replay(el, cls) { el.classList.remove(cls); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add(cls))); }
+function flash() { replay($('#flash'), 'go'); }
 function loadImg(src) { return new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
 function hsvNum(h, s, v) {
   const i = Math.floor(h * 6), f = h * 6 - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
@@ -919,11 +1018,14 @@ const L = {};
 let boardFx = null, scrFx = null;
 const live = new Set();
 
+const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+// 효과 조각은 버리지 않고 다시 쓴다 (폰에서 메모리 청소로 생기는 끊김 방지)
 class Fx {
-  constructor(parent) { this.c = new PIXI.Container(); parent.addChild(this.c); this.ps = []; }
+  constructor(parent) { this.c = new PIXI.Container(); parent.addChild(this.c); this.ps = []; this.pool = []; }
   spawn(tex, o) {
-    if (this.ps.length > 600) return null;
-    const s = new PIXI.Sprite(tex);
+    if (this.ps.length > (TOUCH ? 280 : 600)) return null;
+    const s = this.pool.pop() || new PIXI.Sprite(tex);
+    s.texture = tex;
     s.anchor.set(o.ax ?? .5, o.ay ?? .5);
     s.blendMode = o.normal ? PIXI.BLEND_MODES.NORMAL : ADD;
     s.tint = o.tint ?? 0xFFFFFF;
@@ -952,7 +1054,7 @@ class Fx {
       if (p.age < 0) continue;
       p.s.visible = true;
       const t = p.age / p.life;
-      if (t >= 1) { p.s.destroy(); this.ps.splice(i, 1); continue; }
+      if (t >= 1) { this.recycle(p.s); this.ps[i] = this.ps[this.ps.length - 1]; this.ps.pop(); continue; }
       const k = Math.pow(p.drag, dt * 60);
       p.vx *= k; p.vy *= k; p.vy += p.g * dt;
       p.x += p.vx * dt; p.y += p.vy * dt;
@@ -960,7 +1062,8 @@ class Fx {
       this.apply(p, t);
     }
   }
-  clear() { this.ps.forEach(p => p.s.destroy()); this.ps = []; }
+  recycle(sp) { this.c.removeChild(sp); if (this.pool.length < 320) this.pool.push(sp); else sp.destroy(); }
+  clear() { this.ps.forEach(p => this.recycle(p.s)); this.ps = []; }
 }
 
 function canvasTex(w, h, draw) {
@@ -1117,15 +1220,15 @@ function initGraphics() {
     }
     TEX.prism = prism ? PIXI.Texture.from(prism) : TEX.spark;
     TEX.bomb = bomb ? PIXI.Texture.from(bomb) : TEX.glow;
-    const res = Math.min(2, window.devicePixelRatio || 1);
-    boardApp = new PIXI.Application({width: 300, height: 300, backgroundAlpha: 0, antialias: true, autoDensity: true, resolution: res, sharedTicker: true});
+    const dpr = window.devicePixelRatio || 1, res = Math.min(TOUCH ? 1.5 : 2, dpr);
+    boardApp = new PIXI.Application({width: 300, height: 300, backgroundAlpha: 0, antialias: !TOUCH, powerPreference: 'high-performance', autoDensity: true, resolution: res, sharedTicker: true});
     $('#field').appendChild(boardApp.view);
     L.root = new PIXI.Container(); boardApp.stage.addChild(L.root);
     L.cells = new PIXI.Graphics(); L.root.addChild(L.cells);
     L.pieces = new PIXI.Container(); L.root.addChild(L.pieces);
     boardFx = new Fx(L.root);
     L.flash = new PIXI.Graphics(); L.flash.blendMode = ADD; L.flash.alpha = 0; L.root.addChild(L.flash);
-    scrApp = new PIXI.Application({resizeTo: window, backgroundAlpha: 0, antialias: false, autoDensity: true, resolution: res, sharedTicker: true});
+    scrApp = new PIXI.Application({resizeTo: window, backgroundAlpha: 0, antialias: false, autoDensity: true, resolution: Math.min(TOUCH ? 1.25 : 2, dpr), sharedTicker: true});
     Object.assign(scrApp.view.style, {position: 'fixed', inset: '0', pointerEvents: 'none', zIndex: '25'});
     document.body.appendChild(scrApp.view);
     scrFx = new Fx(scrApp.stage);
@@ -1254,7 +1357,7 @@ function ambient(dt) {
   if (REDUCED || !scrFx) return;
   ambT -= dt;
   if (ambT > 0) return;
-  ambT = rr(.25, .6);
+  ambT = rr(.25, .6) * (TOUCH ? 1.8 : 1);
   const W = window.innerWidth, H = window.innerHeight;
   scrFx.spawn(Math.random() < .2 ? TEX.heart : TEX.spark, {x: rr(0, W), y: rr(H * .1, H), vy: rr(-30, -12), vx: rr(-8, 8), tint: PASTEL[rnd(PASTEL.length)],
     s0: rr(.1, .25), s1: .05, a0: .7, a1: 0, fadeIn: .3, life: rr(2, 3.4), vr: rr(-1.5, 1.5)});
@@ -1308,6 +1411,11 @@ function renderTitle() {
   $('#bestT').textContent = fmt(save.best);
   $('#parade').innerHTML = save.party.map((id, i) => portrait(id, i)).join('');
   $('#ticketChip').hidden = save.tickets < 1; $('#ticketT').textContent = save.tickets;
+  $('#btnDuel').hidden = !duel;
+  if (duel) $('#duelBtnTxt').textContent = `${duel.n}님 ${fmt(duel.s)}점 · 이겨 보기`;
+  $('#dailyNo').textContent = '#' + dailyNo();
+  const tc = todayCh();
+  $('#dailyBest').textContent = tc.plays ? `오늘 최고 ${fmt(tc.best)}점 · 다시 도전!` : '모두 같은 판 · 첫 도전 +50코인';
   updateMissionDot();
 }
 function updateMissionDot() { $('#missionDot').hidden = claimableCount() === 0; }
@@ -1327,6 +1435,18 @@ let combo = 0, maxCombo = 0, lastMatchAt = -1e9, chain = 0;
 let fever = 0, feverOn = false, feverLeft = 0, fevSpawn = 0, twinkleT = 0;
 let pops = [], totalPops = 0, gameStats = {specials: 0, rainbows: 0, fevers: 0};
 let selected = null, hintPieces = null, lastAction = 0, lastSwap = null;
+// 판 모드: normal(보통) / daily(오늘의 챌린지) / duel(도전장). 챌린지·도전장은 같은 씨앗으로 같은 판, 보너스·스킬 없음
+let gameDay = '', gameDailyNo = 0, duelShown = false;
+let mode = 'normal', duel = null, gameSeed = 0, gameRand = Math.random, fair = false, leaderSk = null;
+let gameTime = GAME_TIME, comboWindow = COMBO_WINDOW, feverTime = FEVER_TIME, skFever = 1, skChain = .5, skScore = 1, skLast = 1, skCoin = 0;
+const grnd = n => Math.floor(gameRand() * n);
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(str) { let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function dailyNo() { const d = todayStr().split('-').map(Number); return Math.floor((Date.UTC(d[0], d[1] - 1, d[2]) - Date.UTC(2026, 9, 1)) / 864e5) + 1; }
+const dailySeed = () => hashStr('chibipang-daily-' + todayStr());
+// 도전장 링크는 항상 공개 사이트로 (claude 미리보기 주소는 링크 뒤 정보를 게임에 넘겨주지 않음)
+const DUEL_URL = 'https://baed73117.github.io/ai-astra/chibipang/';
+const todayCh = () => (save.dailyCh && save.dailyCh.date === todayStr() ? save.dailyCh : {date: todayStr(), best: 0, plays: 0});
 
 function makePiece(type, special, r, c) {
   const v = new PIXI.Container();
@@ -1449,7 +1569,7 @@ function genTypes() {
       Tm[r] = [];
       for (let c = 0; c < N; c++) {
         let t, g = 0;
-        do { t = rnd(6); g++; } while (g < 60 && ((c >= 2 && Tm[r][c - 1] === t && Tm[r][c - 2] === t) || (r >= 2 && Tm[r - 1][c] === t && Tm[r - 2][c] === t)));
+        do { t = grnd(6); g++; } while (g < 60 && ((c >= 2 && Tm[r][c - 1] === t && Tm[r][c - 2] === t) || (r >= 2 && Tm[r - 1][c] === t && Tm[r - 2][c] === t)));
         Tm[r][c] = t;
       }
     }
@@ -1628,7 +1748,7 @@ async function blast(initial, creates = new Map(), extraFx = []) {
   }
   if (!REDUCED && (n >= 9 || fxs.some(f => f.kind === 'rainbow' || f.big))) { hitStop = .08; L.flash.alpha = .4; tween(L.flash, {alpha: 0}, .35, E.outQuad, .08); }
   updateTally();
-  const gained = Math.round(sum * (1 + Math.max(0, combo - 1) * 0.1) * (1 + chain * 0.5) * (feverOn ? 2 : 1));
+  const gained = Math.round(sum * (1 + Math.max(0, combo - 1) * 0.1) * (1 + chain * skChain) * (feverOn ? 2 : 1) * skScore * (state === 'play' && timeLeft <= 10 ? skLast : 1));
   score += gained; totalPops += n;
   floatText('+' + fmt(gained), sc / n, sr / n, gained >= 300);
   addFever(n);
@@ -1670,7 +1790,7 @@ async function rainbowSwap(a, b) {
     targets.forEach((k, i) => {
       const [r, c] = unkey(k), p = grid[r][c];
       if (!p.special) {
-        p.special = other.special === 'bomb' ? 'bomb' : (Math.random() < .5 ? 'h' : 'v');
+        p.special = other.special === 'bomb' ? 'bomb' : (gameRand() < .5 ? 'h' : 'v');
         applyLook(p); p.s = .3; tween(p, {s: 1}, .3, E.outBack, i * .03); fxBorn(p);
       }
     });
@@ -1723,7 +1843,7 @@ async function collapse() {
     }
     const m = write + 1;
     for (let r = write; r >= 0; r--) {
-      const p = makePiece(rnd(6), null, r - m, c);
+      const p = makePiece(grnd(6), null, r - m, c);
       grid[r][c] = p;
       const t = fallT(m); maxT = Math.max(maxT, t);
       fall(p, r, c, t);
@@ -1746,7 +1866,7 @@ async function shuffleBoard() {
   const ps = []; eachPiece(p => ps.push(p));
   let ok = false;
   for (let t = 0; t < 150 && !ok; t++) {
-    for (let i = ps.length - 1; i > 0; i--) { const j = rnd(i + 1); [ps[i], ps[j]] = [ps[j], ps[i]]; }
+    for (let i = ps.length - 1; i > 0; i--) { const j = grnd(i + 1); [ps[i], ps[j]] = [ps[j], ps[i]]; }
     ps.forEach((p, i) => { grid[Math.floor(i / N)][i % N] = p; });
     ok = !findRuns().length && !!findMove();
   }
@@ -1777,6 +1897,12 @@ const LINES = {
 };
 const PRI = {hint: 0, no: 0, special: 1, boom: 1, mvp: 1, combo: 2, hurry: 2, rainbow: 3, fever: 3, start: 3, end: 3};
 let cheerLeader = 0, cheerPri = -1, cheerUntil = 0, cheerFaceTimer = 0;
+function cheerName(i) {
+  const ch = types[i]; if (!ch) return '';
+  const t = affTitle(ch.id);
+  return ch.name + (t ? ` · ${t}` : '');
+}
+function startLine(ch) { const lv = affLv(ch.id); return lv >= 5 ? AFF_TALK[ch.id][2] : lv >= 2 ? AFF_TALK[ch.id][0] : ch.hi; }
 function cheerFace(happy) {
   const ch = types[cheerLeader]; if (!ch) return;
   $('#cheerFace').innerHTML = portrait(ch.id, 0, happy);
@@ -1786,13 +1912,13 @@ function cheer(kind, arg) {
   const now = performance.now(), pri = PRI[kind] ?? 0;
   if (now < cheerUntil && pri < cheerPri) return;
   const ch = types[cheerLeader];
-  const pool = kind === 'start' ? [ch.hi] : LINES[kind](arg);
+  const pool = kind === 'start' ? [startLine(ch)] : LINES[kind](arg);
   $('#cheerTxt').textContent = pool[rnd(pool.length)];
-  $('#cheerLbl').textContent = ch.name + (pops[cheerLeader] > 0 && mvpIndex() === cheerLeader ? ' · 현재 MVP' : '');
+  $('#cheerLbl').textContent = pops[cheerLeader] > 0 && mvpIndex() === cheerLeader ? ch.name + ' · 현재 MVP' : cheerName(cheerLeader);
   cheerPri = pri; cheerUntil = now + 1400;
   const el = $('#cheer');
   el.classList.toggle('hot', pri >= 2);
-  el.classList.remove('react'); void el.offsetWidth; el.classList.add('react');
+  replay(el, 'react');
   cheerFace(true);
   clearTimeout(cheerFaceTimer);
   cheerFaceTimer = setTimeout(() => cheerFace(false), 1300);
@@ -1812,13 +1938,13 @@ function updateTally() {
     if (v === tallyShown[i]) return;
     tallyShown[i] = v;
     $('#tc' + i).textContent = v;
-    const el = $('#tl' + i); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    replay($('#tl' + i), 'bump');
   });
   const mi = mvpIndex();
   if (pops[mi] > (pops[cheerLeader] || 0)) setCheerLeader(mi);
 }
 
-function bumpTally(i) { const el = $('#tl' + i); if (!el) return; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+function bumpTally(i) { const el = $('#tl' + i); if (!el) return; replay(el, 'bump'); }
 function flyToTally(p) {
   if (REDUCED || p.type < 0 || state === 'idle' || screens.game.hidden) return;
   const slot = document.querySelector(`#tl${p.type} .tlsd`); if (!slot) return;
@@ -1863,30 +1989,30 @@ function floatText(text, c, r, big) {
 function banner(txt, cls = '') {
   const b = $('#banner');
   b.textContent = txt; b.className = 'banner ' + cls;
-  void b.offsetWidth; b.classList.add('show');
+  replay(b, 'show');
 }
 function elCenter(el) { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
 function showCombo() {
   if (combo < 2) { comboTag.hidden = true; return; }
   comboTag.hidden = false; comboNum.textContent = combo;
-  comboTag.classList.remove('bump'); void comboTag.offsetWidth; comboTag.classList.add('bump');
+  replay(comboTag, 'bump');
   comboBar.style.transform = 'scaleX(1)';
   if (combo % 5 === 0 && scrFx) { const [x, y] = elCenter(comboTag); scrBurst(x, y, {n: 18, speed: 300, glow: 0xFF8DC8}); }
 }
 function bumpCombo() {
   const now = performance.now();
-  combo = now - lastMatchAt < COMBO_WINDOW ? combo + 1 : 1;
+  combo = now - lastMatchAt < comboWindow ? combo + 1 : 1;
   lastMatchAt = now; maxCombo = Math.max(maxCombo, combo); showCombo(); comboCheer();
 }
 function addCombo() { combo++; maxCombo = Math.max(maxCombo, combo); showCombo(); comboCheer(); }
 function comboCheer() { if (combo >= 4 && (combo <= 10 || combo % 5 === 0)) cheer('combo', combo); }
 function addFever(n) {
   if (feverOn || state !== 'play') return;
-  fever = Math.min(100, fever + n * 1.7);
+  fever = Math.min(100, fever + n * 1.7 * skFever);
   if (fever >= 100) startFever();
 }
 function startFever() {
-  feverOn = true; feverLeft = FEVER_TIME; gameStats.fevers++; M.fever = true;
+  feverOn = true; feverLeft = feverTime; gameStats.fevers++; M.fever = true;
   boardEl.classList.add('fever'); document.body.classList.add('fever'); gaugeEl.classList.add('on');
   banner('FEVER TIME!', 'gold'); S.fever(); cheer('fever');
   const [x, y] = elCenter(boardEl); scrBurst(x, y, {n: 50, big: true, glow: 0xFFD36E});
@@ -1906,41 +2032,63 @@ function clearBoard() {
   grid = Array.from({length: N}, () => new Array(N).fill(null));
 }
 let starting = false;
-async function startGame() {
-  if (starting) return;
+async function startGame(opt) {
+  const m = typeof opt === 'string' ? opt : 'normal';
+  if (m === 'duel' && !duel) return;
+  if (starting || state === 'intro' || state === 'play' || state === 'ending') return;
   if (save.party.length !== 6) { toast('파티를 6명으로 채워 주세요.'); show('book'); return; }
   S.init();
   starting = true;
   const fromScreen = Object.keys(screens).find(k => !screens[k].hidden);
   const startBtns = ['#btnStart', '#btnBookStart', '#btnAgain'].map(sel => $(sel)), labels = startBtns.map(b => b.textContent);
   startBtns.forEach(b => { b.disabled = true; b.textContent = '불러오는 중…'; });
+  $('#btnDaily').disabled = true; $('#btnDuel').disabled = true;
   try { await initGraphics(); }
   catch (e) {
     toast('이 브라우저에서는 게임 그래픽(WebGL)을 켤 수 없어요. 크롬이나 사파리 최신 버전으로 열어 주세요.');
     return;
   } finally {
     startBtns.forEach((b, i) => { b.disabled = false; b.textContent = labels[i]; });
+    $('#btnDaily').disabled = false; $('#btnDuel').disabled = false;
     starting = false;
     $('#btnBookStart').disabled = save.party.length !== 6;
   }
   // 불러오는 동안 파티나 화면이 바뀌었으면 시작하지 않는다
   if (save.party.length !== 6) { toast('파티를 6명으로 채워 주세요.'); show('book'); return; }
-  if (Object.keys(screens).find(k => !screens[k].hidden) !== fromScreen || !$('#attModal').hidden || !$('#missionModal').hidden) return;
+  if (Object.keys(screens).find(k => !screens[k].hidden) !== fromScreen || !$('#attModal').hidden || !$('#missionModal').hidden || (m !== 'duel' && !$('#duelModal').hidden)) return;
   $('#result').hidden = true;
   show('game');
   resizeBoard();
-  types = save.party.map(id => BY_ID[id]); bonus = types.map(bonusOf);
-  score = 0; shownScore = 0; timeLeft = GAME_TIME; lastTick = 99;
+  types = save.party.map(id => BY_ID[id]);
+  mode = m; fair = m !== 'normal';
+  gameDay = todayStr(); gameDailyNo = dailyNo();
+  gameSeed = m === 'daily' ? hashStr('chibipang-daily-' + gameDay) : m === 'duel' ? duel.seed : (Math.random() * 4294967296) >>> 0;
+  gameRand = mulberry(gameSeed);
+  bonus = fair ? types.map(() => 0) : types.map(bonusOf);
+  const li = Math.max(0, save.party.indexOf(save.leader));
+  leaderSk = fair ? null : Object.assign({id: types[li].id, val: skillVal(types[li].id)}, SKILLS[types[li].id]);
+  const sv = leaderSk ? leaderSk.val : 0, sk = leaderSk ? leaderSk.kind : '';
+  gameTime = GAME_TIME + (sk === 'time' ? sv : 0);
+  comboWindow = COMBO_WINDOW + (sk === 'combo' ? sv * 1000 : 0);
+  feverTime = FEVER_TIME + (sk === 'feverLong' ? sv * 1000 : 0);
+  skFever = 1 + (sk === 'feverFast' ? sv / 100 : 0);
+  skChain = .5 * (1 + (sk === 'chain' ? sv / 100 : 0));
+  skScore = 1 + (sk === 'score' ? sv / 100 : 0);
+  skLast = sk === 'lastSpurt' ? sv : 1;
+  skCoin = sk === 'coin' ? sv / 100 : 0;
+  score = 0; shownScore = 0; timeLeft = gameTime; lastTick = 99;
   combo = 0; maxCombo = 0; lastMatchAt = -1e9; chain = 0;
   pops = new Array(6).fill(0); totalPops = 0; gameStats = {specials: 0, rainbows: 0, fevers: 0};
-  cheerLeader = rnd(6); cheerPri = -1; cheerUntil = 0;
+  cheerLeader = li; cheerPri = -1; cheerUntil = 0;
   M.hurry = false; M.fever = false;
   renderTally();
-  cheerFace(false); $('#cheerLbl').textContent = types[cheerLeader].name; $('#cheerTxt').textContent = '준비됐지?'; $('#cheer').classList.remove('hot');
+  cheerFace(false); $('#cheerLbl').textContent = cheerName(cheerLeader); $('#cheerTxt').textContent = leaderSk ? `리더 스킬 · ${leaderSk.d(leaderSk.val)}` : '준비됐지?'; $('#cheer').classList.remove('hot');
   selected = null; hintPieces = null; lastSwap = null; paused = false;
   busy = true; state = 'intro';
   clearBoard();
-  scoreEl.textContent = '0'; $('#bestG').textContent = fmt(save.best);
+  scoreEl.textContent = '0';
+  $('#bestLbl').textContent = mode === 'duel' ? 'VS' : mode === 'daily' ? 'Today' : 'Best';
+  $('#bestG').textContent = fmt(mode === 'duel' ? duel.s : mode === 'daily' ? todayCh().best : save.best);
   const Tm = genTypes();
   for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
     const p = makePiece(Tm[r][c], null, r - N - 1, c);
@@ -1948,10 +2096,35 @@ async function startGame() {
     fall(p, r, c, .5, c * .035 + (N - 1 - r) * .03);
   }
   await sleep(500 + 6 * 35 + 6 * 30 + 120);
+  if (state !== 'intro') { busy = false; return; }
+  if (mode === 'daily') { banner(`챌린지 #${gameDailyNo}`, 'gold'); await sleep(950); }
+  else if (mode === 'duel') { banner('VS ' + fmt(duel.s), 'gold'); await sleep(950); }
+  else if (leaderSk) { banner(leaderSk.name, 'gold'); placeStartSpecials(); await sleep(950); }
+  if (state !== 'intro') { busy = false; return; }
   banner('READY'); await sleep(850);
   if (state !== 'intro') { busy = false; return; }
   banner('START!', 'gold'); S.start(); cheer('start');
   state = 'play'; busy = false; lastAction = performance.now();
+}
+function openDuel() {
+  if (!duel) return;
+  duelShown = true;
+  $('#dmName').textContent = duel.n + '님'; $('#dmScore').textContent = fmt(duel.s);
+  $('#attModal').hidden = true; $('#duelModal').hidden = false;
+}
+// 리더 스킬: 시작할 때 특수 블록 놓기
+function placeStartSpecials() {
+  if (!leaderSk || !/^start/.test(leaderSk.kind)) return;
+  const cells = [];
+  eachPiece(p => { if (!p.special) cells.push(p); });
+  for (let i = cells.length - 1; i > 0; i--) { const j = rnd(i + 1); [cells[i], cells[j]] = [cells[j], cells[i]]; }
+  cells.slice(0, leaderSk.val).forEach(p => {
+    if (leaderSk.kind === 'startBomb') p.special = 'bomb';
+    else if (leaderSk.kind === 'startLine') p.special = Math.random() < .5 ? 'h' : 'v';
+    else { p.special = 'rainbow'; p.type = -1; }
+    applyLook(p); p.s = .2; tween(p, {s: 1}, .34, E.outBack); fxBorn(p);
+  });
+  S.make();
 }
 async function finishGame() {
   state = 'ending';
@@ -1970,8 +2143,22 @@ async function finishGame() {
   }
   endFever();
   busy = false; state = 'over'; M.hurry = false;
-  const coins = Math.floor(score / PTS_PER_COIN), isBest = score > save.best && score > 0;
+  let coins = Math.floor(score / PTS_PER_COIN * (1 + skCoin));
+  const isBest = mode === 'normal' && score > save.best && score > 0, extra = [];
+  if (mode === 'daily') {
+    const ch = save.dailyCh && save.dailyCh.date === gameDay ? save.dailyCh : {date: gameDay, best: 0, plays: 0};
+    if (!ch.plays) { coins += 50; extra.push('오늘의 챌린지 첫 도전 보너스 +50코인'); }
+    ch.plays++; if (score > ch.best) { ch.best = score; if (ch.plays > 1) extra.push('오늘의 챌린지 최고 기록!'); }
+    save.dailyCh = ch;
+  }
   save.coins += coins; if (isBest) save.best = score;
+  // 호감도: 터뜨린 만큼 쌓인다
+  types.forEach((ch, i) => {
+    const before = affLv(ch.id);
+    save.aff[ch.id] = affPts(ch.id) + pops[i];
+    const after = affLv(ch.id);
+    if (after > before) extra.push(`${ch.name} 호감도 Lv${after}!` + (after === 2 ? ' 새 대사가 열렸어요' : after === 3 ? ` 칭호 「${AFF_TALK[ch.id][1]}」` : after === 4 ? ' 리더 스킬 강화' : ' 특별 대사가 열렸어요'));
+  });
   ensureDaily();
   const before = save.daily.list.map(it => mInfo(it).done);
   addProg('games', 1);
@@ -1983,21 +2170,34 @@ async function finishGame() {
   const newly = save.daily.list.filter((it, i) => !before[i] && mInfo(it).done).length;
   persist();
   const mvpId = types[mvpIndex()].id;
-  if (score > 0) {
+  if (score > 0 && mode === 'normal') {
     save.history.push({s: score, c: mvpId, d: todayStr()});
     save.history.sort((a, b) => b.s - a.s);
     save.history = save.history.slice(0, 10);
     persist();
   }
-  lastResult = {score, mvp: BY_ID[mvpId].name, combo: maxCombo};
-  showResult(coins, isBest, newly);
-  Rank.submit(score, mvpId).then(ok => { const rk = Rank.rankOf(score); if (ok && rk <= Rank.rows.length) addResultLine(`랭킹 ${rk}위에 올랐어요!`); });
+  lastResult = {score, mvp: BY_ID[mvpId].name, combo: maxCombo, mode, seed: gameSeed, duel: mode === 'duel' ? duel : null};
+  showResult(coins, isBest, newly, extra);
+  if (mode === 'normal') Rank.submit(score, mvpId).then(ok => { const rk = Rank.rankOf(score); if (ok && rk <= Rank.rows.length) addResultLine(`랭킹 ${rk}위에 올랐어요!`); });
 }
 let lastResult = null;
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/chibipang/';
 async function brag() {
   if (!lastResult) return;
-  const text = `치비팡 ${fmt(lastResult.score)}점 달성! ✨\nMVP ${lastResult.mvp} · 최대 콤보 ${lastResult.combo}\n나 이겨 볼 사람? → ${SHARE_URL}`;
+  let text = `치비팡 ${fmt(lastResult.score)}점 달성! ✨\nMVP ${lastResult.mvp} · 최대 콤보 ${lastResult.combo}\n나 이겨 볼 사람? → ${SHARE_URL}`;
+  if (lastResult.mode !== 'normal') {
+    // 도전장: 같은 판 씨앗 + 내 점수 + 이름을 링크에 담는다
+    const nick = Array.from(($('#nickInput').value || '').trim()).slice(0, 10).join('');
+    if (nick && nick !== save.nick) { save.nick = nick; persist(); }
+    const who = nick || '친구';
+    const url = `${DUEL_URL}?duel=${lastResult.seed}&s=${lastResult.score}&n=${encodeURIComponent(who)}`;
+    const msg = `치비팡 도전장 ⚔️ ${who}의 점수 ${fmt(lastResult.score)}점! 같은 판으로 이겨 봐`;
+    if (navigator.share) {
+      try { await navigator.share({title: '치비팡 도전장', text: msg, url}); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    text = `${msg}\n${url}`;
+  }
   const box = $('#bragText');
   try {
     await navigator.clipboard.writeText(text);
@@ -2014,11 +2214,27 @@ function addResultLine(txt) {
   el.textContent = el.hidden || !el.textContent ? txt : el.textContent + ' · ' + txt;
   el.hidden = false;
 }
-function showResult(coins, isBest, newly) {
+function showResult(coins, isBest, newly, extra = []) {
   const mi = mvpIndex(), mvp = types[mi];
   $('#resExtra').hidden = true; $('#resExtra').textContent = '';
   $('#bragText').hidden = true;
   if (newly) addResultLine(`미션 ${newly}개 완료! 메인의 출석·미션에서 받아요`);
+  extra.forEach(addResultLine);
+  // 챌린지·도전장: 같은 판 대결 결과와 도전장 보내기
+  const vs = $('#duelVs');
+  vs.hidden = mode === 'normal';
+  if (mode === 'duel') {
+    const win = score > duel.s, tie = score === duel.s;
+    vs.innerHTML = `<div><span></span><b class="${score < duel.s ? 'win' : ''}">${fmt(duel.s)}</b></div><i>${win ? 'WIN!' : tie ? 'DRAW' : 'LOSE'}</i><div><span>나</span><b class="${win ? 'win' : ''}">${fmt(score)}</b></div>`;
+    vs.querySelector('span').textContent = duel.n;
+    addResultLine(win ? `${duel.n}님을 이겼어요! 다시 도전장을 보내 보세요` : tie ? '무승부! 한 번 더?' : `${duel.n}님까지 ${fmt(duel.s - score)}점 모자라요`);
+  } else if (mode === 'daily') {
+    vs.innerHTML = `<div><span>챌린지</span><b>#${gameDailyNo}</b></div><i>★</i><div><span>오늘 최고</span><b class="win">${fmt(save.dailyCh ? save.dailyCh.best : score)}</b></div>`;
+  }
+  $('#nickRow').hidden = mode === 'normal';
+  $('#nickInput').value = save.nick || '';
+  $('#btnBrag').textContent = mode === 'normal' ? '점수 자랑하기 · 문구 복사' : '친구에게 도전장 보내기';
+  $('#resTitle').textContent = mode === 'duel' ? (score > duel.s ? '승리!' : score === duel.s ? '무승부!' : '아쉬워요!') : mode === 'daily' ? '챌린지 완료!' : '타임 오버!';
   if (S.ctx) M.play('title');
   $('#mvpFace').innerHTML = portrait(mvp.id, 0, true);
   $('#mvpName').textContent = mvp.name;
@@ -2029,7 +2245,7 @@ function showResult(coins, isBest, newly) {
   $('#resBest').textContent = fmt(save.best);
   $('#newBest').hidden = !isBest;
   $('#result').hidden = false;
-  if (isBest && scrFx) { confetti(); S.reveal(true); }
+  if ((isBest || (mode === 'duel' && score > duel.s)) && scrFx) { confetti(); S.reveal(true); }
   const el = $('#resScore'), t0 = performance.now();
   (function step(now) {
     const k = Math.min(1, (now - t0) / 900);
@@ -2079,7 +2295,7 @@ function tick() {
     if (feverOn) { feverLeft -= dt * 1000; if (feverLeft <= 0) endFever(); }
     if (!busy && !hintPieces && now - lastAction > 5000) showHint();
     if (combo > 0 && !busy) {
-      const left = 1 - (now - lastMatchAt) / COMBO_WINDOW;
+      const left = 1 - (now - lastMatchAt) / comboWindow;
       if (left <= 0) { combo = 0; comboTag.hidden = true; } else comboBar.style.transform = `scaleX(${left.toFixed(3)})`;
     }
     twinkleT -= dt;
@@ -2094,21 +2310,21 @@ function tick() {
   if (feverOn && boardFx) {
     fevSpawn -= dt;
     if (fevSpawn <= 0) {
-      fevSpawn = .05;
+      fevSpawn = TOUCH ? .09 : .05;
       const heart = Math.random() < .3;
       boardFx.spawn(heart ? TEX.heart : TEX.spark, {x: rr(0, N * cell), y: N * cell + 10, vy: -cell * rr(3, 6), vx: rr(-.5, .5) * cell, normal: heart,
         tint: heart ? 0xFF8DC0 : PASTEL[rnd(PASTEL.length)], s0: heart ? cell / 64 * .3 : cell / 128 * .45, s1: .02, a0: .9, a1: 0, life: rr(.9, 1.5), vr: rr(-3, 3)});
     }
   }
   if (!screens.game.hidden) {
-    timeFill.style.transform = `scaleX(${(timeLeft / GAME_TIME).toFixed(4)})`;
+    timeFill.style.transform = `scaleX(${Math.min(1, timeLeft / gameTime).toFixed(4)})`;
     timeTxt.textContent = Math.ceil(timeLeft);
     if (shownScore !== score) {
       shownScore += Math.ceil((score - shownScore) * .2);
       if (Math.abs(score - shownScore) < 2) shownScore = score;
       scoreEl.textContent = fmt(shownScore);
     }
-    feverFill.style.width = (feverOn ? feverLeft / FEVER_TIME * 100 : fever) + '%';
+    feverFill.style.width = (feverOn ? feverLeft / feverTime * 100 : fever) + '%';
   }
 }
 
@@ -2169,9 +2385,10 @@ async function pull(useTicket) {
 /* ---------- 도감 · 파티 ---------- */
 let bookSel = null;
 function renderBook() {
+  if (!save.party.includes(save.leader)) save.leader = save.party[0] || STARTERS[0];
   $('#bookCount').textContent = `${Object.keys(save.owned).length} / ${CH.length}`;
   $('#partyNote').textContent = save.party.length === 6 ? '게임 판에 나오는 6명' : `${save.party.length} / 6명 · 6명을 채워 주세요`;
-  $('#partySlots').innerHTML = Array.from({length: 6}, (_, i) => save.party[i] ? portrait(save.party[i]) : '<span class="slot-empty"></span>').join('');
+  $('#partySlots').innerHTML = Array.from({length: 6}, (_, i) => save.party[i] ? portrait(save.party[i]).replace('</span>', save.party[i] === save.leader ? '<i class="crown" aria-label="리더">👑</i></span>' : '</span>') : '<span class="slot-empty"></span>').join('');
   $('#bookGrid').innerHTML = CH.map(ch => {
     const lv = lvOf(ch.id), stars = '★'.repeat(ch.star);
     if (!lv) return `<button class="card glass locked" type="button" data-id="${ch.id}" aria-label="아직 못 만난 ${stars} 캐릭터">${portrait(ch.id)}<span class="nm">???</span><span class="stars">${stars}</span></button>`;
@@ -2183,17 +2400,23 @@ function renderBook() {
 }
 function renderDetail() {
   const d = $('#detail'), ch = bookSel && BY_ID[bookSel];
-  if (!ch) { d.innerHTML = '<p class="note">캐릭터를 누르면 프로필을 보고 파티에 넣거나 뺄 수 있어요.<br>★★★ 캐릭터는 점수 +20%, 레벨이 오를 때마다 +10%.</p>'; return; }
-  const lv = lvOf(ch.id), inP = save.party.includes(ch.id);
-  d.innerHTML = `${portrait(ch.id, 0, true)}<div class="info"><h3>${ch.name} <span class="stars">${'★'.repeat(ch.star)}</span></h3><p class="hearts" aria-label="레벨 ${lv}">${'♥'.repeat(lv)}<span>${'♥'.repeat(MAX_LV - lv)}</span><small>Lv ${lv}</small></p><p>${ch.line}</p><p class="bonus">점수 보너스 +${Math.round(bonusOf(ch) * 100)}%</p><button class="btn ${inP ? '' : 'pink'}" type="button" id="btnParty">${inP ? '파티에서 빼기' : '파티에 넣기'}</button></div>`;
+  if (!ch) { d.innerHTML = '<p class="note">캐릭터를 누르면 파티에 넣거나 리더로 정할 수 있어요.<br>👑 리더 스킬이 게임에 적용되고, 많이 터뜨릴수록 호감도가 올라요.</p>'; return; }
+  const lv = lvOf(ch.id), inP = save.party.includes(ch.id), isL = save.leader === ch.id;
+  const al = affLv(ch.id), pts = affPts(ch.id), next = AFF_AT[al] ?? null, prev = AFF_AT[al - 1];
+  const affPct = next === null ? 100 : Math.round((pts - prev) / (next - prev) * 100);
+  const title = affTitle(ch.id);
+  d.innerHTML = `${portrait(ch.id, 0, true)}<div class="info"><h3>${ch.name} <span class="stars">${'★'.repeat(ch.star)}</span>${title ? `<span class="title-tag">${title}</span>` : ''}</h3><p class="hearts" aria-label="레벨 ${lv}">${'♥'.repeat(lv)}<span>${'♥'.repeat(MAX_LV - lv)}</span><small>Lv ${lv} · 점수 +${Math.round(bonusOf(ch) * 100)}%</small></p><p>${ch.line}</p><p class="skill">👑 리더 스킬 <b>${skillText(ch.id)}</b></p><div class="aff"><small>호감도 Lv${al}${next === null ? ' · 최고!' : ` · 다음까지 ${fmt(next - pts)}팡`}${al >= 2 ? ` · “${AFF_TALK[ch.id][al >= 5 ? 2 : 0]}”` : ''}</small><div class="bar"><i style="width:${affPct}%"></i></div></div><div class="row-btns"><button class="btn ${inP ? '' : 'pink'}" type="button" id="btnParty">${inP ? '파티에서 빼기' : '파티에 넣기'}</button>${inP && !isL ? '<button class="btn gold" type="button" id="btnLeader">👑 리더로</button>' : ''}${isL ? '<span class="title-tag">지금 리더</span>' : ''}</div></div>`;
   $('#btnParty').addEventListener('click', () => {
     if (inP) save.party = save.party.filter(x => x !== ch.id);
     else {
       if (save.party.length >= 6) { toast('파티는 6명까지예요. 먼저 한 명을 빼 주세요.'); return; }
       save.party.push(ch.id);
     }
+    if (!save.party.includes(save.leader)) save.leader = save.party[0] || STARTERS[0];
     persist(); renderBook();
   });
+  const lb = $('#btnLeader');
+  if (lb) lb.addEventListener('click', () => { save.leader = ch.id; persist(); renderBook(); toast(`${iga(ch.name)} 리더가 됐어요! ${SKILLS[ch.id].d(skillVal(ch.id))}`); });
 }
 $('#bookGrid').addEventListener('click', e => {
   const b = e.target.closest('.card'); if (!b) return;
@@ -2322,8 +2545,12 @@ setInterval(() => {
 }, 1800);
 
 /* ---------- 버튼 연결 ---------- */
-$('#btnStart').addEventListener('click', startGame);
-$('#btnBookStart').addEventListener('click', startGame);
+$('#btnStart').addEventListener('click', () => startGame('normal'));
+$('#btnDaily').addEventListener('click', () => startGame('daily'));
+$('#btnDuelGo').addEventListener('click', () => { $('#duelModal').hidden = true; startGame('duel'); });
+$('#btnDuelLater').addEventListener('click', () => { $('#duelModal').hidden = true; renderTitle(); maybeShowAttendance(); });
+$('#btnDuel').addEventListener('click', openDuel);
+$('#btnBookStart').addEventListener('click', () => startGame('normal'));
 $('#btnGacha').addEventListener('click', () => show('gacha'));
 $('#btnBook').addEventListener('click', () => show('book'));
 $('#btnPull').addEventListener('click', () => pull(false));
@@ -2338,7 +2565,7 @@ $('#btnBrag').addEventListener('click', brag);
 $('#btnPause').addEventListener('click', pauseGame);
 $('#btnResume').addEventListener('click', resumeGame);
 $('#btnQuit').addEventListener('click', () => leaveGame('title'));
-$('#btnAgain').addEventListener('click', startGame);
+$('#btnAgain').addEventListener('click', () => startGame(mode === 'duel' && !duel ? 'normal' : mode));
 $('#btnResGacha').addEventListener('click', () => leaveGame('gacha'));
 $('#btnResHome').addEventListener('click', () => leaveGame('title'));
 document.addEventListener('visibilitychange', () => {
@@ -2350,6 +2577,15 @@ const unlockAudio = () => { S.init(); if (!M.track) M.play(screens.game.hidden ?
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (paused) resumeGame(); else pauseGame(); } });
 
 let bootDone = false;
+// 도전장 링크로 들어왔으면 (?duel=씨앗&s=점수&n=이름)
+try {
+  const qs = new URLSearchParams(location.search);
+  const sd = Number(qs.get('duel')), sc = Number(qs.get('s'));
+  if (qs.has('duel') && Number.isInteger(sd) && sd >= 0 && sd < 4294967296 && Number.isFinite(sc) && sc >= 0 && sc < 1e8) {
+    duel = {seed: sd, s: Math.floor(sc), n: Array.from((qs.get('n') || '친구').replace(/[\u0000-\u001f]/g, '')).slice(0, 10).join('') || '친구'};
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* 미리보기 창에서는 주소를 못 바꿀 수 있음 */ }
+  }
+} catch (e) { duel = null; }
 show('title');
 assetsReady.then(() => { if (!screens.title.hidden) renderTitle(); });
 initGraphics().catch(() => {});
@@ -2358,7 +2594,8 @@ initGraphics().catch(() => {});
   if (ensureDaily()) persist();
   bootDone = true;
   if (!screens.title.hidden) renderTitle();
-  maybeShowAttendance();
+  if (duel && !duelShown && !screens.title.hidden && !starting) openDuel();
+  else maybeShowAttendance();
 })();
 })();
 </script>

@@ -980,9 +980,18 @@ let sdUnit = 1;                                   // 그림 칸 높이 / 320
 async function loadChar(c) {
   const tex = await PIXI.Assets.load(SD_URL(c.key)).catch(() => null);
   sdTex = tex || FB_SD[c.key] || (FB_SD[c.key] = fallbackSd(c.c1));
-  const cw = sdTex.width / 4, chh = sdTex.height / 2; sdUnit = chh / 320;
-  sdFrames = []; for (let i = 0; i < 8; i++) sdFrames.push(sub(sdTex, (i % 4) * cw, Math.floor(i / 4) * chh, cw, chh));
+  // 그림 판: 4열×3행(달리기 6장) 또는 4열×2행(달리기 4장)
+  const cw = sdTex.width / 4, rows = Math.max(2, Math.round(sdTex.height / (cw * 320 / 384))), chh = sdTex.height / rows; sdUnit = chh / 320;
+  const fr = []; for (let i = 0; i < rows * 4; i++) fr.push(sub(sdTex, (i % 4) * cw, Math.floor(i / 4) * chh, cw, chh));
+  const nRun = rows >= 3 ? 6 : 4;
+  SD = {run: fr.slice(0, nRun), jump: fr[nRun], djump: fr[nRun + 1], slide: fr[nRun + 2], hurt: fr[nRun + 3]};
+  // 걸음마다 몸 높이(세계 단위)·눌림: 6장 = 디딤·낮음·공중 ×2, 4장 = 디딤·공중 ×2
+  SD.bob = nRun === 6 ? [3, 0, 10, 3, 0, 10] : [0, 7, 0, 7];
+  SD.squash = nRun === 6 ? [0, 1, -1, 0, 1, -1] : [1, -1, 1, -1];
+  SD.steps = nRun === 6 ? [0, 3] : [0, 2];             // 발이 땅에 닿는 장 (먼지)
+  sdFrames = fr;
 }
+let SD = null;
 
 async function startGame() {
   if (starting) return;
@@ -1033,7 +1042,7 @@ function resetWorld() {
   layout();
   fx.clear(); L.texts.forEach(t => { t.visible = false; });
   renderLetters();
-  L.player.texture = sdFrames[0]; L.player.visible = true;
+  L.player.texture = SD.run[0]; L.player.visible = true; P.runF = -1;
   while (genX < viewW * 3) genChunk();
 }
 // 판이 끝나거나 중간에 나가도 최고 기록과 모은 코인은 남긴다 (한 판에 한 번만)
@@ -1406,20 +1415,28 @@ function drawEnt(e, dt, bob) {
 function drawPlayer(dt, now) {
   const sp = L.player;
   const flying = flyT > 0 || bonusT > 0;
-  let f = 0;
-  if (P.hurtT > 0) f = 7;
-  else if (flying) f = 4;
-  else if (P.slide) f = 6;
-  else if (!P.onGround) f = P.jumps >= 2 && P.spin > 0 ? 5 : 4;
-  else { P.anim += dt * speed / 46; f = Math.floor(P.anim) % 4; }
-  if (sdFrames && sp.texture !== sdFrames[f]) sp.texture = sdFrames[f];
+  let tex = SD.run[0], running = false, bob = 0, sq = 0;
+  if (P.hurtT > 0) tex = SD.hurt;
+  else if (flying) tex = SD.jump;
+  else if (P.slide) tex = SD.slide;
+  else if (!P.onGround) tex = P.jumps >= 2 && P.spin > 0 ? SD.djump : SD.jump;
+  else {
+    // 달리기: 한 바퀴(두 걸음)에 약 190 단위를 나아가는 빠르기로 그림을 넘긴다
+    running = true;
+    P.anim = (P.anim + dt * speed / 190) % 1;
+    const n = SD.run.length, f = Math.floor(P.anim * n) % n;
+    tex = SD.run[f]; bob = SD.bob[f]; sq = SD.squash[f];
+    if (f !== P.runF) { if (SD.steps.includes(f) && state === 'play') dust(P.x - 6, P.y, TOUCH ? 1 : 2); P.runF = f; }
+  }
+  if (sp.texture !== tex) sp.texture = tex;
   let sc = CHAR_H / (270 * sdUnit) * P.k, sxk = 1, syk = 1;
   if (P.land > 0) { const t = P.land / .12; sxk = 1 + .12 * t; syk = 1 - .12 * t; }
   else if (!P.onGround && !flying) { sxk = .96; syk = 1.04; }
+  else if (running) { sxk = 1 + .035 * sq; syk = 1 - .035 * sq; }   // 낮은 자세는 살짝 눌리고, 공중 자세는 살짝 늘어남
   sp.scale.set(sc * sxk, sc * syk);
-  let y = P.y;
+  let y = P.y - bob * P.k;
   if (P.jumps >= 2 && P.spin > 0 && !P.onGround) { P.spin = Math.max(0, P.spin - dt * 2.4); sp.rotation = (1 - P.spin) * Math.PI * 2; }
-  else sp.rotation = flying ? Math.sin(now / 300) * .06 : 0;
+  else sp.rotation = flying ? Math.sin(now / 300) * .06 : running ? .06 + .02 * sq : 0;   // 달릴 때는 앞으로 살짝 기울임
   if (flying) y += Math.sin(now / 260) * 6;
   sp.position.set(P.x, y);
   sp.alpha = P.invT > 0 && !isInvuln() && P.hurtT <= 0 ? (Math.floor(now / 70) % 2 ? .35 : 1) : 1;

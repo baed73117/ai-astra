@@ -78,6 +78,15 @@ body.wide .side{display:grid;gap:12px}
 .score b{font:800 20px/1 var(--f-en);font-variant-numeric:tabular-nums}
 .score em{display:block;margin-top:3px;font:800 11px/1 var(--f-en);font-style:normal;color:#FFC07A}
 .evpill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;border-radius:999px;background:linear-gradient(120deg,rgba(255,138,40,.9),rgba(140,60,200,.9));box-shadow:0 6px 16px rgba(255,120,40,.35),inset 0 0 0 1px rgba(255,255,255,.4);font:800 12px/1 var(--f-kr);color:#fff}
+.attg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.attg div{display:grid;justify-items:center;gap:3px;padding:9px 4px 8px;border-radius:13px;background:#F5EFF9;box-shadow:inset 0 0 0 1px #EADFF2;font:800 10.5px/1.2 var(--f-kr);color:var(--ink2)}
+.attg div b{font:800 15px/1 var(--f-en);color:var(--ink)}
+.attg div i{font-style:normal;font-size:19px;line-height:1}
+.attg div.big{grid-column:span 2;background:linear-gradient(120deg,#FFF6D6,#FFE0F0);box-shadow:inset 0 0 0 1.5px var(--gold)}
+.attg div.got{opacity:.5}
+.attg div.got i::after{content:"✓";position:relative;margin-left:2px;color:#2BA84A;font-size:15px}
+.attg div.now{background:linear-gradient(120deg,#FF86BF,#FF4F9A);color:#fff;box-shadow:0 6px 16px rgba(255,79,154,.35)}
+.attg div.now b{color:#fff}
 .hw-top{margin:-4px -4px 0;height:140px;border-radius:16px;background:#2A1240 center 18%/cover no-repeat}
 .hw-rew{display:grid;gap:6px;text-align:left}
 .hw-rew li{list-style:none;display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:12px;background:#F7F2FA;font:500 12.5px/1.3 var(--f-kr);color:var(--ink2)}
@@ -396,6 +405,13 @@ body.wide .side{display:grid;gap:12px}
       <li><i>♾️</i><div><b>무한 스테이지 · 체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
     </ul>
     <button class="btn main" id="newsOk" type="button">좋아요!</button>
+  </div>
+</div>
+<div class="overlay" id="att" hidden>
+  <div class="card"><span class="tag">DAILY CHECK</span><h2 class="c-title">📅 출석 체크</h2>
+    <p class="inst-lead" id="attInfo"></p>
+    <div class="attg" id="attGrid"></div>
+    <button class="btn main" id="attGo" type="button">받기!</button>
   </div>
 </div>
 <div class="overlay" id="hwEv" hidden>
@@ -717,6 +733,8 @@ function hwClaim(out) {   // 사탕이 모이면 보상을 차례로 받음
   const e = hwSave();
   while (e.g < HW_REW.length && e.c >= HW_REW[e.g].n) { const r = HW_REW[e.g]; e.g++; if (r.coin) save.coins += r.coin; if (out) out.push(`🎃 이벤트 보상: ${r.text}`); }
 }
+// 출석 체크 (7일 한 바퀴): 7일째는 코인 + 전설 강화 선물
+const ATT = [{coin: 200}, {coin: 300}, {coin: 400}, {coin: 600}, {coin: 800}, {coin: 1000}, {coin: 1500, leg: 1}];
 function loadSave() {
   let s = {};
   try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}') || {}; } catch (e) { s = {}; }
@@ -737,7 +755,7 @@ function loadSave() {
   if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && (s.cos[k] === 'c1' || s.cos[k] === 'c2')) cos[k] = s.cos[k];
   const ev = {};   // 이벤트 기록: {h26: {c: 사탕, g: 받은 보상 수}}
   if (s.ev && typeof s.ev === 'object') for (const k of Object.keys(s.ev)) if (/^h\d\d$/.test(k) && s.ev[k] && typeof s.ev[k] === 'object') ev[k] = {c: n(s.ev[k].c), g: Math.min(HW_REW.length, n(s.ev[k].g))};
-  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123]|e:[a-z]+)$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, ev, wbest: n(s.wbest), wseen: String(s.wseen || ''),
+  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123]|e:[a-z]+)$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, ev, att: {d: String((s.att && s.att.d) || ''), n: n(s.att && s.att.n)}, legT: Math.min(9, n(s.legT)), wbest: n(s.wbest), wseen: String(s.wseen || ''),
     muted: s.muted === true, auto: s.auto !== false, daily: s.daily && typeof s.daily === 'object' ? {d: String(s.daily.d || ''), best: n(s.daily.best)} : {d: '', best: 0}};
 }
 const save = loadSave();
@@ -2352,6 +2370,10 @@ async function startInner(opts) {
   app.start();
   $('#hint').hidden = false; $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4500);
   banner(run.daily ? `오늘의 도전 · ${ch.name}` : `스테이지 ${run.stage} · ${stageName(run.stage)}`, run.daily);
+  if (!opts.resume && !run.daily && save.legT > 0) {   // 출석 7일째 선물: 전설 강화 하나 들고 시작
+    const pool = Object.keys(LEG).filter(k => !LG(k));
+    if (pool.length) { const k = pool[Math.floor(Math.random() * pool.length)]; run.leg[k] = 1; save.legT--; persist(); later(1.2, () => { if (run && !run.ended) banner(`🎁 출석 선물: ${LEG[k].name}!`, false); }); }
+  }
   if (!opts.resume && !run.daily) {   // 시작할 때도 세계(2회차~)·규칙 안내
     const aw = lapOf(run.stage) > 0;
     if (aw) later(2.2, () => { if (run && !run.ended) { const w = worldOf(run.stage); banner(`${w.ico} ${w.name}`, true); } });
@@ -2545,6 +2567,25 @@ function goTitle() {
 }
 
 /* ---------- 첫 화면 · 캐릭터 · 강화 ---------- */
+// 출석 체크: 오늘 아직 안 받았으면 첫 화면에서 한 번 뜸 (업데이트 안내 창이 있으면 그 다음)
+function maybeAtt() {
+  if (state !== 'title' || String(kstDate()) === save.att.d || !$('#news').hidden || !$('#att').hidden) return;
+  const i = save.att.n % 7;
+  $('#attInfo').textContent = `${save.att.n + 1}일째 출석이에요! 7일마다 한 바퀴 · 빠진 날이 있어도 이어서`;
+  $('#attGrid').innerHTML = ATT.map((a, k) => `<div class="${k === 6 ? 'big ' : ''}${k < i ? 'got' : k === i ? 'now' : ''}"><span>${k + 1}일째</span><i>${a.leg ? '🎁' : '🪙'}</i><b>${fmt(a.coin)}</b>${a.leg ? '<span>+ 전설 강화 선물</span>' : ''}</div>`).join('');
+  $('#att').hidden = false;
+}
+function takeAtt() {
+  const today = String(kstDate());
+  if (save.att.d === today) { $('#att').hidden = true; return; }
+  const a = ATT[save.att.n % 7];
+  save.att.n++; save.att.d = today; save.coins = Math.min(9999999, save.coins + a.coin);
+  if (a.leg) save.legT = Math.min(9, (save.legT || 0) + 1);
+  persist(); S.init(); S.item && S.item();
+  $('#att').hidden = true;
+  toast(a.leg ? `출석 ${save.att.n}일째! 코인 +${fmt(a.coin)} · 다음 판은 전설 강화 하나 들고 시작해요 🎁` : `출석 ${save.att.n}일째! 코인 +${fmt(a.coin)}`);
+  renderTitle();
+}
 function renderHwPill() {
   const st = hwState(), b = $('#btnHw');
   b.hidden = st === 'off' && !(save.ev[HW.id] && save.ev[HW.id].c);
@@ -2575,6 +2616,7 @@ function renderTitle() {
   renderStage();
   idleReward(); $('#tCoins').textContent = fmt(save.coins);
   if (save.news !== NEWS_V) $('#news').hidden = false;   // 업데이트 안내는 한 번만
+  else setTimeout(maybeAtt, 400);
   dmRoll(); $('#btnAch').classList.toggle('dot', save.dm.done.length < 3);   // 오늘의 미션이 남아 있으면 빨간 점
   const sc = byKey(save.sel); $('#sidePt').style.backgroundImage = `url(${PT_URL(sc.key)})`; $('#sideName').textContent = sc.name; $('#sideDesc').textContent = sc.desc;
 }
@@ -2888,7 +2930,8 @@ $('#btnImportGo').addEventListener('click', () => {
   if (importCode(code)) { toast('기록을 불러왔어요!'); $('#codeBox').hidden = true; go.hidden = true; openAch(); renderTitle(); }
   else { toast('코드가 맞지 않아요. 처음부터 끝까지 그대로 붙여 넣어 주세요'); go.dataset.sure = ''; go.textContent = '이 코드로 바꾸기'; }
 });
-$('#newsOk').addEventListener('click', () => { save.news = NEWS_V; persist(); $('#news').hidden = true; });
+$('#newsOk').addEventListener('click', () => { save.news = NEWS_V; persist(); $('#news').hidden = true; setTimeout(maybeAtt, 300); });
+$('#attGo').addEventListener('click', takeAtt);
 $('#shopBack').addEventListener('click', () => { $('#shop').hidden = true; renderTitle(); });
 $('#btnSound').addEventListener('click', toggleSound);
 $('#btnSound2').addEventListener('click', toggleSound);

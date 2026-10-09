@@ -18,18 +18,33 @@
   "start": 22.177
  },
  "b_frost": {
-  "alias": "battle"
+  "loop": 52.2472,
+  "xf": 0.25,
+  "bpm": 147.65,
+  "start": 38.558
  },
  "b_fire": {
-  "alias": "battle"
+  "loop": 37.403,
+  "xf": 0.25,
+  "bpm": 155.0,
+  "start": 14.395
  },
  "b_cyber": {
-  "alias": "battle"
+  "loop": 51.191,
+  "xf": 0.25,
+  "bpm": 149.8,
+  "start": 16.669
  },
  "b_mystic": {
-  "alias": "battle"
+  "loop": 78.8899,
+  "xf": 0.25,
+  "bpm": 97.5,
+  "start": 14.511
  },
  "b_cosmic": {
-  "alias": "battle"
+  "loop": 36.7565,
+  "xf": 0.35,
+  "bpm": 156.6,
+  "start": 44.857
  }
 }

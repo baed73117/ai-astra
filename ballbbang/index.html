@@ -444,7 +444,7 @@ const ROMAN = ['', ' Ⅱ', ' Ⅲ', ' Ⅳ', ' Ⅴ', ' Ⅵ', ' Ⅶ', ' Ⅷ', ' Ⅸ
 const themeOf = n => THEMES[(Math.max(1, n | 0) - 1) % THEMES.length];
 const lapTag = n => { const l = Math.floor((Math.max(1, n | 0) - 1) / THEMES.length); return l < ROMAN.length ? ROMAN[l] : ` ${l + 1}회차`; };
 const stageName = n => themeOf(n).name + lapTag(n);
-const SCORE_CAP = 8990000;                   // 랭킹 시트 상한(900만) 안쪽
+const SCORE_CAP = 99990000;                  // 랭킹 시트 상한(1억) 안쪽 · 무한 스테이지라 사실상 제한 없음
 
 /* ---------- 저장 (새 키: astra-universe-breaker-v1) ---------- */
 const SAVE_KEY = 'astra-universe-breaker-v1', RUN_KEY = 'astra-universe-breaker-run';

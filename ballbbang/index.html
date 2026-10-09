@@ -373,13 +373,13 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="news" hidden>
   <div class="card"><span class="tag">UPDATE</span><h2 class="c-title">새로워졌어요!</h2>
     <ul class="news-list">
-      <li class="nw"><i>🎐</i><div><b>캐릭터 숙련도 · 유카타 의상</b>한 캐릭터로 할수록 강해지고, Lv.10이면 축제 유카타를 입어요</div></li>
-      <li class="nw"><i>📅</i><div><b>주간 랭킹</b>월요일마다 새로 시작 · 1~3등은 '주간 ○등' 칭호</div></li>
-      <li class="nw"><i>🎵</i><div><b>테마마다 다른 전투 곡</b>얼음·용암·네온·벚꽃·우주 스테이지에 새 곡</div></li>
+      <li class="nw"><i>💾</i><div><b>저장하고 나가기</b>일시정지 → 저장하고 나가면 다음에 '이어 하기'로 그 자리부터</div></li>
+      <li class="nw"><i>📲</i><div><b>앱으로 설치</b>첫 화면 오른쪽 위 버튼 · 홈 화면 아이콘으로 바로 열려요</div></li>
+      <li class="nw"><i>🌙</i><div><b>21스테이지부터 밤의 세계</b>규칙이 두 개씩 겹치고, 보스가 각성해요</div></li>
+      <li><i>🎐</i><div><b>캐릭터 숙련도 · 유카타 의상</b>한 캐릭터로 할수록 강해지고, Lv.10이면 축제 유카타</div></li>
+      <li><i>📅</i><div><b>주간 랭킹</b>월요일마다 새로 시작 · 1~3등은 '주간 ○등' 칭호</div></li>
+      <li><i>🎵</i><div><b>테마마다 다른 전투 곡</b>얼음·용암·네온·벚꽃·우주 스테이지에 새 곡</div></li>
       <li><i>♾️</i><div><b>무한 스테이지 · 체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
-      <li><i>🏆</i><div><b>업적 · 칭호 · 보물 상자 · 쉬는 동안 코인</b>할수록 코인과 칭호가 쌓여요</div></li>
-      <li><i>👭</i><div><b>새 친구 소라 · 네네 · 미라이</b>캐릭터 화면에서 만나요</div></li>
-      <li><i>💾</i><div><b>기록 옮기기 코드</b>업적 화면 맨 아래에서 백업할 수 있어요</div></li>
     </ul>
     <button class="btn main" id="newsOk" type="button">좋아요!</button>
   </div>
@@ -564,6 +564,11 @@ const ROMAN = ['', ' Ⅱ', ' Ⅲ', ' Ⅳ', ' Ⅴ', ' Ⅵ', ' Ⅶ', ' Ⅷ', ' Ⅸ
 const themeOf = n => THEMES[(Math.max(1, n | 0) - 1) % THEMES.length];
 const lapTag = n => { const l = Math.floor((Math.max(1, n | 0) - 1) / THEMES.length); return l < ROMAN.length ? ROMAN[l] : ` ${l + 1}회차`; };
 const stageName = n => themeOf(n).name + lapTag(n);
+// 2회차부터(21스테이지~) 다른 세계: 배경 색만 바꿈(새 그림·필터 없이 tint → 렉 없음) · 규칙 두 개 겹침 · 보스 '각성'
+const lapOf = n => Math.floor((Math.max(1, n | 0) - 1) / THEMES.length);
+const WORLDS = [{name: '', ico: '', bg: 0xFFFFFF, boss: 0xFFFFFF}, {name: '밤의 세계', ico: '🌙', bg: 0x9AA6FF, boss: 0xD6CCFF},
+  {name: '붉은 달의 세계', ico: '🌕', bg: 0xFFA4A4, boss: 0xFFC6C6}, {name: '황금의 세계', ico: '👑', bg: 0xFFE3A0, boss: 0xFFEAB6}];
+const worldOf = n => { const l = lapOf(n); return l ? WORLDS[(l - 1) % 3 + 1] : WORLDS[0]; };
 // 스테이지 규칙: 테마마다 손맛이 달라짐 (THEMES의 rule)
 const RULES = {none: {name: '', desc: ''}, fest: {name: '축제의 밤', desc: '황금 블록이 자주 나와요'}, ice: {name: '미끄러운 얼음', desc: '공이 더 빨라져요'},
   lava: {name: '폭발 주의', desc: '폭탄 블록이 많아요'}, storm: {name: '천둥 번개', desc: '번개가 블록을 내리쳐요'}, steel: {name: '강철 장벽', desc: '철갑 블록이 많아요'},
@@ -573,8 +578,23 @@ const RULES = {none: {name: '', desc: ''}, fest: {name: '축제의 밤', desc: '
   toy: {name: '태엽 장난감', desc: '분열 블록이 많아요'}, neon: {name: '네온 사인', desc: '레이저 아이템이 자주 나와요'}, aurora: {name: '눈보라', desc: '가끔 모든 블록이 얼어붙어요'},
   clock: {name: '멈춘 시간', desc: '가끔 블록이 멈춰요'}, throne: {name: '왕좌의 위엄', desc: '크고 단단한 블록이 많아요'}};
 const ruleOf = () => (run ? themeOf(run.stage).rule : 'none') || 'none';
+// 이번 스테이지 규칙들: 1회차는 테마 규칙 하나, 2회차부터는 10칸 떨어진 테마의 규칙이 하나 더 (스테이지가 바뀔 때만 다시 계산)
+let rsStage = -1, rsList = ['none'];
+function rulesOf() {
+  const n = run ? run.stage | 0 : 0;
+  if (n !== rsStage) {
+    rsStage = n; const i = (Math.max(1, n) - 1) % THEMES.length, a = THEMES[i].rule || 'none';
+    const b = n && lapOf(n) ? THEMES[(i + 10) % THEMES.length].rule || 'none' : 'none';
+    rsList = b !== 'none' && b !== a ? [a, b] : [a];
+  }
+  return rsList;
+}
+const hasRule = r => rulesOf().includes(r);
 function ruleType(type, roll, t) {   // 줄 만들 때 규칙대로 특수 블록 바꾸기 (씨앗 순서는 그대로)
-  const r = ruleOf();
+  for (const r of rulesOf()) { const x = ruleType1(r, type, roll, t); if (x !== type) return x; }
+  return type;
+}
+function ruleType1(r, type, roll, t) {
   if (r === 'fest' && roll > .9) return 'gold';
   if (r === 'lava' && t > 30 && roll >= .07 && roll < .13) return 'bomb';
   if (r === 'steel' && t > 40 && roll >= .16 && roll < .25) return 'armor';
@@ -586,7 +606,10 @@ function ruleType(type, roll, t) {   // 줄 만들 때 규칙대로 특수 블�
   return type;
 }
 function ruleItem(type, it) {
-  const r = ruleOf();
+  for (const r of rulesOf()) { const x = ruleItem1(r, type, it); if (x !== type) return x; }
+  return type;
+}
+function ruleItem1(r, type, it) {
   if (r === 'sakura' && it >= .3 && it < .46) return 'heart';
   if ((r === 'cyber' || r === 'neon') && it >= .3 && it < .46) return it < .38 ? 'laserH' : 'laserV';
   if (r === 'sweet' && it >= .3 && it < .46) return 'coin';
@@ -607,7 +630,8 @@ const ACH = [
   {id: 's10', name: '달 너머로', desc: '스테이지 10 도달', stat: 'top', n: 10, coin: 1000, title: '우주 여행자'},
   {id: 's15', name: '시간을 넘어', desc: '스테이지 15 도달', stat: 'top', n: 15, coin: 2000, title: '무한의 볼러'},
   {id: 's20', name: '별의 왕좌', desc: '스테이지 20 도달', stat: 'top', n: 20, coin: 4000, title: '전설의 볼러'},
-  {id: 's25', name: '두 번째 바퀴', desc: '스테이지 25 도달 (Ⅱ회차)', stat: 'top', n: 25, coin: 6000, title: '무한의 지배자'},
+  {id: 's21', name: '밤의 세계', desc: '스테이지 21 도달 (두 번째 세계)', stat: 'top', n: 21, coin: 5000, title: '밤의 여행자'},
+  {id: 's25', name: '두 번째 바퀴', desc: '스테이지 25 도달 (밤의 세계)', stat: 'top', n: 25, coin: 6000, title: '무한의 지배자'},
   {id: 'b10', name: '보스 사냥 입문', desc: '보스 10마리 잡기', stat: 'bosses', n: 10, coin: 200},
   {id: 'b50', name: '보스 사냥꾼', desc: '보스 50마리 잡기', stat: 'bosses', n: 50, coin: 600, title: '보스 사냥꾼'},
   {id: 'b150', name: '보스의 천적', desc: '보스 150마리 잡기', stat: 'bosses', n: 150, coin: 1500, title: '보스의 천적'},
@@ -1167,13 +1191,13 @@ const U = k => (run.upg[k] || 0);
 // 능력치
 const atkMul = () => run.atkMeta * (1 + .15 * U('atk')) * (LG('power') ? 1.5 : 1);
 const fireInterval = () => .11 * Math.pow(.88, U('rate'));
-const ballSpeed = () => 980 * (1 + .1 * U('spd')) * (ruleOf() === 'ice' ? 1.15 : ruleOf() === 'sky' ? 1.1 : 1);
-const sizeMul = () => (1 + .12 * U('size')) * (LG('giant') ? 1.5 : 1) * (run.starT > 0 ? 1.4 : 1) * (ruleOf() === 'space' ? 1.2 : ruleOf() === 'sky' ? 1.1 : 1);
+const ballSpeed = () => 980 * (1 + .1 * U('spd')) * (hasRule('ice') ? 1.15 : 1) * (hasRule('sky') ? 1.1 : 1);
+const sizeMul = () => (1 + .12 * U('size')) * (LG('giant') ? 1.5 : 1) * (run.starT > 0 ? 1.4 : 1) * (hasRule('space') ? 1.2 : 1) * (hasRule('sky') ? 1.1 : 1);
 const critChance = () => .05 + .08 * U('crit') + .02 * U('luck');
 const isFinal = () => !!(run.boss && run.boss.boss.final);
 const descendSpeed = () => {
   // 화면 길이가 달라도 바닥까지 걸리는 시간은 같게 (세로 길이에 비례)
-  const base = (17 + Math.min(run.t, SPD_T) * .025 + Math.max(0, run.t - SPD_T) * SPD_LATE) * (1 - .08 * U('slow')) * (ruleOf() === 'sea' ? .85 : ruleOf() === 'sand' ? 1.15 : 1);
+  const base = (17 + Math.min(run.t, SPD_T) * .025 + Math.max(0, run.t - SPD_T) * SPD_LATE) * (1 - .08 * U('slow')) * (hasRule('sea') ? .85 : 1) * (hasRule('sand') ? 1.15 : 1);
   if (run.frozenT > 0) return 0;
   if (isFinal()) return 5.5;
   if (run.calmT > 0) return base * .35;      // 보스를 잡은 뒤 잠깐 숨 돌리기
@@ -1232,9 +1256,9 @@ function spawnRow() {
   const n = clamp(4 + Math.floor(t / 150) + Math.floor(R() * 3), 4, 7);
   const cols = []; for (let c = 0; c < COLS; c++) if (!row[c]) cols.push(c);
   for (let i = cols.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [cols[i], cols[j]] = [cols[j], cols[i]]; }
-  const base = hpBase(run.t) * ({sea: 1.15, sand: .85, throne: 1.2}[ruleOf()] || 1);
+  const base = hpBase(run.t) * rulesOf().reduce((m, r) => m * ({sea: 1.15, sand: .85, throne: 1.2}[r] || 1), 1);
   // 큰 블록 (2×2): 3분 뒤부터 가끔
-  if (t > 150 && R() < (ruleOf() === 'throne' ? .3 : .1)) {
+  if (t > 150 && R() < (hasRule('throne') ? .3 : .1)) {
     const c = Math.floor(R() * (COLS - 1)), r2 = gridRow(k + 1);
     if (!row[c] && !row[c + 1] && !r2[c] && !r2[c + 1]) {
       addBlock(k, c, 2, 2, Math.round(base * 4.5 * (.85 + R() * .3)), COLORS[Math.floor(R() * 5)], {big: true});
@@ -1339,7 +1363,8 @@ function spawnBoss(final) {
   const th = themeOf(run.stage), tex = final ? th.fin : th.mid;
   const hm = final ? Math.min(BOSS_HP.finMax, BOSS_HP.fin + BOSS_HP.finUp * (run.stage - 1)) : Math.min(BOSS_HP.midMax, BOSS_HP.mid + BOSS_HP.midUp * (run.stage - 1));
   const hp = Math.round(hpBase(run.t) * hm);
-  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: BOSS_NAMES[tex] + lapTag(run.stage), spawnT: 5, t0: run.t}});
+  const aw = lapOf(run.stage) > 0;   // 2회차부터 각성 보스: 색이 바뀌고 체력 절반에서 한 번 분노(부하 많이)
+  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: (aw ? '각성 ' : '') + BOSS_NAMES[tex] + lapTag(run.stage), spawnT: 5, t0: run.t, awake: aw ? worldOf(run.stage).boss : 0, rage: aw ? 1 : 0}});
   if (final) useStageBg(run.stage + 1, true);   // 다음 스테이지 배경 미리 받아 둠
   run.boss = b;
   $('#bossName').textContent = b.boss.name; $('#bossbar').hidden = false; updateBossBar();
@@ -1353,8 +1378,8 @@ function spawnBoss(final) {
 function spawnPartner(tex) {
   const w = 4, h = 3, c = Math.floor((COLS - w) / 2), k = run.nextK; run.nextK += h;
   for (let i = 0; i < h; i++) { const r = gridRow(k + i); for (let j = 0; j < w; j++) if (r[c + j]) removeBlock(r[c + j]); }
-  const hm = Math.min(BOSS_HP.midMax, BOSS_HP.mid + BOSS_HP.midUp * (run.stage - 1)), name = BOSS_NAMES[tex] + lapTag(run.stage);
-  addBlock(k, c, w, h, Math.round(hpBase(run.t) * hm * .8), 'boss', {boss: {tex, final: false, partner: true, name, spawnT: 8, t0: run.t}});
+  const aw = lapOf(run.stage) > 0, hm = Math.min(BOSS_HP.midMax, BOSS_HP.mid + BOSS_HP.midUp * (run.stage - 1)), name = (aw ? '각성 ' : '') + BOSS_NAMES[tex] + lapTag(run.stage);
+  addBlock(k, c, w, h, Math.round(hpBase(run.t) * hm * .8), 'boss', {boss: {tex, final: false, partner: true, name, spawnT: 8, t0: run.t, awake: aw ? worldOf(run.stage).boss : 0}});
   return name;
 }
 
@@ -1535,6 +1560,7 @@ function damage(blk, d, crit, kind) {
   if (blk.boss) d *= 1 + .25 * U('boss');
   blk.hp -= d;
   run.dmgTotal = (run.dmgTotal || 0) + d;
+  if (blk.boss && blk.boss.rage && blk.hp > 0 && blk.hp < blk.maxHp * .5) bossRage(blk);
   if (crit || blk.boss || (d >= blk.maxHp * .6 && d > 40)) showNum(blk, d, crit);   // 숫자는 치명타·보스·큰 한 방만 (화면이 지저분하지 않게)
   if (blk.hp <= 0) killBlock(blk);
   else if (blk.txt) blk.txtDirty = true;
@@ -1703,9 +1729,15 @@ function stepWorld(dt) {
   if (run.frozenT > 0) run.frozenT -= dt;
   if (run.shieldT > 0) run.shieldT -= dt;
   if (run.calmT > 0) run.calmT -= dt;
-  if (ruleOf() === 'storm') { run.thT = (run.thT ?? 8) - dt; if (run.thT <= 0) { run.thT = 8; thunder(); } }
-  if (ruleOf() === 'aurora') { run.thT = (run.thT ?? 10) - dt; if (run.thT <= 0) { run.thT = 10; for (const b of blocks) if (!b.dead && !b.boss) freeze(b, 2); banner('눈보라!', true); } }
-  if (ruleOf() === 'clock') { run.thT = (run.thT ?? 15) - dt; if (run.thT <= 0) { run.thT = 15; run.frozenT = Math.max(run.frozenT, 2); banner('시간 정지!', true); } }
+  for (const r of rulesOf()) if (RULE_T[r]) {
+    const rt = run.rt || (run.rt = {}); rt[r] = (rt[r] ?? RULE_T[r]) - dt;
+    if (rt[r] <= 0) {
+      rt[r] = RULE_T[r];
+      if (r === 'storm') thunder();
+      else if (r === 'aurora') { for (const b of blocks) if (!b.dead && !b.boss) freeze(b, 2); banner('눈보라!', true); }
+      else { run.frozenT = Math.max(run.frozenT, 2); banner('시간 정지!', true); }
+    }
+  }
   run.skillT += dt;
   // 스테이지 시계 (보스가 있으면 멈춤): 중간 보스 → 스테이지 보스
   if (!run.boss) run.stT += dt;
@@ -1743,6 +1775,7 @@ function stepWorld(dt) {
     else endRun(false);
   }
 }
+const RULE_T = {storm: 8, aurora: 10, clock: 15};   // 번개 8초 · 눈보라 10초 · 시간 정지 15초마다
 function thunder() {   // 폭풍 하늘섬: 번개가 블록 3개를 내리침 (내 편)
   const live = [...blocks].filter(b => !b.dead && !b.boss); if (!live.length) return;
   for (let i = 0; i < 3 && live.length; i++) { const b = live.splice(Math.floor(Math.random() * live.length), 1)[0], R = blockRect(b); zapLine(R.x + R.w / 2, FIELD_TOP - 40, R.x + R.w / 2, R.y + R.h / 2, 0xBFE8FF); damage(b, powRef() * 8, true, 'bolt'); }
@@ -1750,6 +1783,12 @@ function thunder() {   // 폭풍 하늘섬: 번개가 블록 3개를 내리침 (
 }
 function clearBottom(n) {   // 불사조 부활: 바닥 가까운 블록 치우기
   for (const b of [...blocks]) if (!b.dead && !b.boss && rowTop(b.k) + CELL > DANGER_Y - CELL * n) { const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFFD27A); removeBlock(b); }
+}
+function bossRage(b) {   // 각성 보스가 체력 절반 아래로: 한 번 분노 → 부하 두 배로 부르고 다음 부하도 빨리
+  b.boss.rage = 0; b.boss.spawnT = Math.min(b.boss.spawnT, 2.5);
+  bossMinions(b); bossMinions(b);
+  const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFF6F8F); shake = Math.min(14, shake + 8);
+  banner(`${b.boss.name}의 분노!`, true); S.warn();
 }
 function bossMinions(b) {
   const k = b.k + b.h, row = gridRow(k), base = hpBase(run.t);
@@ -1794,8 +1833,10 @@ function nextStage(cleared) {
   BGM.prefetch([themeOf(run.stage + 1).bgm || 'battle']);
   if (run.stage > save.top) { save.top = run.stage; persist(); }
   useStageBg(run.stage, false, true);
-  later(1.8, () => { if (run && !run.ended) banner(`스테이지 ${run.stage} · ${stageName(run.stage)}`, true); });
-  later(3.8, () => { const ru = RULES[themeOf(run.stage).rule]; if (run && !run.ended && ru && ru.name) banner(`${ru.name} · ${ru.desc}`, false); });
+  const newWorld = lapOf(run.stage) > lapOf(n), sh = newWorld ? 2.6 : 0;
+  if (newWorld) later(1.8, () => { if (run && !run.ended) { const w = worldOf(run.stage); banner(`${w.ico} ${w.name}에 들어왔어요!`, true); shake = 10; S.win(); } });
+  later(1.8 + sh, () => { if (run && !run.ended) banner(`스테이지 ${run.stage} · ${stageName(run.stage)}`, true); });
+  later(3.8 + sh, () => { if (run && !run.ended) ruleBanner(); });
   saveRunSoon();
 }
 function updateBossBar() { if (!run || !run.boss) return; $('#bossFill').style.transform = `scaleX(${Math.max(0, run.boss.hp / run.boss.maxHp)})`; }
@@ -1822,7 +1863,7 @@ function render(dt, frozen) {
     if (!frozen) b.jigT += dt;
     const amp = b.jig ? b.jig * Math.exp(-b.jigT * 9) : 0, wv = amp * Math.sin(b.jigT * 38), kd = Math.exp(-b.jigT * 14), ox = b.kx * kd, oy = b.ky * kd;
     sp.scale.set(k * (1 + wv), k * (1 - wv)); sp.position.set(cx + ox, cy + oy);
-    sp.tint = b.frozenT > 0 || (run.frozenT > 0) ? 0xB8E8FF : b.burnT > 0 ? 0xFFC0A0 : b.poison > 0 ? 0xE0C0FF : 0xFFFFFF;
+    sp.tint = b.frozenT > 0 || (run.frozenT > 0) ? 0xB8E8FF : b.burnT > 0 ? 0xFFC0A0 : b.poison > 0 ? 0xE0C0FF : b.boss && b.boss.awake ? b.boss.awake : 0xFFFFFF;
     if (b.flash > 0) { if (!frozen) b.flash -= dt; b.fl.visible = true; b.fl.alpha = Math.max(0, b.flash / .1) * .7; b.fl.scale.copyFrom(sp.scale); b.fl.position.copyFrom(sp.position); }
     else if (b.fl.visible) b.fl.visible = false;
     if (b.ck) {
@@ -1892,8 +1933,9 @@ function render(dt, frozen) {
   if (run.fever > 0 && state === 'play') {
     L.fever.visible = true; const h = (performance.now() / 1000 * .6) % 1, c = hsl(h);
     L.fever.tint = PIXI.utils.rgb2hex(c); L.fever.alpha = Math.min(1, run.fever / .5) * (.75 + .25 * Math.sin(performance.now() / 90));
-    L.bg.tint = PIXI.utils.rgb2hex([.72 + c[0] * .28, .72 + c[1] * .28, .72 + c[2] * .28]);     // 배경도 은은하게 물듦
-  } else if (L.fever.visible) { L.fever.visible = false; L.bg.tint = 0xFFFFFF; }
+    const wt = PIXI.utils.hex2rgb(worldOf(run.stage).bg);
+    L.bg.tint = PIXI.utils.rgb2hex([wt[0] * (.72 + c[0] * .28), wt[1] * (.72 + c[1] * .28), wt[2] * (.72 + c[2] * .28)]);     // 배경도 은은하게 물듦
+  } else if (L.fever.visible) { L.fever.visible = false; L.bg.tint = worldOf(run.stage).bg; }
   // 콤보 (5부터 보임, 바뀔 때마다 톡 튐, 10·25·50·100에서 색이 바뀜)
   const cb = run.combo || 0;
   if (cb >= 5 && state === 'play') {
@@ -1966,6 +2008,11 @@ function renderSide() {
   $('#sideStats').innerHTML = rows.map(([a, b]) => `<div class="statrow"><span>${a}</span><span>${b}</span></div>`).join('');
 }
 let bannerTimer = 0;
+function ruleBanner() {   // 이번 스테이지 규칙 안내 (2회차는 두 개)
+  const rs = rulesOf().map(r => RULES[r]).filter(ru => ru && ru.name);
+  if (rs.length === 1) banner(`${rs[0].name} · ${rs[0].desc}`, false);
+  else if (rs.length === 2) { banner(`규칙 두 개! ${rs[0].name} + ${rs[1].name}`, false); later(2.2, () => { if (run && !run.ended) banner(`${rs[0].desc} · ${rs[1].desc}`, false); }); }
+}
 function banner(text, blue) {
   const b = $('#banner'); b.firstElementChild.textContent = text; b.classList.toggle('blue', !!blue);
   b.classList.remove('go'); requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('go')));
@@ -2123,6 +2170,7 @@ const AUTO_W = {atk: 58, rate: 55, extra: 57, multi: 54, pierce: 52, burst: 50, 
 function autoGrow(n, cp) {
   // 직접 왔다면 모았을 것: 판 위 +1 아이템 기본 공(스테이지마다 2개쯤) · 5스테이지마다 보물 상자 전설 강화
   run.extraBasic = Math.min(BASIC_CAP, run.extraBasic + 2 * (cp - 1));
+  const score0 = run.score, coin0 = run.coinBonus;   // 자동 성장 중 '보너스'를 골라도 점수·코인은 안 붙음 (점수는 시작한 곳부터 — 예전엔 S21 시작이면 240만 점이 공짜로 붙었음)
   for (let c = 5; c < cp; c += 5) { const pool = Object.keys(LEG).filter(k => !LG(k)); if (pool.length) { run.leg[pool[Math.floor(run.cr() * pool.length)]] = 1; run.chestN++; } }
   for (let i = 0; i < n; i++) {
     run.level++;
@@ -2134,6 +2182,7 @@ function autoGrow(n, cp) {
     if (best) applyOffer(best, true);
   }
   run.xp = 0; run.xpNeed = xpNeedFor(run.level); run.hp = run.hpMax;
+  run.score = score0; run.coinBonus = coin0;
 }
 function reroll() { if (state !== 'levelup' || run.rerolls <= 0) return; run.rerolls--; offers = rollOffers(); renderOffers(); $('#rerollN').textContent = run.rerolls; $('#btnReroll').hidden = run.rerolls <= 0; S.pick(); }
 
@@ -2170,9 +2219,11 @@ let bgFadeT = 0;
 async function useStageBg(n, prefetch, fade) {
   const key = themeOf(n).bg;
   if (!TEX.bgs[key]) TEX.bgs[key] = await PIXI.Assets.load(`assets/${key}.webp${AV}`).catch(() => null) || TEX.bg;
-  if (prefetch || !L.bg || L.bg.texture === TEX.bgs[key]) return;
-  if (fade) { L.bgOld.texture = L.bg.texture; L.bgOld.alpha = 1; L.bgOld.visible = true; bgFadeT = 1.2; }
-  L.bg.texture = TEX.bgs[key];
+  if (prefetch || !L.bg) return;
+  const tint = worldOf(n).bg;   // 2회차부터 세계마다 배경 색 (밤·붉은 달·황금)
+  if (L.bg.texture === TEX.bgs[key]) { L.bg.tint = tint; return; }
+  if (fade) { L.bgOld.texture = L.bg.texture; L.bgOld.tint = L.bg.tint; L.bgOld.alpha = 1; L.bgOld.visible = true; bgFadeT = 1.2; }
+  L.bg.texture = TEX.bgs[key]; L.bg.tint = tint;
   if (app) { fitBg(L.bg, app.screen.width, app.screen.height); fitBg(L.bgOld, app.screen.width, app.screen.height); }
 }
 async function startGame(opts) {
@@ -2195,7 +2246,7 @@ async function startInner(opts) {
     Object.assign(run, o); run.wr = rng(0); run.wr.set(o.wr); run.cr = rng(0); run.cr.set(o.cr);
     layout();
     o.bl.forEach(([k, c, w, h, hp, mx, type]) => { const b = addBlock(k, c, w, h, mx, type, w > 1 ? {big: true} : null); b.hp = hp; b.txtDirty = true; });
-    if (o.bo) { const [k, c, w, h, hp, mx, tex, fin, name] = o.bo; const b = addBlock(k, c, w, h, mx, 'boss', {boss: {tex, final: !!fin, name, spawnT: 4, t0: o.t}}); b.hp = hp; run.boss = b; $('#bossName').textContent = name; $('#bossbar').hidden = false; S.boss = true; }
+    if (o.bo) { const [k, c, w, h, hp, mx, tex, fin, name] = o.bo; const aw = lapOf(o.stage) > 0, b = addBlock(k, c, w, h, mx, 'boss', {boss: {tex, final: !!fin, name, spawnT: 4, t0: o.t, awake: aw ? worldOf(o.stage).boss : 0, rage: aw && hp > mx * .5 ? 1 : 0}}); b.hp = hp; run.boss = b; $('#bossName').textContent = name; $('#bossbar').hidden = false; S.boss = true; }
     run.boss = run.boss && !run.boss.dead ? run.boss : null;
     (Array.isArray(o.it) ? o.it : []).forEach(([type, k, c, uses]) => { if (ITEM[type]) addItem(type, k, c, uses | 0 || ITEM_USES); });
     if (!Number.isFinite(run.t) || !Number.isFinite(run.score) || !Number.isFinite(run.hp) || !run.kinds || !Object.keys(run.kinds).every(k => BALLS[k])) throw new Error('bad save');
@@ -2229,6 +2280,11 @@ async function startInner(opts) {
   app.start();
   $('#hint').hidden = false; $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4500);
   banner(run.daily ? `오늘의 도전 · ${ch.name}` : `스테이지 ${run.stage} · ${stageName(run.stage)}`, run.daily);
+  if (!opts.resume && !run.daily) {   // 시작할 때도 세계(2회차~)·규칙 안내
+    const aw = lapOf(run.stage) > 0;
+    if (aw) later(2.2, () => { if (run && !run.ended) { const w = worldOf(run.stage); banner(`${w.ico} ${w.name}`, true); } });
+    later(aw ? 4.4 : 2.4, () => { if (run && !run.ended) ruleBanner(); });
+  }
   restoreVolume(); battleMusic(); BGM.prefetch(['boss', themeOf(run.stage + 1).bgm || 'battle']);
   inputLock = performance.now() + 300;
   clearInterval(autosave); autosave = setInterval(() => { if (state === 'play' || state === 'levelup') saveRun(); }, 10000);
@@ -2315,7 +2371,7 @@ function idleReward() {
   setTimeout(() => toast(`쉬는 동안 캐릭터들이 코인 ${fmt(got)}개를 모아 왔어요! (시간당 ${rate}개)`), 600);
 }
 // 기록 옮기기 코드: 'BB1-확인값-내용' (내용 = 저장 JSON을 base64로). 확인값이 안 맞으면 거절
-const NEWS_V = '20261009b';   // 바꾸면 모두에게 안내 창이 한 번 더 뜸
+const NEWS_V = '20261009c';   // 바꾸면 모두에게 안내 창이 한 번 더 뜸
 function codeSum(t) { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
 function exportCode() { const b = btoa(unescape(encodeURIComponent(JSON.stringify(save)))); return 'BB1-' + codeSum('astra-bb' + b) + '-' + b; }
 function importCode(code) {
@@ -2444,7 +2500,8 @@ function renderStage() {
   $('#stPrev').hidden = $('#stNext').hidden = !many; $('#stPrev').disabled = stView <= 0; $('#stNext').disabled = stView >= opts.length - 1;
   $('#stNo').textContent = many ? `시작 스테이지 · 최고 기록 ${t}` : 'ENDLESS STAGES';
   $('#stName').textContent = `스테이지 ${st} · ${stageName(st)}`;
-  $('#stInfo').textContent = st > 1 ? `레벨 ${CP_LV(st)}까지 자동 성장해서 시작 · 점수는 여기서부터` : many ? '처음부터 차근차근 · 점수를 가장 많이 모을 수 있어요' : '쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요';
+  const sw = worldOf(st);
+  $('#stInfo').textContent = (sw.name ? `${sw.ico} ${sw.name} · ` : '') + (st > 1 ? `레벨 ${CP_LV(st)}까지 자동 성장해서 시작 · 점수는 여기서부터` : many ? '처음부터 차근차근 · 점수를 가장 많이 모을 수 있어요' : '쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요');
   $('#btnStart').firstElementChild.textContent = st > 1 ? `스테이지 ${st}부터 시작` : many ? '처음부터 시작' : '게임 시작';
   $('#stagePick').style.backgroundImage = `url(assets/${themeOf(st).bg}.webp${AV})`;
   BGM.prefetch([themeOf(st).bgm || 'battle']);

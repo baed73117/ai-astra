@@ -323,7 +323,7 @@ body.wide .side{display:grid;gap:12px}
   <div class="t-foot">
     <div class="t-best"><span>최고 점수 <b id="tBest">0</b></span><span>최고 스테이지 <b id="tClears">0</b></span></div>
     <div class="stagepick" id="stagePick"><button class="sp-arr" id="stPrev" type="button" aria-label="이전 시작 스테이지" hidden>‹</button><div class="sp-mid"><small id="stNo">ENDLESS STAGES</small><b id="stName">스테이지 1 · 노을 옥상부터</b><em id="stInfo">쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요</em></div><button class="sp-arr" id="stNext" type="button" aria-label="다음 시작 스테이지" hidden>›</button></div>
-    <button class="btn glass" id="btnContinue" type="button" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg><span id="contLbl">이어 하기</span></button>
+    <button class="btn gold" id="btnContinue" type="button" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg><span id="contLbl">이어 하기</span></button>
     <button class="btn main xl" id="btnStart" type="button"><span>게임 시작</span><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg></button>
     <button class="daily" id="btnDaily" type="button"><div class="dc" id="dailyFace"></div><span><b>오늘의 도전</b><em style="font-style:normal" id="dailyInfo">모두가 같은 판으로 랭킹 대결!</em></span><svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
     <div class="row4">
@@ -393,8 +393,9 @@ body.wide .side{display:grid;gap:12px}
   <div class="card"><span class="tag">PAUSE</span><h2 class="c-title">잠깐 쉬어요</h2>
     <button class="btn main xl" id="btnResume" type="button">계속하기</button>
     <div class="row"><button class="btn soft" id="btnAutoP" type="button">자동 발사 켜짐</button><button class="btn soft" id="btnSound2" type="button"><span class="lbl">소리 켜짐</span></button></div>
+    <button class="btn gold" id="btnSaveQuit" type="button">💾 저장하고 나가기</button>
     <button class="btn soft" id="btnQuit" type="button">그만하고 결과 보기</button>
-    <p style="margin:0;font:500 12px var(--f-kr);color:var(--ink2)">창을 닫아도 다음에 '이어 하기'로 계속할 수 있어요</p>
+    <p style="margin:0;font:500 12px var(--f-kr);color:var(--ink2)">저장하고 나가면 다음에 첫 화면 '이어 하기'로 그 자리부터 계속해요</p>
   </div>
 </div>
 <!-- 결과 -->
@@ -2397,7 +2398,7 @@ function renderTitle() {
   $('#tCoins').textContent = fmt(save.coins); $('#tBest').textContent = fmt(save.best); $('#tClears').textContent = save.top || '-';
   const sv = loadRunSave();
   $('#btnContinue').hidden = !sv;
-  if (sv) { const m = Math.floor(sv.t / 60); $('#contLbl').textContent = `이어 하기 · ${sv.daily ? '' : 'S' + (sv.stage || 1) + ' '}${byKey(sv.char).name} ${m}분 ${Math.floor(sv.t % 60)}초${sv.daily ? ' (오늘의 도전)' : ''}`; }
+  if (sv) { const pt = Math.max(0, sv.t - (sv.daily ? 0 : CP_T(sv.startStage || 1))), m = Math.floor(pt / 60); $('#contLbl').textContent = `이어 하기 · ${sv.daily ? '오늘의 도전 · ' : '스테이지 ' + (sv.stage || 1) + ' · '}${byKey(sv.char).name} · ${m ? m + '분' : Math.floor(pt) + '초'}`; }
   const d = kstDate(), dc = dailyChar(d);
   $('#dailyFace').style.backgroundImage = `url(${PT_URL(dc.key)})`;
   const lead = rankTop && rankTop['bbd' + d] && rankTop['bbd' + d][0];
@@ -2626,6 +2627,14 @@ $('#btnHome').addEventListener('click', goTitle);
 $('#btnPause').addEventListener('click', pauseGame);
 $('#btnResume').addEventListener('click', resumeGame);
 $('#btnQuit').addEventListener('click', () => { if (!run) return; $('#pause').hidden = true; paused = false; endRun(false); });
+// 저장하고 나가기: 지금 판을 저장하고 첫 화면으로 (판은 끝내지 않음 → 다음에 '이어 하기')
+$('#btnSaveQuit').addEventListener('click', () => {
+  if (!run || run.ended || state !== 'play') return;
+  saveRun();
+  if (!loadRunSave()) { toast('저장하지 못했어요. 브라우저 저장 공간을 확인해 주세요'); return; }
+  run.ended = true;   // 첫 화면에 있는 동안 저장본이 다시 덮이지 않게 (결과·보상은 이어서 끝낼 때)
+  goTitle(); toast("저장했어요! 다음에 '이어 하기'로 그 자리부터 계속해요");
+});
 $('#btnSkill').addEventListener('click', useSkill);
 $('#btnAuto').addEventListener('click', toggleAuto);
 $('#btnAutoP').addEventListener('click', toggleAuto);

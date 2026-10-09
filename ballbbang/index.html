@@ -187,7 +187,17 @@ body.wide .side{display:grid;gap:12px}
 .news-list li{display:flex;gap:10px;align-items:center;padding:9px 11px;border-radius:12px;background:#F7F2FA;font:500 12.5px/1.4 var(--f-kr);color:var(--ink2)}
 .news-list li i{font-style:normal;font-size:20px;line-height:1;flex:none}
 .news-list li b{display:block;font:800 13.5px/1.3 var(--f-kr);color:var(--ink)}
+.news-list li.nw{background:linear-gradient(120deg,#FFF6D6,#FFE6F2);box-shadow:inset 0 0 0 1.5px #FFC24A}
+.news-list li.nw b::after{content:"NEW";margin-left:6px;padding:2px 6px;border-radius:999px;background:var(--pink);color:#fff;font:800 9.5px/1 var(--f-en);letter-spacing:.08em;vertical-align:2px}
 .lvup.chest .lvwrap h2{background:linear-gradient(180deg,#FFFBE0,#FFC24A);-webkit-background-clip:text;background-clip:text}
+.charc .mast{display:flex;align-items:center;gap:6px;margin-top:6px;font:800 11px/1 var(--f-kr);color:var(--pink)}
+.charc .mast i{flex:1;height:5px;border-radius:3px;background:#E8DDF0;position:relative;overflow:hidden;min-width:30px}
+.charc .mast i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--p);background:var(--pink)}
+.charc .mnext{display:block;margin-top:3px;font:500 10.5px/1.3 var(--f-kr);color:var(--ink2)}
+.charc .cos{display:inline-block;margin-top:6px;padding:5px 9px;border-radius:999px;background:linear-gradient(120deg,#FFF6D6,#FFE0F0);box-shadow:inset 0 0 0 1.5px var(--gold);font:800 11px/1 var(--f-kr);color:#4A2E00}
+.wk{display:grid;gap:4px}
+.wk div{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:10px;background:#F7F2FA;font:700 12.5px/1.2 var(--f-kr);color:var(--ink)}
+.wk div small{font:500 11px/1.2 var(--f-kr);color:var(--ink2)}
 .charc .pr.cond{font:700 10.5px/1.25 var(--f-kr);max-width:48%;text-align:right;white-space:normal}
 @keyframes sweep{0%,62%{left:-60%}100%{left:130%}}
 /* 첫 화면 */
@@ -337,6 +347,7 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="ach" hidden>
   <div class="card"><span class="tag">REWARDS</span><h2 class="c-title">업적 · 도감</h2>
     <div class="ach-sec"><b>오늘의 미션</b><small id="dmInfo"></small><div id="dmList" class="mlist"></div></div>
+    <div class="ach-sec"><b>이번 주 랭킹</b><small id="wkInfo">월요일마다 새로 시작 · 1~3등은 다음 주에 '주간 ○등' 칭호</small><div id="wkList" class="wk"></div></div>
     <div class="ach-sec"><b>칭호</b><small>고른 칭호가 랭킹에 이름과 같이 나와요</small><div id="titleList" class="chips"></div></div>
     <div class="ach-sec"><b>업적 <em id="achCount"></em></b><div id="achList" class="mlist"></div></div>
     <div class="ach-sec"><b>보스 도감 <em id="dexCount"></em></b><div id="dexGrid" class="dex"></div></div>
@@ -351,11 +362,11 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="news" hidden>
   <div class="card"><span class="tag">UPDATE</span><h2 class="c-title">새로워졌어요!</h2>
     <ul class="news-list">
-      <li><i>♾️</i><div><b>시간제한 없는 무한 스테이지</b>스테이지 20개 · 쓰러질 때까지 계속</div></li>
-      <li><i>🚩</i><div><b>체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
-      <li><i>🏆</i><div><b>업적 · 칭호 · 보스 도감 · 오늘의 미션</b>할수록 코인과 칭호가 쌓여요</div></li>
-      <li><i>🎁</i><div><b>5스테이지마다 보물 상자</b>전설 강화 하나를 골라요</div></li>
-      <li><i>💤</i><div><b>쉬는 동안 코인</b>안 하는 동안에도 친구들이 코인을 모아 와요</div></li>
+      <li class="nw"><i>🎐</i><div><b>캐릭터 숙련도 · 유카타 의상</b>한 캐릭터로 할수록 강해지고, Lv.10이면 축제 유카타를 입어요</div></li>
+      <li class="nw"><i>📅</i><div><b>주간 랭킹</b>월요일마다 새로 시작 · 1~3등은 '주간 ○등' 칭호</div></li>
+      <li class="nw"><i>🎵</i><div><b>테마마다 다른 전투 곡</b>얼음·용암·네온·벚꽃·우주 스테이지에 새 곡</div></li>
+      <li><i>♾️</i><div><b>무한 스테이지 · 체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
+      <li><i>🏆</i><div><b>업적 · 칭호 · 보물 상자 · 쉬는 동안 코인</b>할수록 코인과 칭호가 쌓여요</div></li>
       <li><i>👭</i><div><b>새 친구 소라 · 네네 · 미라이</b>캐릭터 화면에서 만나요</div></li>
       <li><i>💾</i><div><b>기록 옮기기 코드</b>업적 화면 맨 아래에서 백업할 수 있어요</div></li>
     </ul>
@@ -413,7 +424,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=1f80979b';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=bacf8d9b';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -431,7 +442,8 @@ const WIN_LINE = {ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한
 const GOOD_LINE = {ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
 const LOSE_LINE = {ruby: '으으… 한 번만 더 하자!', yuki: '괜찮아. 다시 하면 돼.', riko: '에이~ 몸풀기였어! 다시 고고!', sora: '에헤헤, 바람이 좀 셌네. 다시!', nene: '졸려… 한 판만 더 할까.', mirai: '연습은 끝! 이제 본무대야!'};
 const byKey = k => CHARS.find(c => c.key === k) || CHARS[0];
-const PT_URL = k => `assets/pt_${k}.webp${AV}`, SD_URL = k => `assets/sd_${k}.webp${AV}`, BLINK_URL = k => `assets/sd_${k}_blink.webp${AV}`;
+const skin = k => save && save.cos && save.cos[k] && mastLv(k) >= 10 ? '_' + save.cos[k] : '';   // 숙련도 Lv.10 의상 (지금은 c1 = 축제 유카타)
+const PT_URL = k => `assets/pt_${k}${skin(k)}.webp${AV}`, SD_URL = k => `assets/sd_${k}${skin(k)}.webp${AV}`, BLINK_URL = k => `assets/sd_${k}${skin(k)}_blink.webp${AV}`;
 // 공 15종 (balls.webp 5×3 칸 번호 = i). dmg = 기본 피해, owner = 콜라보 합체 연출에 나오는 캐릭터
 const BALLS = {
   basic: {i: 0, name: '기본 공', dmg: 10, color: 0xFFE3F1, desc: '단단하고 믿음직한 기본 공'},
@@ -599,7 +611,13 @@ const MISSIONS = [
   {id: 'chest', text: () => '보물 상자 1개 열기', n: [1], coin: 150}, {id: 'plays', text: n => `${n}판 하기`, n: [2, 3], coin: 100},
   {id: 'level', text: n => `한 판에 레벨 ${n} 달성`, n: [25, 35], coin: 120}, {id: 'daily', text: () => '오늘의 도전 1판', n: [1], coin: 100},
 ];
-const SCORE_CAP = 99990000;                  // 랭킹 시트 상한(1억) 안쪽 · 무한 스테이지라 사실상 제한 없음
+const SCORE_CAP = 99990000;
+// 캐릭터 숙련도: 판이 끝나면 그 캐릭터에 경험치(간 스테이지·부순 블록·잡은 보스) → Lv.1~10, 단계마다 작은 보너스, Lv.10 = 유카타 의상 + '○○ 마스터' 칭호 (오늘의 도전엔 보너스 없음)
+const MAST_XP = [0, 60, 150, 280, 450, 670, 950, 1300, 1720, 2220];
+const MAST_TXT = ['', '', '공격력 +3%', '시작 기본 공 +1', '최대 체력 +10', '공격력 +3%', '특기 쿨타임 -6%', '시작 기본 공 +1', '특기 위력 +10%', '공격력 +4% · 체력 +10', '유카타 의상 · 마스터 칭호'];
+const mastXp = k => (save.mast && save.mast[k]) || 0;
+const mastLv = k => { const x = mastXp(k); let l = 1; while (l < 10 && x >= MAST_XP[l]) l++; return l; };
+function mastBonus(k) { const l = mastLv(k); return {atk: (l >= 2 ? .03 : 0) + (l >= 5 ? .03 : 0) + (l >= 9 ? .04 : 0), balls: (l >= 3 ? 1 : 0) + (l >= 7 ? 1 : 0), hp: (l >= 4 ? 10 : 0) + (l >= 9 ? 10 : 0), cd: l >= 6 ? .94 : 1, pow: l >= 8 ? 1.1 : 1}; }                  // 랭킹 시트 상한(1억) 안쪽 · 무한 스테이지라 사실상 제한 없음
 
 /* ---------- 저장 (새 키: astra-universe-breaker-v1) ---------- */
 const SAVE_KEY = 'astra-universe-breaker-v1', RUN_KEY = 'astra-universe-breaker-run';
@@ -618,7 +636,10 @@ function loadSave() {
   const ach = Array.isArray(s.ach) ? s.ach.filter(id => ACH.some(a => a.id === id)) : [];
   const d0 = s.dm && typeof s.dm === 'object' ? s.dm : {}, dm = {d: String(d0.d || ''), p: {}, done: Array.isArray(d0.done) ? d0.done.map(String) : [], streak: n(d0.streak), last: String(d0.last || ''), best: n(d0.best)};
   MISSIONS.forEach(m => { dm.p[m.id] = n(d0.p && d0.p[m.id]); });
-  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) ? s.title : '', dm,
+  const mast = {}, cos = {};
+  if (s.mast && typeof s.mast === 'object') for (const k of Object.keys(s.mast)) if (CHARS.some(c => c.key === k)) mast[k] = n(s.mast[k]);
+  if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && s.cos[k] === 'c1') cos[k] = 'c1';
+  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123])$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, wbest: n(s.wbest), wseen: String(s.wseen || ''),
     muted: s.muted === true, auto: s.auto !== false, daily: s.daily && typeof s.daily === 'object' ? {d: String(s.daily.d || ''), best: n(s.daily.best)} : {d: '', best: 0}};
 }
 const save = loadSave();
@@ -1098,13 +1119,14 @@ function newRun(opts) {
   const daily = !!opts.daily, seed = daily ? opts.seed : (Math.random() * 4294967296) >>> 0;
   const ch = byKey(opts.char);
   const shop = daily ? {atk: 0, hp: 0, start: 0, xp: 0, reroll: 0} : save.shop;
+  const mb = daily ? {atk: 0, balls: 0, hp: 0, cd: 1, pow: 1} : mastBonus(ch.key);   // 숙련도 보너스 (오늘의 도전은 공정하게 없음)
   return {
     started: false, daily, seed, dateNum: opts.dateNum || 0, char: ch.key, stage: 1, startStage: 1, prevTop: save.top, stT: 0, stPh: 0,   // stT = 스테이지 시계 · stPh = 0 시작 · 1 중간 보스 나옴 · 2 스테이지 보스 나옴
     wr: rng(seed), cr: rng(seed ^ 0x9E3779B9),          // 블록용 · 선택지용 (고른 것이 블록 배치를 바꾸지 않게)
     t: 0, scroll: 0, nextK: 0, score: 0, kills: 0, level: 1, xp: 0, xpNeed: xpNeedFor(1),
-    hp: 100 + shop.hp * 10, hpMax: 100 + shop.hp * 10, atkMeta: 1 + shop.atk * .08, xpMeta: 1 + shop.xp * .06,
-    rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start, fusions: [],
-    upg: {}, skillT: 0, skillCd: 22, frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
+    hp: 100 + shop.hp * 10 + mb.hp, hpMax: 100 + shop.hp * 10 + mb.hp, atkMeta: (1 + shop.atk * .08) * (1 + mb.atk), xpMeta: 1 + shop.xp * .06,
+    rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
+    upg: {}, skillT: 0, skillCd: 22 * mb.cd, frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
     hitCount: 0, pendingLv: 0, minK: 0, bossN: 0, maxCombo: 0, chestN: 0, dexRun: 0, leg: {}, pendingChest: 0, revived: false, starT: 0,
   };
 }
@@ -1935,7 +1957,7 @@ function cutIn(small, text, a, b, c1, c2) {
 /* ---------- 특기 ---------- */
 let skillPoseT = 0;
 const skillCdNow = () => run.skillCd * Math.pow(.88, U('skillcd')) * (LG('charge') ? .6 : 1);
-const skillPow = () => (1 + .3 * U('skillpow')) * atkMul() * (1 + run.level * .06);
+const skillPow = () => (1 + .3 * U('skillpow')) * atkMul() * (1 + run.level * .06) * (run.mPow || 1);
 function later(sec, fn) { (run.skillQ || (run.skillQ = [])).push({t: run.t + sec, fn}); }   // 게임 시간으로 잠시 뒤에 (차례대로 넣음)
 function useSkill() {
   if (state !== 'play' || paused || !run || run.skillT < skillCdNow()) return;
@@ -2093,7 +2115,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -2214,12 +2236,18 @@ function endRun(won) {
   run.rewards = applyRewards(run);
   if (run.daily) { if (save.daily.d !== String(run.dateNum)) save.daily = {d: String(run.dateNum), best: 0}; save.daily.best = Math.max(save.daily.best, finalScore); }
   persist();
+  sendStat(run);
   const r = run;
   setTimeout(() => { if (run === r) showResult(won); }, won ? 1800 : 900);
 }
 // 판이 끝나면: 기록 쌓기 → 오늘의 미션 → 업적 → 조건 캐릭터 합류. 받은 보상 글 목록을 돌려줌 (결과 화면에 표시)
 function applyRewards(r) {
   const out = [], R = save.rec;
+  // 숙련도: 간 스테이지 수 ×10 + 블록 100개당 1 + 보스 1마리당 2
+  const mg = Math.round(10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)), lv0 = mastLv(r.char);
+  save.mast[r.char] = mastXp(r.char) + mg;
+  const lv1 = mastLv(r.char);
+  out.push(`${byKey(r.char).name} 숙련도 +${mg}` + (lv1 > lv0 ? ` · Lv.${lv1}! ${MAST_TXT[lv1]}` : ''));
   R.kills += r.kills || 0; R.bosses += r.bossN || 0; R.combo = Math.max(R.combo, r.maxCombo || 0); R.chests += r.chestN || 0; if (r.daily) R.dailies++;
   if ((r.startStage || 1) === 1 || r.stage > r.startStage) R.cbest[r.char] = Math.max(R.cbest[r.char] || 0, r.stage);
   save.dex = (save.dex | (r.dexRun || 0)) & 0xFFFFFFF;
@@ -2258,7 +2286,7 @@ function idleReward() {
   setTimeout(() => toast(`쉬는 동안 캐릭터들이 코인 ${fmt(got)}개를 모아 왔어요! (시간당 ${rate}개)`), 600);
 }
 // 기록 옮기기 코드: 'BB1-확인값-내용' (내용 = 저장 JSON을 base64로). 확인값이 안 맞으면 거절
-const NEWS_V = '20261009';
+const NEWS_V = '20261009b';   // 바꾸면 모두에게 안내 창이 한 번 더 뜸
 function codeSum(t) { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
 function exportCode() { const b = btoa(unescape(encodeURIComponent(JSON.stringify(save)))); return 'BB1-' + codeSum('astra-bb' + b) + '-' + b; }
 function importCode(code) {
@@ -2270,7 +2298,39 @@ function importCode(code) {
   Object.assign(save, loadSave()); save.news = NEWS_V; persist(); clearRunSave(); stView = -1;
   return true;
 }
-const titleText = () => { const a = ACH.find(x => x.id === save.title); return a ? a.title : ''; };
+const titleText = () => {
+  const t = save.title || '';
+  if (t.startsWith('m:')) { const k = t.slice(2); return mastLv(k) >= 10 ? byKey(k).name + ' 마스터' : ''; }
+  if (t.startsWith('w:')) return save.wbest && save.wbest <= +t.slice(2) ? `주간 ${t.slice(2)}등` : '';
+  const a = ACH.find(x => x.id === t); return a ? a.title : '';
+};
+// 주간 랭킹: 'bbw' + 이번 주 월요일(한국 시간). 시트는 이번 주·지난주 것만 받음. 지난주 1~3등(같은 닉네임)은 '주간 ○등' 칭호
+function weekKey(off) { const d = new Date(Date.now() + 9 * 3600e3), dow = (d.getUTCDay() + 6) % 7, m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - dow - 7 * (off || 0))); return 'bbw' + (m.getUTCFullYear() * 1e4 + (m.getUTCMonth() + 1) * 100 + m.getUTCDate()); }
+let wkBusy = false;
+function sendWeekly(score, info, delay) {
+  const g = weekKey(), nm = RankNet.name;
+  if (!RankNet.on || !nm || !rankTop || !Object.prototype.hasOwnProperty.call(rankTop, g) || !(score > RankNet.sent(g))) return;
+  setTimeout(() => {   // 결과 화면·랭킹 올리기 두 곳에서 불려도 한 번만 (보내기 직전에 다시 확인)
+    if (wkBusy || !(score > RankNet.sent(g))) return;
+    wkBusy = true;
+    RankNet.send(g, RankNet.name || nm, score, info).then(j => { if (j && j.ok && j.top) rankTop = j.top; }).catch(() => {}).then(() => { wkBusy = false; });
+  }, delay);
+}
+function weeklyCheck() {
+  const g = weekKey(1), list = rankTop && rankTop[g], nm = RankNet.name;
+  if (!list || !nm || save.wseen === g) return;
+  const i = list.slice(0, 3).findIndex(x => x.name === nm);
+  save.wseen = g;
+  if (i >= 0) { save.wbest = Math.min(save.wbest || 9, i + 1); toast(`지난주 주간 랭킹 ${i + 1}등! '주간 ${i + 1}등' 칭호를 받았어요`); }
+  persist();
+}
+// 익명 판 기록 (이름 없이 스테이지·캐릭터·시간·레벨만) → 시트 '볼빵기록' 탭: 실제 사람 기준으로 난이도를 맞추는 데 씀
+function sendStat(r) {
+  if (!RankNet.on) return;
+  const body = {kind: 'stat', id: RankNet.id(), stage: r.stage, start: r.startStage || 1, char: r.char, sec: Math.floor(played()), lv: r.level,
+    shop: Object.values(save.shop).reduce((a, b) => a + b, 0), m: mastLv(r.char), daily: r.daily ? 1 : 0, score: r.final || 0};
+  setTimeout(() => RankNet.req({method: 'POST', body: JSON.stringify(body)}).catch(() => {}), 2500);
+}
 function restoreVolume() { if (S.music) S.music.gain.value = .32; if (S.bgm) S.bgm.gain.value = BGM_VOL; }
 function showResult(won) {
   state = 'over'; paused = false; overT = 0;
@@ -2290,6 +2350,7 @@ function showResult(won) {
   // 랭킹 (시트가 이 게임을 받을 준비가 됐을 때만)
   const ch = byKey(run.char), info = `${run.daily ? '도전 ' + String(run.dateNum).slice(4) + ' · ' : ''}${titleText() ? titleText() + ' · ' : ''}${ch.name} · ${run.startStage > 1 ? 'S' + run.startStage + '→' : '스테이지 '}${run.stage}`;
   const game = run.daily ? 'bbd' + run.dateNum : 'ballbbang';    // 오늘의 도전은 날짜별 랭킹
+  if (!run.daily) sendWeekly(finalScore, info, 6500);   // 주간 랭킹 (전체 랭킹 올린 뒤 몇 초 있다가 — 시트가 한 기기에서 5초에 한 번만 받음)
   if (rankSupported) RankUI.show(game, finalScore, info); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info); }); }
   $('#result').hidden = false; lockEl($('#result .card'), 500);
   const r = run; setTimeout(() => { if (state === 'over' && run === r) BGM.play('title', 1.2); }, 1600);
@@ -2371,8 +2432,13 @@ function openAch() {
   const P = save.dm.p, ml = $('#dmList'); ml.innerHTML = '';
   $('#dmInfo').textContent = `매일 바뀌어요 · 3개 다 하면 보너스 코인 (최고 연속 ${save.dm.best}일)`;
   todayMissions().forEach(m => ml.appendChild(mrow(m.text, `${fmt(Math.min(P[m.id], m.n))} / ${fmt(m.n)}`, P[m.id] / m.n, `+${m.coin}`, save.dm.done.includes(m.id))));
+  const wl = $('#wkList'), wk = rankTop && rankTop[weekKey()]; wl.innerHTML = '';
+  if (wk && wk.length) wk.slice(0, 3).forEach((x, i) => { const d = document.createElement('div'); d.innerHTML = '<span></span><small></small>'; d.firstChild.textContent = `${['🥇', '🥈', '🥉'][i]} ${x.name}`; d.lastChild.textContent = fmt(x.score); wl.appendChild(d); });
+  else { const d = document.createElement('div'); d.innerHTML = '<small></small>'; d.firstChild.textContent = rankTop ? '이번 주 기록이 아직 없어요 · 첫 1등에 도전!' : '랭킹을 불러오는 중이거나 연결이 안 돼요'; wl.appendChild(d); }
   const tl = $('#titleList'); tl.innerHTML = '';
   tl.appendChild(chip('칭호 없음', !save.title, false, () => { save.title = ''; persist(); openAch(); }));
+  CHARS.filter(c => mastLv(c.key) >= 10).forEach(c => tl.appendChild(chip(c.name + ' 마스터', save.title === 'm:' + c.key, false, () => { save.title = 'm:' + c.key; persist(); openAch(); })));
+  [1, 2, 3].filter(n => save.wbest && save.wbest <= n).slice(0, 1).forEach(n => tl.appendChild(chip(`주간 ${n}등`, save.title === 'w:' + n, false, () => { save.title = 'w:' + n; persist(); openAch(); })));
   ACH.filter(a => a.title).forEach(a => { const got = save.ach.includes(a.id); tl.appendChild(chip(a.title, save.title === a.id, !got, () => { if (!got) { toast(`「${a.name}」 업적을 달성하면 열려요`); return; } save.title = a.id; persist(); openAch(); })); });
   $('#achCount').textContent = `${save.ach.length} / ${ACH.length}`;
   const al = $('#achList'); al.innerHTML = '';
@@ -2395,6 +2461,17 @@ function openChars() {
     b.innerHTML = `<div class="ph" style="background-image:url(${PT_URL(c.key)})"></div><div style="flex:1;min-width:0"><span class="en"></span><h4></h4><p></p><div class="kit"><i style="background-image:url(assets/balls.webp${AV});background-position:${(bd.i % 5) * 25}% ${Math.floor(bd.i / 5) * 50}%"></i><span></span></div></div>${own ? '' : c.unlock ? `<span class="pr cond">🔒 ${c.unlock.text}</span>` : `<span class="pr">🔒 ${fmt(c.price)}</span>`}`;
     b.querySelector('.en').textContent = c.en; b.querySelector('h4').textContent = c.name; b.querySelector('p').textContent = c.desc;
     b.querySelector('.kit span').textContent = `${bd.name}으로 시작 · 「${c.skill}」`;
+    if (own) {   // 숙련도 · 의상
+      const l = mastLv(c.key), x = mastXp(c.key), pct = l >= 10 ? 100 : Math.round((x - MAST_XP[l - 1]) / (MAST_XP[l] - MAST_XP[l - 1]) * 100);
+      const mw = document.createElement('div'); mw.innerHTML = `<div class="mast"><span>숙련도 Lv.${l}</span><i style="--p:${pct}%"></i></div><span class="mnext"></span>`;
+      mw.querySelector('.mnext').textContent = l >= 10 ? '최고 단계! 유카타 의상을 입을 수 있어요' : `다음 Lv.${l + 1}: ${MAST_TXT[l + 1]} (${fmt(x)} / ${fmt(MAST_XP[l])})` + (l < 9 ? ' · Lv.10엔 🎐유카타' : '');
+      if (l >= 10) {
+        const cb = document.createElement('span'); cb.className = 'cos'; cb.setAttribute('role', 'button'); cb.textContent = save.cos[c.key] ? '기본 옷으로 갈아입기' : '🎐 유카타 입기';
+        cb.addEventListener('click', ev => { ev.stopPropagation(); if (save.cos[c.key]) delete save.cos[c.key]; else save.cos[c.key] = 'c1'; persist(); openChars(); renderTitle(); });
+        mw.appendChild(cb);
+      }
+      b.querySelector('.kit').after(mw);
+    }
     b.addEventListener('click', () => {
       if (own) { save.sel = c.key; persist(); openChars(); return; }
       if (c.unlock) {
@@ -2473,6 +2550,7 @@ const RankUI = {
     let text;
     try {
       const r = await RankNet.send(this.game, name, this.score, this.info);
+      if (r && r.ok && this.game === 'ballbbang') sendWeekly(this.score, this.info, 6000);
       if (r && r.ok) { if (run !== this.run) return; msg.textContent = r.rank <= 3 ? `전체 ${r.rank}등! 홈페이지에 이름이 올라가요` : `전체 ${r.rank}등이에요 · 내 최고 ${Number(r.best).toLocaleString('ko-KR')}`; btn.textContent = '올렸어요'; return; }
       const retry = r && (r.why === 'slow' || r.why === 'busy' || r.why === 'error');
       if (retry && auto === true && run === this.run) { msg.textContent = '잠시 후 자동으로 다시 올려요…'; btn.disabled = false; btn.textContent = '랭킹 올리기'; setTimeout(() => { if (run === this.run) this.up('retry'); }, 5500); return; }
@@ -2486,7 +2564,7 @@ let rankSupported = false, rankTop = null;
 function checkRank() {
   return RankNet.top().then(j => {
     rankSupported = !!(j && j.ok && j.top && Object.prototype.hasOwnProperty.call(j.top, 'ballbbang'));
-    if (rankSupported) { rankTop = j.top; if (state === 'title') renderTitle(); }
+    if (rankSupported) { rankTop = j.top; weeklyCheck(); if (state === 'title') renderTitle(); }
     return rankSupported;
   }).catch(() => false);
 }

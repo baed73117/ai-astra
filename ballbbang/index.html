@@ -2680,7 +2680,8 @@ function weeklyCheck() {
 function sendStat(r) {
   if (!RankNet.on || r.fast) return;
   const body = {kind: 'stat', id: RankNet.id(), stage: r.stage, start: r.startStage || 1, char: r.char, sec: Math.floor(played()), lv: r.level,
-    shop: Object.values(save.shop).reduce((a, b) => a + b, 0), m: mastLv(r.char), daily: r.daily ? 1 : 0, score: r.final || 0, tk: r.tk && r.tk !== '-' ? r.tk : ''};
+    shop: Object.values(save.shop).reduce((a, b) => a + b, 0), m: mastLv(r.char), daily: r.daily ? 1 : 0, score: r.final || 0, tk: r.tk && r.tk !== '-' ? r.tk : '',
+    fu: (r.fusions || []).join(','), kd: Object.entries(r.kinds || {}).map(([k, v]) => k + v).join(' '), leg: Object.keys(r.leg || {}).join(',')};   // 시트 v12: 고른 합체·공·전설 (밸런스 자료)
   setTimeout(() => RankNet.req({method: 'POST', body: JSON.stringify(body)}).catch(() => {}), 2500);
 }
 function restoreVolume() { if (S.music) S.music.gain.value = .32 * volM(); if (S.bgm) S.bgm.gain.value = BGM_VOL * volM(); if (S.sfx) S.sfx.gain.value = .8 * volS(); }

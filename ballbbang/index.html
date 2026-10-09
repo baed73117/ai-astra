@@ -2804,6 +2804,7 @@ function renderTitle() {
   $('#sideBest').textContent = fmt(save.best); $('#sideClears').textContent = save.clears; $('#sideTop').textContent = save.top || '-';
   renderStage();
   idleReward(); $('#tCoins').textContent = fmt(save.coins);
+  if (save.news !== NEWS_V && !save.plays && !save.best) { save.news = NEWS_V; persist(); }   // 처음 온 사람에겐 '새로워졌어요' 안내를 안 띄움 (2026-10-10)
   if (save.news !== NEWS_V) $('#news').hidden = false;   // 업데이트 안내는 한 번만
   else setTimeout(maybeAtt, 400);
   dmRoll(); $('#btnAch').classList.toggle('dot', save.dm.done.length < 3);   // 오늘의 미션이 남아 있으면 빨간 점

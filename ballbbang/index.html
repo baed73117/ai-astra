@@ -806,7 +806,8 @@ function initGraphics() {
     L.circle = new PIXI.Sprite(TEX.circle); L.circle.anchor.set(.5); L.circle.blendMode = PIXI.BLEND_MODES.ADD; L.pad.addChild(L.circle);
     L.aura = new PIXI.Sprite(TEX.spark); L.aura.anchor.set(.5); L.aura.blendMode = PIXI.BLEND_MODES.ADD; L.aura.visible = false; W.addChild(L.aura);
     L.pillar = new PIXI.Sprite(TEX.pillar); L.pillar.anchor.set(.5, 1); L.pillar.blendMode = PIXI.BLEND_MODES.ADD; L.pillar.visible = false; W.addChild(L.pillar);
-    L.player = new PIXI.Sprite(); L.player.anchor.set(.5, SD_FOOT); W.addChild(L.player);
+    L.player = new PIXI.SimplePlane(PIXI.Texture.WHITE, MESH_X, MESH_Y); L.player.visible = false; W.addChild(L.player);
+    L.player2 = new PIXI.SimplePlane(PIXI.Texture.WHITE, MESH_X, MESH_Y); L.player2.visible = false; W.addChild(L.player2);
     L.orb = new PIXI.Sprite(TEX.k[0]); L.orb.anchor.set(.5); W.addChild(L.orb);
     fx = new Fx(W);
     L.nums = new PIXI.Container(); W.addChild(L.nums);
@@ -1109,7 +1110,7 @@ function fire(dt) {
     for (let m = 0; m < U('multi'); m++) { const a2 = ang + (m % 2 ? 1 : -1) * (.08 + .04 * m); spawnBall('basic', SHOOT_X, SHOOT_Y, Math.cos(a2) * sp, Math.sin(a2) * sp, true); }
     if (U('burst') && fireN % Math.max(2, 6 - U('burst')) === 0) for (const d of [-.22, .22]) spawnBall(kind, SHOOT_X, SHOOT_Y, Math.cos(ang + d) * sp, Math.sin(ang + d) * sp, true);
     S.shoot();
-    if (throwCd <= 0) { throwT = .16; throwCd = .36; fx.spawn(TEX.ring, {x: SHOOT_X, y: SHOOT_Y, tint: BALLS[kind].color, s0: .12, s1: .5, a0: .9, a1: 0, life: .2, add: true}); }
+    if (throwCd <= 0) { throwT = .22; throwCd = .75; fx.spawn(TEX.ring, {x: SHOOT_X, y: SHOOT_Y, tint: BALLS[kind].color, s0: .12, s1: .5, a0: .9, a1: 0, life: .2, add: true}); }
   }
 }
 let throwT = 0, throwCd = 0;
@@ -1467,6 +1468,25 @@ function bossDown(b) {
 }
 function updateBossBar() { if (!run || !run.boss) return; $('#bossFill').style.transform = `scaleX(${Math.max(0, run.boss.hp / run.boss.maxHp)})`; }
 
+/* ---------- 캐릭터 몸 움직임: 발은 땅에 붙이고 위로 갈수록 휘고 출렁임 (그림 1장을 부드럽게 변형) ---------- */
+const MESH_X = 5, MESH_Y = 9, POSE_FADE = .1;
+const bendS = {x: 0, v: 0}, hopS = {x: 0, v: 0}, sqS = {x: 0, v: 0};
+let curF = -1, fadeT = 0, prevThrowT = 0, prevHurtT = 0, prevLvT = 0, winHopT = 0;
+function spring(o, to, k, c, dt) { o.v += (-k * (o.x - to) - c * o.v) * dt; o.x += o.v * dt; }
+// top = 머리 쪽 가로 휨(키 대비) · sway = 살랑임 · sqx/sqy = 가로·세로 늘이기 (발 기준)
+function bendBody(m, top, sway, sqx, sqy) {
+  const g = m.geometry, buf = g.getBuffer('aVertexPosition'), d = buf.data, W = g.width, H = g.height, F = H * SD_FOOT;
+  for (let j = 0; j < MESH_Y; j++) {
+    const y0 = j / (MESH_Y - 1) * H, w = clamp((F - y0) / F, 0, 1), dx = (top + sway) * H * Math.pow(w, 1.7), ny = F - (F - y0) * (1 + sqy);
+    for (let i = 0; i < MESH_X; i++) {
+      const x0 = i / (MESH_X - 1) * W, k = (j * MESH_X + i) * 2;
+      d[k] = W / 2 + (x0 - W / 2) * (1 + sqx * (.35 + .65 * w)) + dx;
+      d[k + 1] = ny;
+    }
+  }
+  buf.update();
+}
+
 /* ---------- 그리기 ---------- */
 function render(dt, frozen) {
   if (!run) return;
@@ -1499,27 +1519,35 @@ function render(dt, frozen) {
   // 조준선 (벽에 한 번 튕기는 것까지)
   drawGuide();
   // 캐릭터
-  const P = L.player, now = performance.now() / 1000;
+  const P = L.player, P2 = L.player2, now = performance.now() / 1000;
   if (SD) {
-    // 대기: 가끔 눈을 감고 웃음 · 던질 때 통통 · 맞으면 움찔 · 특기 때 떠오름 · 이기면 폴짝폴짝
-    blinkT -= dt; if (blinkT < -nextBlink) { blinkT = .26; nextBlink = 2.2 + Math.random() * 2.6; }
+    // 자세(그림 6장): 기본 · 눈 감고 웃음(가끔) · 던지기 · 특기 · 맞음 · 승리
+    blinkT -= dt; if (blinkT < -nextBlink) { blinkT = .3; nextBlink = 2.4 + Math.random() * 2.8; }
     let f = 0;
     if (run.ended && run.won) f = 5; else if (hurtT > 0) f = 4; else if (skillPoseT > 0) f = 3; else if (throwT > 0) f = 2; else if (blinkT > 0 || lvFxT > 0) f = 1;
-    if (P.texture !== SD[f]) P.texture = SD[f];
-    const sc = 172 / (SD_H * sdUnit), br = Math.sin(now * 3.2) * .012;
-    let x = 0, y = 0, sx = 1, sy = 1;
-    if (f === 5) { const j = Math.abs(Math.sin(now * 6)); y = -j * 16; sy = 1 + j * .04; sx = 1 - j * .03; }
-    else if (f === 4) x = Math.sin(now * 70) * 5 * Math.min(1, hurtT / .3);
-    else if (f === 3) { const u = 1 - skillPoseT / .8; y = -15 * Math.sin(Math.min(1, u * 4) * Math.PI / 2) * Math.min(1, skillPoseT / .15); }
-    else if (f === 2) { const u = Math.sin((1 - throwT / .16) * Math.PI); y = -7 * u; sy = 1 + .05 * u; sx = 1 - .035 * u; }
-    if (lvFxT > 0) y = Math.min(y, -20 * Math.sin((1 - lvFxT / LVFX) * Math.PI));
-    if (nearDanger > .6 && f !== 5) x += Math.sin(now * 46) * 1.3;
-    // 조준하는 쪽으로 몸을 살짝 기울임
-    const aimA = Math.atan2(aim.y, aim.x) + Math.PI / 2;
-    lean += (clamp(aimA * .2, -.2, .2) - lean) * Math.min(1, dt * 10);
-    P.rotation = f === 4 || f === 5 ? 0 : lean;
-    P.scale.set(sc * sx * (1 - br * .5), sc * sy * (1 + br)); P.position.set(SHOOT_X + x, FEET_Y + y);
-    P.tint = f === 4 && (now * 14 | 0) % 2 ? 0xFF9AAC : 0xFFFFFF;
+    // 자세가 바뀌면 이전 그림이 0.1초 동안 겹쳐 사라짐 (툭 바뀌지 않게)
+    if (f !== curF) { if (curF >= 0) { P2.texture = SD[curF]; P2.visible = true; fadeT = POSE_FADE; } curF = f; P.texture = SD[f]; P.visible = true; }
+    // 용수철 힘: 던질 때 휙 · 맞으면 휘청 · 이기면 폴짝 · 레벨업 점프
+    if (throwT > 0 && prevThrowT <= 0) { bendS.v += aim.x * 1.5; hopS.v -= 150; sqS.v += 2.4; }
+    if (hurtT > 0 && prevHurtT <= 0) { bendS.v += (Math.random() < .5 ? -1 : 1) * 2.6; hopS.v += 90; sqS.v -= 3.4; }
+    if (lvFxT > prevLvT + .01) { hopS.v -= 270; sqS.v += 3; }
+    if (f === 5) { winHopT -= dt; if (winHopT <= 0 && Math.abs(hopS.x) < 4) { winHopT = .6; hopS.v -= 340; sqS.v += 3.2; } }
+    prevThrowT = throwT; prevHurtT = hurtT; prevLvT = lvFxT;
+    const aimA = Math.atan2(aim.y, aim.x) + Math.PI / 2;            // 0 = 정면 · 음수 = 왼쪽
+    const bendTo = f === 4 || f === 5 ? 0 : clamp(aimA * .15, -.11, .11);
+    const hopTo = f === 3 ? -16 * Math.min(1, skillPoseT / .15) : 0;
+    spring(bendS, bendTo, 150, 13, dt); spring(hopS, hopTo, 180, 16, dt); spring(sqS, 0, 230, 15, dt);
+    // 위로 솟을 땐 늘어나고 내려앉을 땐 납작 · 숨쉬기 · 살랑살랑 · 위험할 때 떨림
+    const stretch = clamp(-hopS.v * .00032, -.07, .07) + sqS.x * .02, breath = Math.sin(now * 2.6) * .009;
+    const sway = Math.sin(now * 1.35) * .007 + Math.sin(now * 2.9 + 1) * .003 + (nearDanger > .6 && f !== 5 ? Math.sin(now * 40) * .004 : 0);
+    const sqy = stretch + breath, sqx = -stretch * .6 - breath * .35;
+    const sc = 172 / (SD_H * sdUnit), tint = f === 4 && (now * 14 | 0) % 2 ? 0xFF9AAC : 0xFFFFFF;
+    for (const m of fadeT > 0 ? [P, P2] : [P]) {
+      bendBody(m, bendS.x, sway, sqx, sqy);
+      m.pivot.set(m.geometry.width / 2, m.geometry.height * SD_FOOT); m.scale.set(sc); m.position.set(SHOOT_X, FEET_Y + hopS.x); m.tint = tint;
+    }
+    if (fadeT > 0) { fadeT -= dt; P2.alpha = Math.max(0, fadeT / POSE_FADE); if (fadeT <= 0) P2.visible = false; }
+    const y = hopS.x;
     // 특기 때 뒤에서 빛이 퍼짐 · 레벨업 때 빛 기둥
     const ch = byKey(run.char);
     if (skillPoseT > 0) { L.aura.visible = true; L.aura.tint = PIXI.utils.string2hex(ch.c2); const u = 1 - skillPoseT / .8; L.aura.scale.set(3 + u * 4); L.aura.alpha = Math.min(1, skillPoseT / .25) * .8; L.aura.position.set(SHOOT_X, FEET_Y - 80 + y); }
@@ -1826,6 +1854,7 @@ function resetWorld() {
   fx.clear(); numPool.forEach(p => { p.life = 0; p.t.visible = false; });
   shake = 0; hurtT = 0; throwT = 0; skillPoseT = 0; fireT = 0; fireN = 0; effT = 0; S.boss = false;
   hitStop = 0; hitStopCd = 0; lvFxT = 0; blinkT = 0; lean = 0; comboPulse = 0;
+  bendS.x = bendS.v = hopS.x = hopS.v = sqS.x = sqS.v = 0; curF = -1; fadeT = 0; prevThrowT = prevHurtT = prevLvT = 0; if (L.player2) L.player2.visible = false;
 }
 function endRun(won) {
   if (!run || run.ended) return;

@@ -101,6 +101,7 @@ body.wide .side{display:grid;gap:12px}
 .hw-bar{height:8px;border-radius:5px;background:#EEE4F5;overflow:hidden}
 .hw-bar i{display:block;height:100%;background:linear-gradient(90deg,#FF9A3C,#B657E8)}
 .charc .cosrow{display:flex;flex-wrap:wrap;gap:6px}
+.charc .ch1{display:block;margin-top:5px;font:700 11px/1.3 var(--f-kr);color:#B5781A}
 .charc .cos.lock{background:#F1ECF5;box-shadow:inset 0 0 0 1px #DDD0E8;color:var(--ink2);font-weight:700}
 .charc .cos.on{background:linear-gradient(120deg,#FF86BF,#FF4F9A);color:#fff;box-shadow:none}
 .pause{pointer-events:auto;width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line)}
@@ -395,6 +396,7 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="ach" hidden>
   <div class="card"><span class="tag">REWARDS</span><h2 class="c-title">업적 · 도감</h2>
     <div class="ach-sec"><b>오늘의 미션</b><small id="dmInfo"></small><div id="dmList" class="mlist"></div></div>
+    <div class="ach-sec"><b>캐릭터별 1등</b><small>판이 끝나면 그 캐릭터 랭킹에도 올라가요</small><div id="chList" class="wk"></div></div>
     <div class="ach-sec"><b>이번 주 랭킹</b><small id="wkInfo">월요일마다 새로 시작 · 1~3등은 다음 주에 '주간 ○등' 칭호</small><div id="wkList" class="wk"></div></div>
     <div class="ach-sec"><b>칭호</b><small>고른 칭호가 랭킹에 이름과 같이 나와요</small><div id="titleList" class="chips"></div></div>
     <div class="ach-sec"><b>업적 <em id="achCount"></em></b><div id="achList" class="mlist"></div></div>
@@ -517,11 +519,11 @@ const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 /* ---------- 캐릭터 · 공 · 강화 ---------- */
 const CHARS = [
   {key: 'ruby', name: '루비', en: 'FIRE · RUBY', ball: 'fire', c1: '#FF4F5E', c2: '#FFA24F', price: 0, skill: '플레어 버스트', desc: '장난꾸러기 불꽃 소녀. 특기: 블록 10개에 불꽃 폭격 + 화상', line: '다 태워 버릴 거야~!'},
-  {key: 'yuki', name: '유키', en: 'ICE · YUKI', ball: 'ice', c1: '#7FB8FF', c2: '#C9A8FF', price: 250, skill: '다이아몬드 더스트', desc: '시크한 얼음 소녀. 특기: 5초 동안 블록이 멈추고 받는 피해 +40%', line: '…얼어붙어.'},
+  {key: 'yuki', name: '유키', en: 'ICE · YUKI', ball: 'ice', c1: '#7FB8FF', c2: '#C9A8FF', price: 250, skill: '다이아몬드 더스트', desc: '시크한 얼음 소녀. 특기: 6.5초 동안 블록이 얼어 멈추고 얼음 피해, 받는 피해 +40%', line: '…얼어붙어.'},
   {key: 'riko', name: '리코', en: 'BOLT · RIKO', ball: 'bolt', c1: '#2A2A3A', c2: '#9BFF4F', price: 500, skill: '기가 볼트', desc: '에너지 폭발 게이머 소녀. 특기: 가장 아래 3줄에 번개 낙뢰', line: '찌릿찌릿 간다~!'},
   {key: 'sora', name: '소라', en: 'WIND · SORA', ball: 'wind', c1: '#2FC8B8', c2: '#7FC8FF', price: 800, skill: '하늘 회오리', desc: '하늘을 나는 바람 소녀. 특기: 회오리로 모든 블록을 2줄 위로 날려 보내요', line: '바람 타고 간다~!'},
   {key: 'nene', name: '네네', en: 'POISON · NENE', ball: 'poison', c1: '#5A2E9A', c2: '#B57CFF', price: 0, unlock: {stat: 'bosses', n: 30, text: '보스 30마리를 잡으면 합류'}, skill: '독안개', desc: '졸린 눈의 독 마녀. 특기: 판 위 모든 블록에 진한 독을 뿌려요', line: '후후… 천천히 녹아내려.'},
-  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 8초 동안 피버 + 모든 공이 커져요', line: '무대 시작이야~ 반짝!'},
+  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 10초 동안 피버 + 모든 공이 커져요', line: '무대 시작이야~ 반짝!'},
   {key: 'karin', name: '카린', en: 'STEEL · KARIN', ball: 'iron', c1: '#4A5A80', c2: '#FF6F5E', price: 0, unlock: {stat: 'top', n: 15, text: '스테이지 15에 가면 합류'}, skill: '메테오 해머', desc: '씩씩한 강철 기사 소녀. 특기: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리쳐요', line: '정의의 철퇴~! 받아랏!'},
 ];
 const WIN_LINE = {karin: '강철은 꺾이지 않아! 승리다!', ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한 결과야. 고마워.', riko: '클리어! 하이스코어 갱신 가즈아~!', sora: '바람처럼 날아올랐지? 최고야!', nene: '후후… 독은 천천히 퍼지는 법이야.', mirai: '오늘의 센터는 나야~ 반짝!'};
@@ -539,14 +541,14 @@ const PT_URL = k => `assets/pt_${k}${skin(k)}.webp${AV}`, SD_URL = k => `assets/
 const BALLS = {
   basic: {i: 0, name: '기본 공', dmg: 10, color: 0xFFE3F1, desc: '단단하고 믿음직한 기본 공'},
   fire: {i: 1, name: '불꽃 공', dmg: 9, color: 0xFF6A3D, owner: 'ruby', desc: '맞은 블록에 화상 (계속 피해)'},
-  ice: {i: 2, name: '얼음 공', dmg: 9, color: 0x8FD8FF, owner: 'yuki', desc: '블록을 얼려서 받는 피해 +50%'},
+  ice: {i: 2, name: '얼음 공', dmg: 12, color: 0x8FD8FF, owner: 'yuki', desc: '블록을 얼려서 받는 피해 +50%'},
   bolt: {i: 3, name: '번개 공', dmg: 8, color: 0xF2FF4F, owner: 'riko', desc: '주변 블록 2개에 번개가 튐'},
-  wind: {i: 4, name: '바람 공', dmg: 9, color: 0x7DFFC8, desc: '블록을 뚫고 지나감 (3개)'},
+  wind: {i: 4, name: '바람 공', dmg: 10, color: 0x7DFFC8, desc: '블록을 뚫고 지나감 (3개)'},
   poison: {i: 5, name: '독 공', dmg: 6, color: 0xB57CFF, desc: '독이 쌓여서 점점 큰 피해'},
   bomb: {i: 6, name: '폭탄 공', dmg: 6, color: 0x5A5A6A, desc: '맞힐 때마다 주변 폭발'},
   split: {i: 7, name: '분열 공', dmg: 8, color: 0xFF6FD8, desc: '처음 맞히면 작은 공 2개로 갈라짐'},
   heart: {i: 8, name: '하트 공', dmg: 8, color: 0xFF8FB8, desc: '10번 맞힐 때마다 체력 1 회복'},
-  star: {i: 9, name: '별 공', dmg: 10, color: 0x6F7CFF, desc: '가까운 블록 쪽으로 휘어 날아감'},
+  star: {i: 9, name: '별 공', dmg: 14, color: 0x6F7CFF, desc: '가까운 블록 쪽으로 휘어 날아감'},
   iron: {i: 10, name: '쇠 공', dmg: 22, color: 0xB8C2D6, owner: 'karin', desc: '느리지만 아주 큰 피해, 크기도 큼'},
   rubber: {i: 11, name: '고무 공', dmg: 6, color: 0xFFA24F, desc: '튕길 때마다 피해가 +3씩 커짐'},
   plasma: {i: 12, name: '플라즈마 볼', dmg: 26, color: 0xFF4FD8, fusion: ['fire', 'bolt'], desc: '불꽃+번개: 화상 + 번개 4갈래'},
@@ -563,7 +565,7 @@ const UPG = {
   heal: {name: '체력 35 회복', ico: '🩹', max: 99}, xp: {name: '경험치 +15%', ico: '✨', max: 5}, extra: {name: '기본 공 +2개', ico: '➕', max: 8},
   multi: {name: '멀티샷: 작은 공 하나 더', ico: '🎯', max: 3}, pierce: {name: '모든 공 관통 +1', ico: '🗡️', max: 3}, ricochet: {name: '벽 튕김 피해 +15%', ico: '↩️', max: 4},
   boss: {name: '보스 피해 +25%', ico: '👑', max: 4}, slow: {name: '블록 하강 -8%', ico: '🐢', max: 4}, blast: {name: '처치 시 폭발 +12%', ico: '🎆', max: 4},
-  skillpow: {name: '특기 위력 +30%', ico: '🌟', max: 5}, skillcd: {name: '특기 쿨타임 -12%', ico: '⏱️', max: 4}, luck: {name: '행운 +1 (코인·치명)', ico: '🍀', max: 4},
+  skillpow: {name: '특기 위력 +30%', ico: '🌟', max: 5}, skillcd: {name: '특기 쿨타임 -12%', ico: '⏱️', max: 4}, luck: {name: '행운 +1 (코인 +12% · 치명 +3%)', ico: '🍀', max: 4},
   shield: {name: '보호막 (30초마다 바닥 피해 1번 막기)', ico: '🛡️', max: 1}, burst: {name: '5번째 발사마다 3갈래', ico: '🔱', max: 3},
   bonus: {name: '보너스: 코인 +15 · 점수 +3,000', ico: '🪙', max: 999},
 };
@@ -705,19 +707,33 @@ const ACH = [
   {id: 's20', name: '별의 왕좌', desc: '스테이지 20 도달', stat: 'top', n: 20, coin: 4000, title: '전설의 볼러'},
   {id: 's21', name: '밤의 세계', desc: '스테이지 21 도달 (두 번째 세계)', stat: 'top', n: 21, coin: 5000, title: '밤의 여행자'},
   {id: 's25', name: '두 번째 바퀴', desc: '스테이지 25 도달 (밤의 세계)', stat: 'top', n: 25, coin: 6000, title: '무한의 지배자'},
+  {id: 's30', name: '밤의 끝자락', desc: '스테이지 30 도달', stat: 'top', n: 30, coin: 8000, title: '밤의 기사'},
+  {id: 's41', name: '붉은 달의 세계', desc: '스테이지 41 도달 (세 번째 세계)', stat: 'top', n: 41, coin: 12000, title: '붉은 달의 주인'},
+  {id: 's50', name: '반백의 전설', desc: '스테이지 50 도달', stat: 'top', n: 50, coin: 20000, title: '전설 그 너머'},
+  {id: 's61', name: '황금의 세계', desc: '스테이지 61 도달 (네 번째 세계)', stat: 'top', n: 61, coin: 30000, title: '황금 볼러'},
   {id: 'b10', name: '보스 사냥 입문', desc: '보스 10마리 잡기', stat: 'bosses', n: 10, coin: 200},
   {id: 'b50', name: '보스 사냥꾼', desc: '보스 50마리 잡기', stat: 'bosses', n: 50, coin: 600, title: '보스 사냥꾼'},
   {id: 'b150', name: '보스의 천적', desc: '보스 150마리 잡기', stat: 'bosses', n: 150, coin: 1500, title: '보스의 천적'},
+  {id: 'b500', name: '보스 학살자', desc: '보스 500마리 잡기', stat: 'bosses', n: 500, coin: 4000, title: '보스 학살자'},
+  {id: 'b1000', name: '보스의 악몽', desc: '보스 1,000마리 잡기', stat: 'bosses', n: 1000, coin: 8000, title: '보스의 악몽'},
   {id: 'k1', name: '블록 1,000개', desc: '블록 1,000개 부수기', stat: 'kills', n: 1000, coin: 100},
   {id: 'k2', name: '블록 10,000개', desc: '블록 10,000개 부수기', stat: 'kills', n: 10000, coin: 500},
   {id: 'k3', name: '파괴왕', desc: '블록 50,000개 부수기', stat: 'kills', n: 50000, coin: 1500, title: '블록 파괴왕'},
+  {id: 'k4', name: '블록의 신', desc: '블록 200,000개 부수기', stat: 'kills', n: 200000, coin: 4000, title: '블록의 신'},
   {id: 'c50', name: '콤보 50', desc: '한 판에 콤보 50', stat: 'combo', n: 50, coin: 200},
   {id: 'c150', name: '콤보 마스터', desc: '한 판에 콤보 150', stat: 'combo', n: 150, coin: 500, title: '콤보 마스터'},
+  {id: 'c300', name: '콤보의 신', desc: '한 판에 콤보 300', stat: 'combo', n: 300, coin: 2000, title: '콤보의 신'},
   {id: 'x8', name: '도감 절반', desc: '보스 도감 8종 채우기', stat: 'dex', n: 8, coin: 500},
   {id: 'x16', name: '도감 16종', desc: '보스 도감 16종 채우기', stat: 'dex', n: 16, coin: 1500},
   {id: 'x28', name: '도감 완성', desc: '보스 도감 28종 모두 채우기', stat: 'dex', n: 28, coin: 4000, title: '도감 마스터'},
   {id: 'ch3', name: '보물 사냥', desc: '보물 상자 3개 열기', stat: 'chests', n: 3, coin: 300},
   {id: 'ch20', name: '보물 수집가', desc: '보물 상자 20개 열기', stat: 'chests', n: 20, coin: 1000, title: '보물 수집가'},
+  {id: 'ch50', name: '보물왕', desc: '보물 상자 50개 열기', stat: 'chests', n: 50, coin: 3000, title: '보물왕'},
+  {id: 'ms1', name: '첫 마스터', desc: '캐릭터 1명 숙련도 Lv.10', stat: 'mast10', n: 1, coin: 3000},
+  {id: 'ms3', name: '세 명의 마스터', desc: '캐릭터 3명 숙련도 Lv.10', stat: 'mast10', n: 3, coin: 8000, title: '만능 볼러'},
+  {id: 'r10', name: '보스 러시 도전자', desc: '보스 러시 한 판에 보스 10마리', stat: 'rushB', n: 10, coin: 1500},
+  {id: 'r30', name: '러시 챔피언', desc: '보스 러시 한 판에 보스 30마리', stat: 'rushB', n: 30, coin: 5000, title: '러시 챔피언'},
+  {id: 'a30', name: '개근상', desc: '출석 체크 30일', stat: 'att', n: 30, coin: 3000, title: '개근상'},
   {id: 'd3', name: '오늘의 도전자', desc: '오늘의 도전 3번 하기', stat: 'dailies', n: 3, coin: 300},
   {id: 'm7', name: '꾸준함', desc: '오늘의 미션 7일 연속 완료', stat: 'streak', n: 7, coin: 1000, title: '성실한 볼러'},
   {id: 'all', name: '팔방미인', desc: '캐릭터 6명 모두로 스테이지 5 도달', stat: 'allChar5', n: 1, coin: 1500, title: '팔방미인'},
@@ -1306,7 +1322,7 @@ const atkMul = () => run.atkMeta * (1 + .15 * U('atk')) * (LG('power') ? 1.5 : 1
 const fireInterval = () => .11 * Math.pow(.88, U('rate'));
 const ballSpeed = () => 980 * (1 + .1 * U('spd')) * (hasRule('ice') ? 1.15 : 1) * (hasRule('sky') ? 1.1 : 1);
 const sizeMul = () => (1 + .12 * U('size')) * (LG('giant') ? 1.5 : 1) * (run.starT > 0 ? 1.4 : 1) * (hasRule('space') ? 1.2 : 1) * (hasRule('sky') ? 1.1 : 1);
-const critChance = () => .05 + .08 * U('crit') + .02 * U('luck');
+const critChance = () => .05 + .08 * U('crit') + .03 * U('luck');
 const isFinal = () => !!(run.boss && run.boss.boss.final);
 const descendSpeed = () => {
   // 화면 길이가 달라도 바닥까지 걸리는 시간은 같게 (세로 길이에 비례)
@@ -1634,7 +1650,7 @@ function collideBlocks(b) {
 /* ---------- 피해 ---------- */
 function ballDamage(b) {
   const def = BALLS[b.kind];
-  const fv = run.fever > 0 ? 1.5 : 1;
+  const fv = (run.fever > 0 ? 1.5 : 1) * (run.starT > 0 ? 1.25 : 1);   // 미라이 슈퍼스타 동안 +25% (2026-10-09 밸런스)
   let d = def.dmg * (1 + .28 * ((b.lv || 1) - 1)) * atkMul();
   if (b.mini) d *= .5;
   if (b.kind === 'rubber') d += 3 * b.bounce * (1 + .25 * ((b.lv || 1) - 1));
@@ -2165,17 +2181,18 @@ function useSkill() {
   const live = [...blocks].filter(b => !b.dead);
   if (ch.key === 'ruby') {
     const pick = live.sort(() => Math.random() - .5).slice(0, 10);
-    pick.forEach((b, i) => later(i * .06, () => { if (b.dead) return; const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFF7A3D); damage(b, 6 * powRef() * skillPow(), true, 'fire'); burn(b, .8 * powRef() * skillPow(), 4); }));   // 특기 위력은 캐릭터 힘(powRef)에 맞춰 커짐
+    pick.forEach((b, i) => later(i * .06, () => { if (b.dead) return; const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFF7A3D); damage(b, 7.5 * powRef() * skillPow(), true, 'fire'); burn(b, .8 * powRef() * skillPow(), 4); }));   // 특기 위력은 캐릭터 힘(powRef)에 맞춰 커짐
   } else if (ch.key === 'yuki') {
-    run.frozenT = 5; const r = run; setTimeout(() => { if (run === r && state === 'play') banner('모든 블록이 얼어붙었다!', true); }, 1250);   // 컷인이 지나간 뒤에
-    live.forEach(b => freeze(b, 5));
+    run.frozenT = 6.5; const r = run;   // 2026-10-09 밸런스: 5 → 6.5초 setTimeout(() => { if (run === r && state === 'play') banner('모든 블록이 얼어붙었다!', true); }, 1250);   // 컷인이 지나간 뒤에
+    const yd = powRef() * skillPow();   // 2026-10-09 밸런스: 얼리면서 피해도 (보스는 두 배) — 유키가 보스를 오래 못 잡던 문제
+    live.forEach((b, i) => { freeze(b, 6.5); later(.3 + i * .008, () => { if (!b.dead) damage(b, (b.boss ? 5 : 2.5) * yd, false, 'ice'); }); });
   } else if (ch.key === 'riko') {
     const rows = [...new Set(live.map(b => b.k))].sort((a, b) => a - b).slice(0, 3);
     live.filter(b => rows.includes(b.k)).forEach((b, i) => later(i * .025, () => { if (b.dead) return; const R = blockRect(b); zapLine(R.x + R.w / 2, R.y - 300, R.x + R.w / 2, R.y + R.h / 2, 0xF2FF6F); damage(b, 7.5 * powRef() * skillPow(), true, 'bolt'); }));
     S.zap();
   } else if (ch.key === 'sora') {
     if (!run.boss) run.scroll -= CELL * 2;   // 회오리: 모든 블록을 2줄 위로 날려 보냄 + 바람 피해 (보스가 있으면 밀지 않고 피해 2배 — 보스가 화면 밖으로 밀리지 않게)
-    const wd = (run.boss ? 6 : 3) * powRef() * skillPow();
+    const wd = (run.boss ? 8 : 4) * powRef() * skillPow();   // 2026-10-09 밸런스: 3/6 → 4/8
     live.forEach((b, i) => later(i * .01, () => { if (!b.dead) damage(b, wd, false, 'wind'); }));
     shake = Math.min(10, shake + 6); setTimeout(() => banner('하늘 회오리!', true), 1250);
   } else if (ch.key === 'nene') {
@@ -2197,7 +2214,7 @@ function useSkill() {
     }
     setTimeout(() => banner('메테오 해머!', true), 1250);
   } else {
-    run.fever = Math.max(run.fever || 0, 8); run.starT = 8; S.fever(); setTimeout(() => banner('슈퍼스타! 공이 커져요', false), 1250);
+    run.fever = Math.max(run.fever || 0, 10); run.starT = 10; S.fever();   // 2026-10-09 밸런스: 8 → 10초 setTimeout(() => banner('슈퍼스타! 공이 커져요', false), 1250);
   }
 }
 
@@ -2228,6 +2245,8 @@ function openChest() {
   $('#lvup').hidden = false; lockEl($('#lvup'), 500); S.fusion();
   setTimeout(() => { if (state === 'levelup' && app) app.stop(); }, 380);
 }
+// 합체 공 시작 레벨: 재료 두 공의 평균 레벨 - 2 (3+3 → Lv.1, 4+4 → Lv.2, 5+5 → Lv.3) — 재료를 더 키워도 손해 없게 (2026-10-09 플레이어 의견)
+const fusionLv = k => { const [a, b] = BALLS[k].fusion; return Math.max(1, Math.min(5, Math.floor(((run.kinds[a] || 0) + (run.kinds[b] || 0)) / 2) - 2)); };
 function rollOffers() {
   const R = run.cr, pool = [];
   const kinds = Object.keys(run.kinds), full = kinds.length >= MAX_KINDS;
@@ -2253,7 +2272,7 @@ function rollOffers() {
 }
 function offerText(o) {
   if (o.t === 'leg') return {title: LEG[o.k].name, sub: LEG[o.k].desc, badge: 'LEGEND'};
-  if (o.t === 'fusion') { const d = BALLS[o.k], [a, b] = d.fusion; return {ico: o.k, title: `합체! ${d.name}`, sub: `${BALLS[a].name} + ${BALLS[b].name} → ${d.desc}`, badge: 'FUSION'}; }
+  if (o.t === 'fusion') { const d = BALLS[o.k], [a, b] = d.fusion, fl = fusionLv(o.k); return {ico: o.k, title: `합체! ${d.name}${fl > 1 ? ` (Lv.${fl}로 시작)` : ''}`, sub: `${BALLS[a].name} Lv.${run.kinds[a]} + ${BALLS[b].name} Lv.${run.kinds[b]} → ${d.desc}`, badge: 'FUSION'}; }
   if (o.t === 'new') return {ico: o.k, title: BALLS[o.k].name, sub: BALLS[o.k].desc, badge: 'NEW'};
   if (o.t === 'up') return {ico: o.k, title: `${BALLS[o.k].name} 강화`, sub: `Lv.${run.kinds[o.k]} → ${run.kinds[o.k] + 1} · 피해와 효과가 커져요`, badge: 'UP'};
   const u = UPG[o.k]; return {emoji: u.ico, title: u.name, sub: U(o.k) ? `지금 ${U(o.k)}단계` : '능력치 강화', badge: U(o.k) ? `${U(o.k) + 1}단계` : 'STAT'};
@@ -2289,7 +2308,8 @@ function applyOffer(o, quiet) {
   else if (o.t === 'up') run.kinds[o.k]++;
   else if (o.t === 'fusion') {
     const d = BALLS[o.k], [a, b] = d.fusion;
-    delete run.kinds[a]; delete run.kinds[b]; run.kinds[o.k] = 1; run.fusions.push(o.k);
+    const fl = fusionLv(o.k);
+    delete run.kinds[a]; delete run.kinds[b]; run.kinds[o.k] = fl; run.fusions.push(o.k);
     const oa = BALLS[a].owner, ob = BALLS[b].owner;
     if (!quiet) setTimeout(() => { cutIn('COLLAB FUSION', d.name + '!', oa, ob, '#FF5FA2', '#5E9BFF'); S.fusion(); }, 120);
   } else if (o.t === 'leg') {
@@ -2455,6 +2475,7 @@ function endRun(won) {
   let coins = Math.floor(Math.sqrt(finalScore) * .8) + Math.floor(run.coinBonus || 0) + 60 * (run.stage - 1);   // 짧게 끝나도 조금은, 멀리 갈수록 더
   if (!Number.isFinite(coins) || coins < 0) coins = 0;
   if (LG('gold')) coins = Math.floor(coins * 1.5);
+  if (U('luck')) coins = Math.floor(coins * (1 + .12 * U('luck')));   // 행운: 코인 +12%씩 (설명만 있고 빠져 있던 것 — 2026-10-09)
   if (run.rush) coins = Math.floor(coins / 2);   // 보스 러시는 코인 절반
   run.final = finalScore; run.coinsGot = coins;
   save.coins = Math.min(9999999, save.coins + coins);
@@ -2501,6 +2522,7 @@ function applyRewards(r) {
 const popc = v => { let c = 0; for (let i = 0; i < 28; i++) if (v & (1 << i)) c++; return c; };
 function statOf(k) {
   if (k === 'top') return save.top; if (k === 'dex') return popc(save.dex); if (k === 'streak') return save.dm.best;
+  if (k === 'mast10') return CHARS.filter(c => mastLv(c.key) >= 10).length; if (k === 'rushB') return save.rush.b; if (k === 'att') return save.att.n;
   if (k === 'allChar5') return ['ruby', 'yuki', 'riko', 'sora', 'nene', 'mirai'].every(k2 => (save.rec.cbest[k2] || 0) >= 5) ? 1 : 0;   // 처음 6명 기준 (카린이 생겨도 목표가 늘지 않게)
   return save.rec[k] || 0;
 }
@@ -2551,6 +2573,19 @@ function sendWeekly(score, info, delay, meta) {
     RankNet.send(g, RankNet.name || nm, score, info, meta).then(j => { if (j && j.ok && j.top) rankTop = j.top; }).catch(() => {}).then(() => { wkBusy = false; });
   }, delay);
 }
+// 캐릭터별 랭킹: 'bbc_' + 캐릭터 (시트가 준비됐을 때만 · 전체·주간 랭킹 다음에 · 5초 제한 때문에 13초 뒤)
+let chBusy = false;
+function sendChar(chKey, score, info, delay, meta) {
+  const g = 'bbc_' + chKey, nm = RankNet.name;
+  if (!RankNet.on || !nm || !rankTop || !Object.prototype.hasOwnProperty.call(rankTop, g) || !(score > RankNet.sent(g))) return;
+  setTimeout(() => {
+    if (chBusy || !(score > RankNet.sent(g))) return;
+    chBusy = true;
+    RankNet.send(g, RankNet.name || nm, score, info, meta).then(j => {
+      if (j && j.ok && j.top) { rankTop = j.top; if (j.rank <= 10 && state === 'over') toast(`${byKey(chKey).name} 랭킹 ${j.rank}등!${j.rank === 1 ? ' 👑' : ''}`); }
+    }).catch(() => {}).then(() => { chBusy = false; });
+  }, delay);
+}
 function weeklyCheck() {
   const g = weekKey(1), list = rankTop && rankTop[g], nm = RankNet.name;
   if (!list || !nm || save.wseen === g) return;
@@ -2588,6 +2623,7 @@ function showResult(won) {
   const game = run.daily ? 'bbd' + run.dateNum : 'ballbbang';    // 오늘의 도전은 날짜별 랭킹
   const meta = {st: run.stage, s0: run.startStage || 1, sec: Math.floor(played())};   // 시트가 점수가 말이 되는지 확인할 때 씀
   if (run.rush) { $('#rankBox').hidden = true; $('#result').hidden = false; lockEl($('#result .card'), 500); const r0 = run; setTimeout(() => { if (state === 'over' && run === r0) BGM.play('title', 1.2); }, 1600); return; }   // 보스 러시는 랭킹 없음 (내 최고 기록만)
+  if (!run.daily) sendChar(run.char, finalScore, info, 13000, meta);   // 캐릭터별 랭킹 (주간 다음)
   if (!run.daily) sendWeekly(finalScore, info, 6500, meta);   // 주간 랭킹 (전체 랭킹 올린 뒤 몇 초 있다가 — 시트가 한 기기에서 5초에 한 번만 받음)
   if (rankSupported) RankUI.show(game, finalScore, info, meta); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info, meta); }); }
   $('#result').hidden = false; lockEl($('#result .card'), 500);
@@ -2711,6 +2747,8 @@ function openAch() {
   const wl = $('#wkList'), wk = rankTop && rankTop[weekKey()]; wl.innerHTML = '';
   if (wk && wk.length) wk.slice(0, 3).forEach((x, i) => { const d = document.createElement('div'); d.innerHTML = '<span></span><small></small>'; d.firstChild.textContent = `${['🥇', '🥈', '🥉'][i]} ${x.name}`; d.lastChild.textContent = fmt(x.score); wl.appendChild(d); });
   else { const d = document.createElement('div'); d.innerHTML = '<small></small>'; d.firstChild.textContent = rankTop ? '이번 주 기록이 아직 없어요 · 첫 1등에 도전!' : '랭킹을 불러오는 중이거나 연결이 안 돼요'; wl.appendChild(d); }
+  const cl = $('#chList'); cl.innerHTML = '';
+  CHARS.forEach(c => { const t1 = rankTop && rankTop['bbc_' + c.key] && rankTop['bbc_' + c.key][0]; const d = document.createElement('div'); d.innerHTML = '<span></span><small></small>'; d.firstChild.textContent = `${c.name} · ${t1 ? '🏆 ' + t1.name : '아직 없음'}`; d.lastChild.textContent = t1 ? fmt(t1.score) : (rankTop ? '첫 1등에 도전!' : ''); cl.appendChild(d); });
   const tl = $('#titleList'); tl.innerHTML = '';
   tl.appendChild(chip('칭호 없음', !save.title, false, () => { save.title = ''; persist(); openAch(); }));
   CHARS.filter(c => mastLv(c.key) >= 10).forEach(c => tl.appendChild(chip(c.name + ' 마스터', save.title === 'm:' + c.key, false, () => { save.title = 'm:' + c.key; persist(); openAch(); })));
@@ -2738,6 +2776,7 @@ function openChars() {
     b.innerHTML = `<div class="ph" style="background-image:url(${PT_URL(c.key)})"></div><div style="flex:1;min-width:0"><span class="en"></span><h4></h4><p></p><div class="kit"><i style="background-image:url(assets/balls.webp${AV});background-position:${(bd.i % 5) * 25}% ${Math.floor(bd.i / 5) * 50}%"></i><span></span></div></div>${own ? '' : c.unlock ? `<span class="pr cond">🔒 ${c.unlock.text}</span>` : `<span class="pr">🔒 ${fmt(c.price)}</span>`}`;
     b.querySelector('.en').textContent = c.en; b.querySelector('h4').textContent = c.name; b.querySelector('p').textContent = c.desc;
     b.querySelector('.kit span').textContent = `${bd.name}으로 시작 · 「${c.skill}」`;
+    { const t1 = rankTop && rankTop['bbc_' + c.key] && rankTop['bbc_' + c.key][0]; if (t1) { const e = document.createElement('span'); e.className = 'ch1'; e.textContent = `🏆 ${c.name} 1등 ${t1.name} · ${fmt(t1.score)}`; b.querySelector('.kit').after(e); } }
     if (own) {   // 숙련도 · 의상
       const l = mastLv(c.key), x = mastXp(c.key), pct = l >= 10 ? 100 : Math.round((x - MAST_XP[l - 1]) / (MAST_XP[l] - MAST_XP[l - 1]) * 100);
       const mw = document.createElement('div'); mw.innerHTML = `<div class="mast"><span>숙련도 Lv.${l}</span><i style="--p:${pct}%"></i></div><span class="mnext"></span>`;
@@ -2832,6 +2871,7 @@ const RankNet = {
   },
   top() { return this.req({cache: 'no-store'}); },
 };
+const runChar = () => (run && !run.daily && !run.rush ? run.char : '');   // 캐릭터별 랭킹에 올릴 캐릭터
 const RankUI = {
   game: '', score: 0, info: '', meta: null, run: 0,
   show(game, score, info, meta) {
@@ -2843,7 +2883,7 @@ const RankUI = {
     if (RankNet.name && this.score > RankNet.sent(game)) this.up(true);
   },
   async up(auto) {
-    const inp = $('#rankName'), btn = $('#btnRankUp'), msg = $('#rankMsg'), run = this.run;
+    const inp = $('#rankName'), btn = $('#btnRankUp'), msg = $('#rankMsg'), run = this.run, run0 = runChar();   // run0 = 지금 판 캐릭터 (캐릭터별 랭킹)
     if (btn.disabled) return;
     const name = Array.from(inp.value.replace(/[\u0000-\u001f<>]/g, '').trim()).slice(0, 10).join('');
     if (!name) { if (!auto) { msg.textContent = '카톡방 닉네임을 먼저 적어 주세요.'; inp.focus(); } return; }
@@ -2851,7 +2891,7 @@ const RankUI = {
     let text;
     try {
       const r = await RankNet.send(this.game, name, this.score, this.info, this.meta);
-      if (r && r.ok && this.game === 'ballbbang') sendWeekly(this.score, this.info, 6000, this.meta);
+      if (r && r.ok && this.game === 'ballbbang') { sendWeekly(this.score, this.info, 6000, this.meta); if (run0) sendChar(run0, this.score, this.info, 12500, this.meta); }
       if (r && r.ok) { if (run !== this.run) return; msg.textContent = r.rank <= 3 ? `전체 ${r.rank}등! 홈페이지에 이름이 올라가요` : `전체 ${r.rank}등이에요 · 내 최고 ${Number(r.best).toLocaleString('ko-KR')}`; btn.textContent = '올렸어요'; return; }
       const retry = r && (r.why === 'slow' || r.why === 'busy' || r.why === 'error');
       if (retry && auto === true && run === this.run) { msg.textContent = '잠시 후 자동으로 다시 올려요…'; btn.disabled = false; btn.textContent = '랭킹 올리기'; setTimeout(() => { if (run === this.run) this.up('retry'); }, 5500); return; }

@@ -2373,7 +2373,8 @@ function applyOffer(o, quiet) {
     if (d.sig && d.sig === run.char && !run.daily) { save.rec.sig = save.rec.sig || {}; if (!save.rec.sig[run.char]) { save.rec.sig[run.char] = 1; persist(); } }   // 업적 '나만의 합체'
     save.rec.fu = save.rec.fu || {}; if (!save.rec.fu[o.k]) { save.rec.fu[o.k] = 1; persist(); }   // 합체 도감 (만든 합체 공 종류)
     const oa = d.sig || BALLS[a].owner, ob = d.sig ? null : BALLS[b].owner;
-    if (!quiet) setTimeout(() => { cutIn(d.sig ? 'SIGNATURE FUSION' : 'COLLAB FUSION', d.name + '!', oa, ob, '#FF5FA2', '#5E9BFF'); S.fusion(); }, 120);
+    const sc = d.sig ? byKey(d.sig) : null;   // 전용 합체는 그 캐릭터 색으로
+    if (!quiet) setTimeout(() => { cutIn(d.sig ? 'SIGNATURE FUSION' : 'COLLAB FUSION', d.name + '!', oa, ob, sc ? sc.c1 : '#FF5FA2', sc ? sc.c2 : '#5E9BFF'); S.fusion(); }, 120);
   } else if (o.t === 'leg') {
     run.leg = run.leg || {}; run.leg[o.k] = 1; run.chestN = (run.chestN || 0) + 1;
     setTimeout(() => banner(`${LEG[o.k].name}!`, false), 200);

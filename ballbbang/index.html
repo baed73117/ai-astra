@@ -17,6 +17,12 @@
 <meta name="twitter:image" content="https://baed73117.github.io/ai-astra/ballbbang/og.jpg?v=9a3c727b">
 <link rel="icon" href="../icon.png">
 <title>볼빵! 아스트라</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="app/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="볼빵">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;700;900&family=Outfit:wght@600;700;800&display=swap">
@@ -213,6 +219,11 @@ body.wide .side{display:grid;gap:12px}
 .logo{margin:8px 0 6px;white-space:nowrap;font:400 clamp(40px,11.6vw,66px)/1 var(--f-logo);background:linear-gradient(180deg,#FFFFFF 35%,#FFE3F1 62%,#FFB3D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 #F0478C) drop-shadow(0 10px 20px rgba(255,79,154,.45))}
 .brand-sub{display:block;font:500 13px/1.3 var(--f-kr);opacity:.94}
 .coinpill{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;background:rgba(14,8,28,.5);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);font:800 16px/1 var(--f-en)}
+.t-right{display:grid;justify-items:end;gap:8px}
+.appchip{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;background:linear-gradient(120deg,rgba(255,231,154,.95),rgba(255,194,74,.95));color:#4A2E00;font:800 12px/1 var(--f-kr);box-shadow:0 6px 16px rgba(255,180,50,.35)}
+.inst-lead{margin:0;font:500 13px/1.5 var(--f-kr);color:var(--ink2);text-align:center}
+.inst-warn{padding:10px 12px;border-radius:12px;background:#FFF4DA;box-shadow:inset 0 0 0 1.5px #FFC24A;font:500 12.5px/1.5 var(--f-kr);color:#5A3A00;text-align:left}
+.inst-warn b{color:#3A2400}
 .coinpill i{flex:none;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6C8,#FFC94D 55%,#D9952A)}
 .t-foot{position:absolute;left:0;right:0;bottom:0;padding:0 20px calc(20px + var(--safe-b));display:grid;gap:10px;max-width:520px;margin:0 auto}
 .t-best{display:flex;justify-content:space-between;font:700 13px/1 var(--f-kr);opacity:.9}
@@ -318,7 +329,7 @@ body.wide .side{display:grid;gap:12px}
   <div class="t-bg"></div><div class="t-fade"></div>
   <header class="t-head">
     <div><span class="brand-en">BALL BBANG! ASTRA</span><h1 class="logo">볼빵! 아스트라</h1><span class="brand-sub">공을 쏴서 몬스터 블록을 부숴요!</span></div>
-    <span class="coinpill"><i></i><b id="tCoins">0</b></span>
+    <div class="t-right"><span class="coinpill"><i></i><b id="tCoins">0</b></span><button class="appchip" id="btnInstall" type="button" hidden>📲 앱 설치</button></div>
   </header>
   <div class="t-foot">
     <div class="t-best"><span>최고 점수 <b id="tBest">0</b></span><span>최고 스테이지 <b id="tClears">0</b></span></div>
@@ -371,6 +382,15 @@ body.wide .side{display:grid;gap:12px}
       <li><i>💾</i><div><b>기록 옮기기 코드</b>업적 화면 맨 아래에서 백업할 수 있어요</div></li>
     </ul>
     <button class="btn main" id="newsOk" type="button">좋아요!</button>
+  </div>
+</div>
+<div class="overlay" id="install" hidden>
+  <div class="card"><span class="tag">APP</span><h2 class="c-title">앱으로 설치하기</h2>
+    <p class="inst-lead">홈 화면에 볼빵 아이콘이 생기고<br>주소창 없이 꽉 찬 화면으로 열려요</p>
+    <ul class="news-list" id="instSteps"></ul>
+    <div class="inst-warn" id="instWarn" hidden></div>
+    <button class="btn gold" id="btnInstCode" type="button" hidden>📋 지금 기록 코드 복사하기</button>
+    <button class="btn main" id="instOk" type="button">알겠어요</button>
   </div>
 </div>
 <div class="overlay" id="shop" hidden>
@@ -2646,6 +2666,56 @@ $('#btnAch').addEventListener('click', openAch);
 $('#stPrev').addEventListener('click', () => { stView = Math.max(0, stView - 1); renderStage(); });
 $('#stNext').addEventListener('click', () => { stView = Math.min(startOptions().length - 1, stView + 1); renderStage(); });
 $('#achBack').addEventListener('click', () => { $('#ach').hidden = true; $('#codeBox').hidden = true; $('#btnImportGo').hidden = true; renderTitle(); });
+/* ---------- 앱으로 설치 (홈 화면 아이콘 · 주소창 없는 화면 · 그림·소리 저장) ---------- */
+const UA = navigator.userAgent || '';
+const IS_APP = !!((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone);
+const IS_IOS = /iPhone|iPad|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IN_APP_BROWSER = /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(UA);
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', () => { installEvt = null; $('#btnInstall').hidden = true; $('#install').hidden = true; toast('설치했어요! 이제 홈 화면의 볼빵 아이콘으로 열어요'); });
+$('#btnInstall').hidden = IS_APP;
+if ('serviceWorker' in navigator && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {});
+function openInstall() {
+  const steps = [], li = (i, b, t) => steps.push(`<li><i>${i}</i><div><b>${b}</b>${t}</div></li>`);
+  let warn = '', code = false;
+  if (IN_APP_BROWSER) {
+    li('🌐', '먼저 다른 브라우저로 열어 주세요', '카톡 같은 앱 안에서는 설치가 안 돼요. 화면 구석의 ⋮ 또는 ⋯ 메뉴 → ‘다른 브라우저로 열기’');
+    li('📲', '거기서 다시 ‘📲 앱 설치’', IS_IOS ? '아이폰은 사파리로 열면 돼요' : '크롬이나 삼성 인터넷으로 열면 돼요');
+  } else if (IS_IOS) {
+    li('⬆️', '공유 버튼 누르기', '화면 아래(또는 위)의 네모에 화살표 모양 버튼');
+    li('➕', '‘홈 화면에 추가’ 누르기', '안 보이면 메뉴를 조금 아래로 내려 보세요');
+    li('✅', '오른쪽 위 ‘추가’', '홈 화면에 볼빵 아이콘이 생겨요');
+    warn = '<b>아이폰은 기록이 따로 저장돼요.</b> 홈 화면 앱을 처음 열면 기록이 비어 있어요. 아래 버튼으로 <b>지금 기록 코드를 복사</b>해 두고, 앱에서 업적 화면 맨 아래 <b>‘코드로 불러오기’</b>에 붙여 넣으면 그대로 옮겨져요.';
+    code = save.plays > 0 || save.best > 0;
+  } else if (/Android/i.test(UA)) {
+    li('⋮', '브라우저 메뉴 열기', '오른쪽 위(삼성 인터넷은 아래) 메뉴 버튼');
+    li('➕', '‘홈 화면에 추가’ 또는 ‘앱 설치’', '홈 화면에 볼빵 아이콘이 생겨요 · 기록은 그대로 이어져요');
+  } else {
+    li('⊕', '주소창 오른쪽의 설치 아이콘', '또는 브라우저 메뉴 → ‘앱 설치’ / ‘볼빵! 아스트라 설치’');
+    li('🖥️', '바탕화면·시작 메뉴에 볼빵이 생겨요', '기록은 그대로 이어져요');
+  }
+  $('#instSteps').innerHTML = steps.join('');
+  $('#instWarn').innerHTML = warn; $('#instWarn').hidden = !warn;
+  $('#btnInstCode').hidden = !code;
+  $('#install').hidden = false;
+}
+$('#btnInstall').addEventListener('click', async () => {
+  if (installEvt) {   // 안드로이드·PC 크롬/엣지·삼성 인터넷: 바로 설치 창 (안 되면 아래 안내 창)
+    try { await installEvt.prompt(); await installEvt.userChoice; installEvt = null; return; } catch (e) {}
+  }
+  openInstall();
+});
+$('#instOk').addEventListener('click', () => { $('#install').hidden = true; });
+$('#btnInstCode').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(exportCode()); toast('복사했어요! 앱을 열고 업적 → ‘코드로 불러오기’에 붙여 넣어 주세요'); }
+  catch (e) { $('#install').hidden = true; openAch(); $('#ach').scrollTop = 99999; $('#btnExport').click(); }
+});
+// 홈 화면 앱으로 처음 열었는데 기록이 비어 있으면 (아이폰은 사파리와 따로) 옮기는 방법을 한 번 알려 줌
+if (IS_APP && !(save.plays > 0) && !(save.best > 0)) {
+  let seen = false; try { seen = !!localStorage.getItem('astra-universe-breaker-app'); localStorage.setItem('astra-universe-breaker-app', '1'); } catch (e) {}
+  if (!seen) setTimeout(() => toast('앱으로 처음 열었어요! 브라우저에서 하던 기록은 업적 화면 맨 아래 ‘코드로 불러오기’로 옮길 수 있어요'), 1500);
+}
 $('#btnExport').addEventListener('click', async () => {
   const code = exportCode(), box = $('#codeBox'); box.value = code; box.hidden = false; box.readOnly = true; $('#btnImportGo').hidden = true;
   try { await navigator.clipboard.writeText(code); toast('기록 코드를 복사했어요! 카톡 나에게 보내기에 붙여 두세요'); }

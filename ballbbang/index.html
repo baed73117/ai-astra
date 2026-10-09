@@ -511,7 +511,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=40c9fb4f';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=4aeb8047';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -980,7 +980,8 @@ const BGM = {
   },
 };
 // 렉 지킴이: 게임 중 화면이 3초 넘게 버벅이면(평균 42fps 아래) 효과를 한 단계 줄임 — 해상도·파티클 수·공 잔상 (한 번 줄이면 다음에도 그 단계로 시작)
-const PERF_KEY = 'astra-universe-breaker-perf', FX_CAP = [TOUCH ? 220 : 400, 110, 50];
+// 3단계(2026-10-10): 해상도 0.7 · 파티클 24개 · 피해 숫자 덜 자주 — 그래픽이 약한 폰에서 체크포인트 20이 2단계여도 25fps라서
+const PERF_KEY = 'astra-universe-breaker-perf', FX_CAP = [TOUCH ? 220 : 400, 110, 50, 24];
 const Perf = {
   lv: 0, acc: 0, n: 0, slow: 0, fast: 0, upped: false,
   sample(ms) {
@@ -989,12 +990,12 @@ const Perf = {
     if (this.acc < 1000) return;   // 1초마다 판단
     const avg = this.acc / this.n; this.acc = 0; this.n = 0;
     this.slow = avg > 24 ? this.slow + 1 : 0; this.fast = avg < 18 ? this.fast + 1 : 0;
-    if (this.slow >= 3 && this.lv < 2) { this.slow = 0; this.set(this.lv + 1, true); }
+    if (this.slow >= 3 && this.lv < 3) { this.slow = 0; this.set(this.lv + 1, true); }
     else if (this.fast >= 180 && this.lv > 0 && !this.upped) { this.fast = 0; this.upped = true; this.set(this.lv - 1, false); }   // 3분 내내 부드러우면 한 번만 다시 올림 (잠깐 버벅인 걸로 계속 낮게 남지 않게)
   },
   set(lv, tell) {
-    this.lv = Math.max(0, Math.min(2, lv | 0));
-    const base = Math.min(TOUCH ? 1.5 : 2, window.devicePixelRatio || 1), r = this.lv >= 2 ? Math.min(base, .85) : this.lv >= 1 ? Math.min(base, 1) : base;
+    this.lv = Math.max(0, Math.min(3, lv | 0));
+    const base = Math.min(TOUCH ? 1.5 : 2, window.devicePixelRatio || 1), r = this.lv >= 3 ? Math.min(base, .7) : this.lv >= 2 ? Math.min(base, .85) : this.lv >= 1 ? Math.min(base, 1) : base;
     if (app && app.renderer.resolution !== r) { app.renderer.resolution = r; app.renderer.resize(app.screen.width, app.screen.height); }
     if (L.ballGlow) L.ballGlow.visible = this.lv < 2;
     try { localStorage.setItem(PERF_KEY, String(this.lv)); } catch (e) {}
@@ -1107,6 +1108,16 @@ class Fx {
   clear() { this.ps.forEach(p => { p.sp.parent && p.sp.parent.removeChild(p.sp); this.pool.push(p.sp); p.sp = null; this.rp.push(p); }); this.ps = []; }
 }
 
+// 숨은 FPS 표시: 주소 끝에 ?fps=1 을 붙이면 왼쪽 위에 초당 그림 수·렉 지킴이 단계·해상도·공·블록 수가 나옴 (폰에서 직접 재 볼 때)
+const FPS_ON = /[?&]fps=1\b/.test(location.search);
+let fpsEl = null, fpsN = 0, fpsT0 = 0;
+function fpsTick(t) {
+  fpsN++;
+  if (t - fpsT0 < 500) return;
+  if (!fpsEl) { fpsEl = document.createElement('div'); fpsEl.style.cssText = 'position:fixed;left:4px;top:4px;z-index:99;pointer-events:none;font:700 11px/1.3 monospace;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:6px'; document.body.appendChild(fpsEl); }
+  const fps = Math.round(fpsN * 1000 / (t - fpsT0)); fpsN = 0; fpsT0 = t;
+  fpsEl.textContent = `${fps}fps · 렉지킴이 ${Perf.lv} · 해상도 ${app.renderer.resolution} · 공 ${balls.length} · 블록 ${blocks.size}`;
+}
 function initGraphics() {
   if (gfxReady) return gfxReady;
   gfxReady = (async () => {
@@ -1118,7 +1129,7 @@ function initGraphics() {
     // 그리기만 10ms보다 짧은 간격이면 건너뜀 (120Hz 폰 → 60, 60·90Hz는 그대로) — Pixi maxFPS는 간격을 정수로 잘라 끊기므로 안 씀
     app.ticker.remove(app.render, app);
     let lastDraw = 0;
-    app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; Perf.sample(t - lastDraw); lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
+    app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; Perf.sample(t - lastDraw); lastDraw = t; app.render(); if (FPS_ON) fpsTick(t); }, null, PIXI.UPDATE_PRIORITY.LOW);
     const load = u => PIXI.Assets.load(u + AV).catch(() => null);
     const hwOn = hwState() === 'on';   // 할로윈 그림은 이벤트 중에만 받음
     const [mon, boss, balls, bg, boss2, boss3, boss4, boss5, boss6, boss7, hwBoss, hwMon, hwX] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp', 'assets/bosses2.webp', 'assets/bosses3.webp', 'assets/bosses4.webp', 'assets/bosses5.webp', 'assets/bosses6.webp', 'assets/bosses7.webp',
@@ -1592,8 +1603,8 @@ function stepBalls(dt) {
     if (b.age > 25) b.vy = Math.abs(b.vy);                        // 너무 오래 날면 내려오게
     if (items.length && !gone) itemHits(b, x0, y0);
     if (gone) { if (retFx < (TOUCH ? 4 : 7)) { retFx++; fx.spawn(TEX.spark, {x: b.x, y: FLOOR_Y, tint: BALLS[b.kind].color, s0: .5, s1: 0, a0: .9, a1: 0, life: .2, add: true}); } freeBall(i); continue; }
-    b.sp.position.set(b.x, b.y); b.gl.position.set(b.x, b.y);
-    b.gl.rotation = Math.atan2(b.vy, b.vx); b.gl.scale.set(b.glk * (1 + sp / 900), b.glk * .8);
+    b.sp.position.set(b.x, b.y);
+    if (Perf.lv < 2) { b.gl.position.set(b.x, b.y); b.gl.rotation = Math.atan2(b.vy, b.vx); b.gl.scale.set(b.glk * (1 + sp / 900), b.glk * .8); }   // 공 빛이 꺼져 있으면(렉 지킴이 2단계~) 계산도 건너뜀
     b.sp.rotation += dt * 6;
   }
 }
@@ -1801,7 +1812,7 @@ function stepGems(dt) {
 }
 function showNum(blk, d, crit) {
   const now = performance.now();
-  if (!crit && blk.numT && now - blk.numT < 140) return;
+  if (!crit && blk.numT && now - blk.numT < (Perf.lv >= 3 ? 400 : 140)) return;   // 렉 지킴이 3단계면 같은 블록 숫자는 0.4초에 한 번
   blk.numT = now;
   const p = numPool.find(o => o.life <= 0); if (!p) return;
   const R = blockRect(blk);
@@ -1948,7 +1959,7 @@ function hurt(d, x, force) {
   if (navigator.vibrate && TOUCH) try { navigator.vibrate(40); } catch (e) {}
 }
 function flashRed() { const f = $('#flash'); f.classList.remove('go'); requestAnimationFrame(() => requestAnimationFrame(() => f.classList.add('go'))); }
-function explodeFx(x, y, tint) { for (let i = 0, n = Perf.lv ? 5 : 10; i < n; i++) { const a = -Math.PI * Math.random(), sp = 200 + Math.random() * 300; fx.spawn(TEX.spark, {x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 600, tint, s0: 1, s1: 0, life: .5, add: true}); } }
+function explodeFx(x, y, tint) { for (let i = 0, n = Perf.lv >= 3 ? 3 : Perf.lv ? 5 : 10; i < n; i++) { const a = -Math.PI * Math.random(), sp = 200 + Math.random() * 300; fx.spawn(TEX.spark, {x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 600, tint, s0: 1, s1: 0, life: .5, add: true}); } }
 let shake = 0, hurtT = 0;
 function logBoss(b, how) { (run.bossLog || (run.bossLog = [])).push([b.boss.name, Math.round(b.boss.t0), Math.round(run.t), how]); }
 function bossDown(b) {
@@ -2877,7 +2888,9 @@ const RankNet = {
   },
   get name() { try { return localStorage.getItem('astra-rank-name') || ''; } catch (e) { return ''; } },
   set name(v) { try { localStorage.setItem('astra-rank-name', v); } catch (e) {} },
-  sent(game) { try { return Number(localStorage.getItem('astra-rank-sent-' + game)) || 0; } catch (e) { return 0; } },
+  // 랭킹 시즌: 2026-10-10 볼빵 랭킹 초기화(배속 기록 때문에) → '이미 올린 점수'도 새로 셈 (예전 최고보다 낮아도 새 시즌엔 올라감)
+  sentKey(game) { return 'astra-rank-sent-' + (/^(ballbbang|bbd\d|bbw\d|bbc_)/.test(game) ? 's2-' : '') + game; },
+  sent(game) { try { return Number(localStorage.getItem(this.sentKey(game))) || 0; } catch (e) { return 0; } },
   async req(opt) { const ac = typeof AbortController === 'function' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 15000); try { const r = await fetch(RANK_URL, Object.assign({}, opt, ac ? {signal: ac.signal} : {})); return await r.json(); } finally { if (t) clearTimeout(t); } },
   // meta = 이 판의 도달 스테이지·시작 스테이지·버틴 초 → 시트가 말이 안 되는 점수(조작)를 거름. k = 확인값
   async send(game, name, score, info, meta) {
@@ -2885,7 +2898,7 @@ const RankNet = {
     const body = {game, name, score: Math.floor(score), info, id: this.id()};
     if (meta) { const tk = meta.tk && meta.tk !== '-' ? meta.tk : ''; Object.assign(body, {st: meta.st | 0, s0: meta.s0 | 0, sec: meta.sec | 0, v: tk ? 3 : 2}, tk ? {tk} : {}); body.k = codeSum(`bbr|${game}|${body.score}|${body.st}|${body.s0}|${body.sec}|${body.id}`); }
     const j = await this.req({method: 'POST', body: JSON.stringify(body)});
-    if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
+    if (j && j.ok) { try { localStorage.setItem(this.sentKey(game), String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
     return j;
   },
   top() { return this.req({cache: 'no-store'}); },

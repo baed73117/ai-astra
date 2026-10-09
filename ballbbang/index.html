@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="애니 소녀들이 마법 공을 쏴서 몬스터 블록을 부수는 무료 벽돌깨기! 레벨업마다 공을 고르고 합체해서 10분 보스까지">
+<meta name="description" content="애니 소녀들이 마법 공을 쏴서 몬스터 블록을 부수는 무료 벽돌깨기! 레벨업마다 공을 고르고 합체해서 스테이지 5개 보스까지">
 <meta name="theme-color" content="#FBF2FF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AI아스트라 공유방">
 <meta property="og:title" content="볼빵! 아스트라 · AI아스트라 공유방">
-<meta property="og:description" content="애니 소녀들이 마법 공을 쏴서 몬스터 블록을 부수는 무료 벽돌깨기! 레벨업마다 공을 고르고 합체해서 10분 보스까지">
+<meta property="og:description" content="애니 소녀들이 마법 공을 쏴서 몬스터 블록을 부수는 무료 벽돌깨기! 레벨업마다 공을 고르고 합체해서 스테이지 5개 보스까지">
 <meta property="og:image" content="https://baed73117.github.io/ai-astra/ballbbang/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -172,6 +172,17 @@ body.wide .side{display:grid;gap:12px}
 .t-foot{position:absolute;left:0;right:0;bottom:0;padding:0 20px calc(20px + var(--safe-b));display:grid;gap:10px;max-width:520px;margin:0 auto}
 .t-best{display:flex;justify-content:space-between;font:700 13px/1 var(--f-kr);opacity:.9}
 .t-best b{font-family:var(--f-en)}
+.stagepick{position:relative;display:flex;align-items:center;gap:8px;padding:8px;border-radius:16px;overflow:hidden;background:#2A1A3A center 45%/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.stagepick::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,8,28,.85),rgba(14,8,28,.42) 50%,rgba(14,8,28,.85))}
+.stagepick>*{position:relative}
+.sp-arr{width:40px;height:44px;border:0;border-radius:12px;background:rgba(255,255,255,.16);color:#fff;font:800 26px/1 var(--f-en);flex:none;cursor:pointer}
+.sp-arr:disabled{opacity:.25;cursor:default}
+.sp-mid{flex:1;min-width:0;display:grid;gap:3px;text-align:center}
+.sp-mid small{font:800 11px/1 var(--f-en);letter-spacing:.14em;color:#FFB8DA}
+.sp-mid b{font:900 17px/1.15 var(--f-kr);color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.sp-mid em{font:500 11.5px/1.3 var(--f-kr);font-style:normal;color:#fff;opacity:.88}
+.stagepick.lock .sp-mid b{opacity:.5}
+.stagepick.lock::before{background:rgba(14,8,28,.8)}
 .daily{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(94,155,255,.18);box-shadow:inset 0 0 0 1px rgba(150,190,255,.5);text-align:left}
 .daily .dc{width:44px;height:44px;border-radius:13px;flex:none;background:#2A1A3A center 10%/150% no-repeat;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7)}
 .daily span{flex:1;font:500 12px/1.4 var(--f-kr);opacity:.92}
@@ -256,7 +267,7 @@ body.wide .side{display:grid;gap:12px}
 </div>
 <aside class="side l" id="sideL"><div class="pt" id="sidePt"></div><h3 id="sideName"></h3><p id="sideDesc"></p></aside>
 <aside class="side r" id="sideR"><div class="panel"><b>STATS</b><div id="sideStats"><div class="statrow"><span>게임을 시작하면 능력치가 나와요</span><span></span></div></div></div>
-  <div class="panel"><b>HOW TO PLAY</b><div class="statrow"><span>조준</span><span>마우스</span></div><div class="statrow"><span>특기</span><span>Space</span></div><div class="statrow"><span>일시정지</span><span>Esc</span></div><div class="statrow"><span>레벨업 고르기</span><span>1 · 2 · 3</span></div></div><div class="panel"><b>RECORD</b><div class="statrow"><span>최고 점수</span><span id="sideBest">0</span></div><div class="statrow"><span>클리어</span><span id="sideClears">0</span></div></div></aside>
+  <div class="panel"><b>HOW TO PLAY</b><div class="statrow"><span>조준</span><span>마우스</span></div><div class="statrow"><span>특기</span><span>Space</span></div><div class="statrow"><span>일시정지</span><span>Esc</span></div><div class="statrow"><span>레벨업 고르기</span><span>1 · 2 · 3</span></div></div><div class="panel"><b>RECORD</b><div class="statrow"><span>최고 점수</span><span id="sideBest">0</span></div><div class="statrow"><span>클리어</span><span id="sideClears">0</span></div><div class="statrow"><span>깬 스테이지</span><span id="sideTop">0</span></div></div></aside>
 
 <!-- 첫 화면 -->
 <div class="overlay title" id="title">
@@ -267,6 +278,7 @@ body.wide .side{display:grid;gap:12px}
   </header>
   <div class="t-foot">
     <div class="t-best"><span>최고 점수 <b id="tBest">0</b></span><span>클리어 <b id="tClears">0</b>회</span></div>
+    <div class="stagepick" id="stagePick"><button class="sp-arr" id="stPrev" type="button" aria-label="이전 스테이지">‹</button><div class="sp-mid"><small id="stNo">STAGE 1</small><b id="stName">노을 옥상</b><em id="stInfo"></em></div><button class="sp-arr" id="stNext" type="button" aria-label="다음 스테이지">›</button></div>
     <button class="btn glass" id="btnContinue" type="button" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg><span id="contLbl">이어 하기</span></button>
     <button class="btn main xl" id="btnStart" type="button"><span>게임 시작</span><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg></button>
     <button class="daily" id="btnDaily" type="button"><div class="dc" id="dailyFace"></div><span><b>오늘의 도전</b><em style="font-style:normal" id="dailyInfo">모두가 같은 판으로 랭킹 대결!</em></span><svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -336,7 +348,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=5cde9dab';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=4b5e44bf';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -401,12 +413,26 @@ const ICO = {
 };
 const ICO_BG = {a: 'linear-gradient(135deg,#FF8FB8,#FF4F8A)', s: 'linear-gradient(135deg,#7FE3FF,#5E9BFF)', h: 'linear-gradient(135deg,#8FF0B8,#3CC48A)', g: 'linear-gradient(135deg,#FFE08A,#FFB03A)'};
 const SHOP = [
-  {k: 'atk', name: '기본 공격력', desc: '+8% (단계마다)', max: 5, cost: l => 120 + l * 120},
-  {k: 'hp', name: '기본 체력', desc: '+10 (단계마다)', max: 5, cost: l => 100 + l * 100},
-  {k: 'start', name: '시작 기본 공', desc: '+1개 (단계마다)', max: 3, cost: l => 200 + l * 200},
-  {k: 'xp', name: '경험치 획득', desc: '+6% (단계마다)', max: 5, cost: l => 150 + l * 150},
-  {k: 'reroll', name: '레벨업 다시 뽑기', desc: '+1회 (단계마다)', max: 2, cost: l => 300 + l * 300},
+  {k: 'atk', name: '기본 공격력', desc: '+8% (단계마다)', max: 12, cost: l => 120 + l * 120},
+  {k: 'hp', name: '기본 체력', desc: '+10 (단계마다)', max: 10, cost: l => 100 + l * 100},
+  {k: 'start', name: '시작 기본 공', desc: '+1개 (단계마다)', max: 5, cost: l => 200 + l * 200},
+  {k: 'xp', name: '경험치 획득', desc: '+6% (단계마다)', max: 8, cost: l => 150 + l * 150},
+  {k: 'reroll', name: '레벨업 다시 뽑기', desc: '+1회 (단계마다)', max: 3, cost: l => 300 + l * 300},
 ];
+/* ---------- 스테이지: 앞 스테이지를 깨면 다음이 열림. 뒤로 갈수록 단단하고(hp) 빠르고(spd) 특수 블록이 일찍 나옴(sp초 앞당김)
+   보스 그림 번호: 0 젤리 킹 · 1 골렘 · 2 폭풍 구름 · 3 다크스타 · 4 선물상자 미믹 · 5 크리스탈 퀸 · 6 마그마 드래곤 · 7 보이드 문 */
+const STAGES = [
+  {n: 1, name: '노을 옥상', bg: 'bg', hp: 1, spd: 1, sp: 0, xp: 1, score: 1, mids: [0, 1, 2], fin: 3},
+  {n: 2, name: '한밤의 놀이공원', bg: 'bg2', hp: 1.7, spd: 1.05, sp: 30, xp: 1.08, score: 1.35, mids: [1, 2, 3], fin: 4},
+  {n: 3, name: '얼음 수정 동굴', bg: 'bg3', hp: 2.8, spd: 1.1, sp: 60, xp: 1.16, score: 1.7, mids: [2, 3, 4], fin: 5},
+  {n: 4, name: '용암 공장', bg: 'bg4', hp: 4.4, spd: 1.14, sp: 90, xp: 1.24, score: 2.1, mids: [3, 4, 5], fin: 6},
+  {n: 5, name: '달 너머 우주', bg: 'bg5', hp: 5.8, spd: 1.16, sp: 110, xp: 1.32, score: 2.5, mids: [4, 5, 6], fin: 7},
+];
+const BOSS_NAMES = ['젤리 킹', '아이언 골렘 박스', '폭풍 구름 큐브', '다크스타 오버로드', '선물상자 미믹 킹', '크리스탈 퀸 큐브', '마그마 드래곤 블록', '보이드 문 엠퍼러'];
+// 보스마다 부하: 젤리 킹=젤리 · 골렘=철갑 · 폭풍 구름=유령 · 다크스타=폭탄·치료 · 미믹=분열·금 · 크리스탈=철갑·유령 · 마그마=폭탄·철갑 · 보이드=유령·치료·폭탄·철갑
+const BOSS_MINIONS = [[null], ['armor'], ['ghost'], ['bomb', 'healer', null], ['split', 'gold', null], ['armor', 'ghost'], ['bomb', 'armor'], ['ghost', 'healer', 'bomb', 'armor']];
+const stageOf = n => STAGES[Math.max(1, Math.min(STAGES.length, n | 0 || 1)) - 1];
+const ST = () => stageOf(run && run.stage);
 
 /* ---------- 저장 (새 키: astra-universe-breaker-v1) ---------- */
 const SAVE_KEY = 'astra-universe-breaker-v1', RUN_KEY = 'astra-universe-breaker-run';
@@ -417,7 +443,9 @@ function loadSave() {
   const owned = Array.isArray(s.owned) ? s.owned.filter(k => CHARS.some(c => c.key === k)) : [];
   if (!owned.includes('ruby')) owned.unshift('ruby');
   const shop = {}; SHOP.forEach(x => { shop[x.k] = Math.min(x.max, n(s.shop && s.shop[x.k])); });
-  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop,
+  // top = 깬 가장 높은 스테이지 (스테이지가 생기기 전에 클리어한 사람은 1단계를 깬 것으로) · st = 고른 스테이지
+  const top = Math.min(STAGES.length, Math.max(n(s.top), n(s.clears) > 0 ? 1 : 0)), st = Math.max(1, Math.min(top + 1, STAGES.length, n(s.st) || top + 1));
+  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st,
     muted: s.muted === true, auto: s.auto !== false, daily: s.daily && typeof s.daily === 'object' ? {d: String(s.daily.d || ''), best: n(s.daily.best)} : {d: '', best: 0}};
 }
 const save = loadSave();
@@ -708,13 +736,15 @@ function initGraphics() {
     let lastDraw = 0;
     app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
     const load = u => PIXI.Assets.load(u + AV).catch(() => null);
-    const [mon, boss, balls, bg] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp'].map(load));
-    TEX.mon = mon || fallbackMonsters(); TEX.boss = boss || fallbackBosses(); TEX.balls = balls || fallbackBalls(); TEX.bg = bg || fallbackBg();
+    const [mon, boss, balls, bg, boss2] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp', 'assets/bosses2.webp'].map(load));
+    TEX.mon = mon || fallbackMonsters(); TEX.boss = boss || fallbackBosses(); TEX.balls = balls || fallbackBalls(); TEX.bg = bg || fallbackBg(); TEX.bgs = {bg: TEX.bg};
     const mc = TEX.mon.width / 4; TEX.m = []; for (let i = 0; i < 12; i++) TEX.m.push(sub(TEX.mon, (i % 4) * mc, Math.floor(i / 4) * mc, mc, mc));
     // 부서질 때 날아가는 블록 조각: 몬스터 몸통을 4등분
     TEX.mp = []; const bs = mc * MON_BODY, by0 = mc * (MON_AY - MON_BODY / 2), bx0 = (mc - bs) / 2;
     for (let i = 0; i < 12; i++) { const ox = (i % 4) * mc + bx0, oy = Math.floor(i / 4) * mc + by0; TEX.mp.push([0, 1, 2, 3].map(q => sub(TEX.mon, ox + (q % 2) * bs / 2, oy + (q >> 1) * bs / 2, bs / 2, bs / 2))); }
     const bw = TEX.boss.width / 2, bh = TEX.boss.height / 2; TEX.b = []; for (let i = 0; i < 4; i++) TEX.b.push(sub(TEX.boss, (i % 2) * bw, Math.floor(i / 2) * bh, bw, bh));
+    // 4~7 = 스테이지 2~5 마지막 보스 (그림이 없으면 1단계 보스 그림을 빌려 씀)
+    for (let i = 0; i < 4; i++) TEX.b.push(boss2 ? sub(boss2, (i % 2) * boss2.width / 2, Math.floor(i / 2) * boss2.height / 2, boss2.width / 2, boss2.height / 2) : TEX.b[i]);
     const kc = TEX.balls.width / 5; TEX.k = []; for (let i = 0; i < 15; i++) TEX.k.push(sub(TEX.balls, (i % 5) * kc, Math.floor(i / 5) * kc, kc, kc));
     TEX.spark = canvasTex(64, 64, (g, w) => { const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.4, 'rgba(255,255,255,.65)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, w); });
     TEX.star = canvasTex(64, 64, (g, w) => { g.fillStyle = '#fff'; g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 12 : 30; g.lineTo(w / 2 + Math.cos(a) * r, w / 2 + Math.sin(a) * r); } g.closePath(); g.fill(); });
@@ -844,7 +874,7 @@ function layout() {
   if (dy) { for (const b of balls) b.y += dy; for (const m of gemList) m.y += dy; }
   s = w / WW;
   W.scale.set(s); W.position.set(0, 0);
-  const bgk = Math.max(w / TEX.bg.width, hh / TEX.bg.height); L.bg.scale.set(bgk); L.bg.position.set((w - TEX.bg.width * bgk) / 2, (hh - TEX.bg.height * bgk) / 2);
+  const bt = L.bg.texture, bgk = Math.max(w / bt.width, hh / bt.height); L.bg.scale.set(bgk); L.bg.position.set((w - bt.width * bgk) / 2, (hh - bt.height * bgk) / 2);
   L.field.clear();
   L.field.beginFill(0x0E0820, .3).drawRoundedRect(FIELD_L - 4, FIELD_TOP - 6, FIELD_R - FIELD_L + 8, DANGER_Y - FIELD_TOP + 12, 18).endFill();
   L.field.lineStyle(2, 0xFFFFFF, .05); for (let c = 1; c < COLS; c++) L.field.moveTo(colX(c), FIELD_TOP).lineTo(colX(c), DANGER_Y);
@@ -871,7 +901,7 @@ function newRun(opts) {
   const ch = byKey(opts.char);
   const shop = daily ? {atk: 0, hp: 0, start: 0, xp: 0, reroll: 0} : save.shop;
   return {
-    started: false, daily, seed, dateNum: opts.dateNum || 0, char: ch.key,
+    started: false, daily, seed, dateNum: opts.dateNum || 0, char: ch.key, stage: daily ? 1 : stageOf(opts.stage).n,   // 오늘의 도전은 늘 1스테이지 규칙
     wr: rng(seed), cr: rng(seed ^ 0x9E3779B9),          // 블록용 · 선택지용 (고른 것이 블록 배치를 바꾸지 않게)
     t: 0, scroll: 0, nextK: 0, score: 0, kills: 0, level: 1, xp: 0, xpNeed: xpNeedFor(1),
     hp: 100 + shop.hp * 10, hpMax: 100 + shop.hp * 10, atkMeta: 1 + shop.atk * .08, xpMeta: 1 + shop.xp * .06,
@@ -892,14 +922,17 @@ const critChance = () => .05 + .08 * U('crit') + .02 * U('luck');
 const isFinal = () => !!(run.boss && run.boss.boss.final);
 const descendSpeed = () => {
   // 화면 길이가 달라도 바닥까지 걸리는 시간은 같게 (세로 길이에 비례)
-  const base = (17 + run.t * .025) * (1 - .08 * U('slow'));
+  const base = (17 + run.t * .025) * ST().spd * (1 - .08 * U('slow'));
   if (run.frozenT > 0) return 0;
   if (isFinal()) return 5.5;
   if (run.boss) return base * .45;            // 보스전에는 천천히 (보스와 싸울 시간)
   return base;
 };
 // 블록 체력: 시간이 갈수록 강해짐
-const hpBase = t => 22 * Math.pow(1 + t / 60, 1.5) * (1 + Math.max(0, t - 180) / 300);   // 3분 뒤로는 레벨이 빨리 오르니 더 단단하게 (봇 시험으로 맞춤)
+const hpBase = t => stHp(t) * 22 * Math.pow(1 + t / 60, 1.5) * (1 + Math.max(0, t - 180) / 300);   // 3분 뒤로는 레벨이 빨리 오르니 더 단단하게 (봇 시험으로 맞춤) · 스테이지 배율
+// 스테이지 체력 배율: 처음엔 55%만 걸고 8분에 걸쳐 다 걸림 (초반에 허무하게 지지 않고 뒤로 갈수록 제대로 셈)
+function stHp(t) { const h = ST().hp; return 1 + (h - 1) * (.55 + .45 * Math.min(1, t / 480)); }
+const addScore = v => { run.score += Math.round(v * ST().score); };   // 높은 스테이지일수록 점수 배율 (랭킹 시트 상한 900만 안쪽으로)
 
 /* ---------- 줄 번호 ↔ 화면 높이 ---------- */
 const rowTop = k => TOP0 + run.scroll - k * CELL;
@@ -940,7 +973,7 @@ function removeBlock(b) {
 // 새 줄 만들기 (오늘의 도전이면 씨앗대로 똑같이)
 function spawnRow() {
   // 줄마다 씨앗을 따로: 보스를 언제 잡든 같은 번호의 줄은 누구에게나 똑같이 (오늘의 도전 공정성)
-  const k = run.nextK++, R = rng((run.seed ^ Math.imul(k + 1, 2654435761)) >>> 0), t = run.t;
+  const k = run.nextK++, R = rng((run.seed ^ Math.imul(k + 1, 2654435761)) >>> 0), t = run.t + ST().sp;   // 높은 스테이지는 특수 블록·빽빽한 줄이 일찍 (체력은 hpBase가 따로 올림)
   if (isFinal()) {                             // 마지막 보스 중에는 가끔 졸개 줄만
     if (k % 3) return;
   }
@@ -948,7 +981,7 @@ function spawnRow() {
   const n = clamp(4 + Math.floor(t / 150) + Math.floor(R() * 3), 4, 7);
   const cols = []; for (let c = 0; c < COLS; c++) if (!row[c]) cols.push(c);
   for (let i = cols.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [cols[i], cols[j]] = [cols[j], cols[i]]; }
-  const base = hpBase(t);
+  const base = hpBase(run.t);
   // 큰 블록 (2×2): 3분 뒤부터 가끔
   if (t > 150 && R() < .1) {
     const c = Math.floor(R() * (COLS - 1)), r2 = gridRow(k + 1);
@@ -1045,20 +1078,19 @@ function drawItems() {
     if (it.type === 'laserH' || it.type === 'laserV') it.sp.alpha = .55 + .45 * (it.uses / ITEM_USES);
   }
 }
-// 보스 등장: 3·6·9분 중간 보스, 10분 마지막 보스
+// 보스 등장: 3·6·9분 중간 보스, 10분 마지막 보스 (어떤 보스인지는 스테이지마다 STAGES의 mids·fin)
 function spawnBoss(final) {
   const w = final ? 6 : 4, h = final ? 4 : 3, c = Math.floor((COLS - w) / 2);
   const k = run.nextK; run.nextK += h;
   // 자리에 있던 블록은 치움
   for (let i = 0; i < h; i++) { const r = gridRow(k + i); for (let j = 0; j < w; j++) if (r[c + j]) removeBlock(r[c + j]); }
-  const tex = final ? 3 : (run.bossPhase - 1) % 3;
-  const names = ['젤리 킹', '아이언 골렘 박스', '폭풍 구름 큐브', '다크스타 오버로드'];
+  const st = ST(), tex = final ? st.fin : st.mids[(run.bossPhase - 1) % 3];   // 스테이지마다 보스 차례가 다름 (앞 스테이지 보스가 중간 보스로)
   const hp = Math.round(hpBase(run.t) * (final ? 75 : 60));
-  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: names[final ? 3 : tex], spawnT: final ? 3 : 5, t0: run.t}});
+  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: BOSS_NAMES[tex], spawnT: final ? 3 : 5, t0: run.t}});
   run.boss = b;
   $('#bossName').textContent = b.boss.name; $('#bossbar').hidden = false; updateBossBar();
   S.warn(); S.boss = true; battleMusic(); shake = 14; flashRed();
-  const wEl = $('#warn'); $('#warnName').textContent = (final ? '마지막 보스 · ' : '') + b.boss.name;
+  const wEl = $('#warn'); $('#warnName').textContent = (final ? (run.stage >= STAGES.length ? '최종 보스 · ' : '마지막 보스 · ') : '') + b.boss.name;
   wEl.classList.remove('go'); requestAnimationFrame(() => requestAnimationFrame(() => wEl.classList.add('go')));
   if (navigator.vibrate && TOUCH) try { navigator.vibrate([60, 60, 60]); } catch (e) {}
 }
@@ -1284,8 +1316,8 @@ function killBlock(blk) {
   run.combo = (run.combo || 0) + 1; run.comboT = 1.4;
   if ([10, 25].includes(run.combo)) S.milestone();
   if (run.combo % 50 === 0) { run.fever = 6; S.fever(); banner(`${run.combo} COMBO · FEVER!`, false); }
-  run.score += Math.round(blk.maxHp * (blk.boss ? 3 : 1) * (1 + Math.min(run.combo, 50) * .01));   // 콤보가 이어질수록 점수 조금 더 (최대 +50%)
-  addXp(blk.boss ? (blk.boss.final ? 0 : 25) : (bt.xp || 1) * (blk.big ? 3 : 1) * (1 + run.t / 240));   // 뒤로 갈수록 블록이 단단해지니 경험치도 늘림
+  addScore(blk.maxHp / stHp(run.t) * (blk.boss ? 3 : 1) * (1 + Math.min(run.combo, 50) * .01));   // 스테이지 체력 배율은 빼고 점수 배율만 (점수가 너무 부풀지 않게)   // 콤보가 이어질수록 점수 조금 더 (최대 +50%)
+  addXp(blk.boss ? (blk.boss.final ? 0 : 25) : (bt.xp || 1) * (blk.big ? 3 : 1) * (1 + run.t / 240) * ST().xp);   // 뒤로 갈수록 블록이 단단해지니 경험치도 늘림 (높은 스테이지는 조금 더)
   if (bt.coin) run.coinBonus = (run.coinBonus || 0) + bt.coin;
   // 부서지는 효과
   const col = blk.boss ? 0xFFB0D0 : [0xFF8FC0, 0x6FE3C0, 0x7FC8FF, 0xFFE070, 0xC9A8FF][(blk.c + blk.k) % 5];
@@ -1439,8 +1471,7 @@ function stepWorld(dt) {
 function bossMinions(b) {
   const k = b.k + b.h, row = gridRow(k), base = hpBase(run.t);
   let n = b.boss.final ? 3 : 2;
-  // 보스마다 부하가 다름: 젤리 킹=젤리 · 골렘=철갑 · 폭풍 구름=유령(가끔 피함) · 다크스타=폭탄·치료
-  const kinds = [[null], ['armor'], ['ghost'], ['bomb', 'healer', null]][b.boss.final ? 3 : b.boss.tex];
+  const kinds = BOSS_MINIONS[b.boss.tex] || [null];   // 보스마다 부하가 다름 (BOSS_MINIONS)
   for (let c = 0; c < COLS && n > 0; c++) {
     const cc = (c * 5 + Math.floor(run.t)) % COLS;
     if (!row[cc]) { const t = kinds[(cc + n) % kinds.length] || COLORS[cc % 5]; addBlock(k, cc, 1, 1, Math.round(base * (t === 'armor' ? .9 : .7)), t); n--; }
@@ -1461,7 +1492,7 @@ function logBoss(b, how) { (run.bossLog || (run.bossLog = [])).push([b.boss.name
 function bossDown(b) {
   if (run.boss === b) { run.boss = null; $('#bossbar').hidden = true; S.boss = false; if (!b.boss.final) battleMusic(); }
   logBoss(b, 'down');
-  run.score += b.boss.final ? 30000 : 6000;
+  addScore(b.boss.final ? 30000 : 6000);
   banner(b.boss.final ? '보스 격파!!' : '보스 격파!', false);
   if (b.boss.final) endRun(true);
 }
@@ -1603,7 +1634,7 @@ function updateHud() {
   const sec = Math.floor(run.t); if (c.sec !== sec) {
     c.sec = sec; $('#time').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
     const toBoss = run.t < 600 ? 600 - sec : 0;
-    $('#phase').textContent = run.boss ? (run.boss.boss.final ? '마지막 보스!' : '보스전!') : toBoss > 0 ? `보스까지 ${Math.floor(toBoss / 60)}:${String(toBoss % 60).padStart(2, '0')}` : '마지막 보스!';
+    $('#phase').textContent = run.boss ? (run.boss.boss.final ? '마지막 보스!' : '보스전!') : toBoss > 0 ? `${run.daily ? '' : 'S' + run.stage + ' · '}보스까지 ${Math.floor(toBoss / 60)}:${String(toBoss % 60).padStart(2, '0')}` : '마지막 보스!';
     $('#timer').classList.toggle('boss', !!run.boss);
   }
   if (c.score !== run.score && (!c.st || now - c.st > 100)) { c.score = run.score; c.st = now; $('#score').textContent = fmt(run.score); }
@@ -1741,7 +1772,7 @@ function choose(i) {
     run.upg[o.k] = U(o.k) + 1;
     if (o.k === 'hpmax') { run.hpMax += 20; run.hp += 20; }
     if (o.k === 'heal') { run.hp = Math.min(run.hpMax, run.hp + 35); delete run.upg.heal; }
-    if (o.k === 'bonus') { run.coinBonus = (run.coinBonus || 0) + 15; run.score += 3000; delete run.upg.bonus; }
+    if (o.k === 'bonus') { run.coinBonus = (run.coinBonus || 0) + 15; addScore(3000); delete run.upg.bonus; }
     if (o.k === 'extra') run.extraBasic += 2;
   }
   rebuildQueue();
@@ -1759,7 +1790,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'bossPhase', 'finalSpawned', 'hitCount', 'coinBonus', 'dmgTotal'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'bossPhase', 'finalSpawned', 'hitCount', 'coinBonus', 'dmgTotal'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -1782,6 +1813,12 @@ async function loadChar(key) {
   SD = []; for (let i = 0; i < 6; i++) SD.push(sub(t, (i % 3) * cw, Math.floor(i / 3) * chh, cw, chh));
   SD.push(tex && bl && bl.width === cw && bl.height === chh ? bl : null);   // 6 = 기본 자세에서 눈만 감은 그림 (없으면 깜빡임 생략)
 }
+// 스테이지 배경 (처음 고를 때만 받아 둠, 없으면 1스테이지 배경)
+async function useStageBg(n) {
+  const key = stageOf(n).bg;
+  if (!TEX.bgs[key]) TEX.bgs[key] = await PIXI.Assets.load(`assets/${key}.webp${AV}`).catch(() => null) || TEX.bg;
+  L.bg.texture = TEX.bgs[key];
+}
 async function startGame(opts) {
   if (starting) return;
   starting = true;
@@ -1790,13 +1827,13 @@ async function startGame(opts) {
 async function startInner(opts) {
   S.init();
   const btns = ['#btnStart', '#btnDaily', '#btnContinue', '#btnAgain'].map($); btns.forEach(b => { b.disabled = true; });
-  try { await initGraphics(); await loadChar(opts.resume ? opts.resume.char : opts.char); }
+  try { await initGraphics(); await Promise.all([loadChar(opts.resume ? opts.resume.char : opts.char), useStageBg(opts.resume ? opts.resume.stage : opts.daily ? 1 : opts.stage)]); }
   catch (e) { toast('이 브라우저에서는 게임 그래픽을 켤 수 없어요. 크롬이나 사파리 최신 버전으로 열어 주세요.'); return; }
   finally { btns.forEach(b => { b.disabled = false; }); }
   resetWorld();
   if (opts.resume) try {
     const o = opts.resume;
-    run = newRun({daily: o.daily, seed: o.seed, dateNum: o.dateNum, char: o.char});
+    run = newRun({daily: o.daily, seed: o.seed, dateNum: o.dateNum, char: o.char, stage: o.stage});
     Object.assign(run, o); run.wr = rng(0); run.wr.set(o.wr); run.cr = rng(0); run.cr.set(o.cr);
     layout();
     o.bl.forEach(([k, c, w, h, hp, mx, type]) => { const b = addBlock(k, c, w, h, mx, type, w > 1 ? {big: true} : null); b.hp = hp; b.txtDirty = true; });
@@ -1830,7 +1867,7 @@ async function startInner(opts) {
   state = 'play'; paused = false; overT = 0; hudCache = {};
   app.start();
   $('#hint').hidden = false; $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4500);
-  banner(run.daily ? `오늘의 도전 · ${ch.name}` : `${ch.name} 출격!`, run.daily);
+  banner(run.daily ? `오늘의 도전 · ${ch.name}` : `스테이지 ${run.stage} · ${ST().name}`, run.daily || run.stage > 1);
   restoreVolume(); battleMusic(); BGM.prefetch(['boss']);
   inputLock = performance.now() + 300;
   clearInterval(autosave); autosave = setInterval(() => { if (state === 'play' || state === 'levelup') saveRun(); }, 10000);
@@ -1854,14 +1891,17 @@ function endRun(won) {
   BGM.want = ''; S.stopMusic(); BGM.stop(.5); restoreVolume(); if (won) S.win(); else S.over();
   // 정산·저장은 바로 (결과 화면이 뜨기 전에 앱을 닫아도 코인·기록이 남게)
   const timeBonus = Math.floor(run.t) * 10;
-  let finalScore = Math.floor(run.score + timeBonus + (won ? 20000 + Math.max(0, run.hp) * 100 : 0));
+  let finalScore = Math.floor(run.score + (timeBonus + (won ? 20000 + Math.max(0, run.hp) * 100 : 0)) * ST().score);
   if (!Number.isFinite(finalScore) || finalScore < 0) finalScore = 0;
-  let coins = Math.floor(Math.sqrt(finalScore) * .8) + Math.floor(run.coinBonus || 0) + (won ? 150 : 0);   // 짧게 끝나도 조금은, 클리어하면 900개 안팎
+  let coins = Math.floor(Math.sqrt(finalScore) * .8) + Math.floor(run.coinBonus || 0) + (won ? 150 * run.stage : 0);   // 짧게 끝나도 조금은, 클리어하면 900개 안팎
   if (!Number.isFinite(coins) || coins < 0) coins = 0;
   run.final = finalScore; run.coinsGot = coins;
   save.coins = Math.min(9999999, save.coins + coins);
   run.isBest = finalScore > save.best; if (run.isBest) save.best = finalScore;
   if (won) save.clears++;
+  // 처음 깬 스테이지면 다음 스테이지 열기 (오늘의 도전은 1스테이지 규칙이라 빼고)
+  run.unlocked = 0;
+  if (won && !run.daily && run.stage > save.top) { save.top = run.stage; if (run.stage < STAGES.length) { run.unlocked = run.stage + 1; save.st = run.unlocked; } }
   if (run.daily) { if (save.daily.d !== String(run.dateNum)) save.daily = {d: String(run.dateNum), best: 0}; save.daily.best = Math.max(save.daily.best, finalScore); }
   persist();
   const r = run;
@@ -1875,14 +1915,18 @@ function showResult(won) {
   const chR = byKey(run.char);
   $('#rPt').style.backgroundImage = `url(${PT_URL(chR.key)})`;
   $('#rLine').textContent = won ? WIN_LINE[chR.key] : run.t >= 360 ? GOOD_LINE[chR.key] : LOSE_LINE[chR.key];
-  $('#rTag').textContent = run.daily ? `TODAY'S CHALLENGE · ${String(run.dateNum).slice(4, 6)}/${String(run.dateNum).slice(6)}` : won ? 'CLEAR' : 'RESULT';
-  $('#rTitle').textContent = won ? '클리어! 대단해요!' : run.t >= 600 ? '보스까지 갔어요!' : '수고했어요!';
+  $('#rTag').textContent = run.daily ? `TODAY'S CHALLENGE · ${String(run.dateNum).slice(4, 6)}/${String(run.dateNum).slice(6)}` : `STAGE ${run.stage} · ${won ? 'CLEAR' : 'RESULT'}`;
+  $('#rTitle').textContent = won ? (run.daily ? '클리어! 대단해요!' : run.stage >= STAGES.length ? '모든 스테이지 클리어!!' : `스테이지 ${run.stage} 클리어!`) : run.t >= 600 ? '보스까지 갔어요!' : '수고했어요!';
+  // 새 스테이지가 열렸으면 큰 버튼이 '다음 스테이지'
+  const nx = run.unlocked ? stageOf(run.unlocked) : null;
+  $('#btnAgain').textContent = nx ? `스테이지 ${nx.n} · ${nx.name} 도전!` : '다시 하기';
+  if (nx) setTimeout(() => { if (state === 'over') toast(`새 스테이지가 열렸어요! 스테이지 ${nx.n} · ${nx.name}`); }, 1200);
   countUp($('#rScore'), finalScore);
   $('#rNew').hidden = !isBest;
   const sec = Math.floor(run.t); $('#rTime').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
   $('#rKills').textContent = fmt(run.kills); $('#rCoin').textContent = '+' + fmt(coins);
   // 랭킹 (시트가 이 게임을 받을 준비가 됐을 때만)
-  const ch = byKey(run.char), info = `${run.daily ? '도전 ' + String(run.dateNum).slice(4) + ' · ' : ''}${ch.name} · ${won ? '클리어' : Math.floor(sec / 60) + '분'}`;
+  const ch = byKey(run.char), info = `${run.daily ? '도전 ' + String(run.dateNum).slice(4) + ' · ' : ''}${ch.name} · ${run.daily ? '' : 'S' + run.stage + ' '}${won ? '클리어' : Math.floor(sec / 60) + '분'}`;
   const game = run.daily ? 'bbd' + run.dateNum : 'ballbbang';    // 오늘의 도전은 날짜별 랭킹
   if (rankSupported) RankUI.show(game, finalScore, info); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info); }); }
   $('#result').hidden = false; lockEl($('#result .card'), 500);
@@ -1922,15 +1966,28 @@ function renderTitle() {
   $('#tCoins').textContent = fmt(save.coins); $('#tBest').textContent = fmt(save.best); $('#tClears').textContent = save.clears;
   const sv = loadRunSave();
   $('#btnContinue').hidden = !sv;
-  if (sv) { const m = Math.floor(sv.t / 60); $('#contLbl').textContent = `이어 하기 · ${byKey(sv.char).name} ${m}분 ${Math.floor(sv.t % 60)}초${sv.daily ? ' (오늘의 도전)' : ''}`; }
+  if (sv) { const m = Math.floor(sv.t / 60); $('#contLbl').textContent = `이어 하기 · ${sv.daily ? '' : 'S' + (sv.stage || 1) + ' '}${byKey(sv.char).name} ${m}분 ${Math.floor(sv.t % 60)}초${sv.daily ? ' (오늘의 도전)' : ''}`; }
   const d = kstDate(), dc = dailyChar(d);
   $('#dailyFace').style.backgroundImage = `url(${PT_URL(dc.key)})`;
   const lead = rankTop && rankTop['bbd' + d] && rankTop['bbd' + d][0];
   $('#dailyInfo').textContent = `${String(d).slice(4, 6)}월 ${String(d).slice(6)}일 · 오늘의 캐릭터 ${dc.name}` +
     (lead ? ` · 1위 ${lead.name} ${fmt(lead.score)}` : '') + (save.daily.d === String(d) && save.daily.best ? ` · 내 최고 ${fmt(save.daily.best)}` : '');
   soundLabels();
-  $('#sideBest').textContent = fmt(save.best); $('#sideClears').textContent = save.clears;
+  $('#sideBest').textContent = fmt(save.best); $('#sideClears').textContent = save.clears; $('#sideTop').textContent = `${save.top} / ${STAGES.length}`;
+  stView = save.st; renderStage();
   const sc = byKey(save.sel); $('#sidePt').style.backgroundImage = `url(${PT_URL(sc.key)})`; $('#sideName').textContent = sc.name; $('#sideDesc').textContent = sc.desc;
+}
+// 스테이지 고르기: 열린 스테이지만 시작 가능, 잠긴 스테이지는 미리 보기만
+let stView = 1;
+function renderStage() {
+  const st = stageOf(stView), open = st.n <= save.top + 1;
+  $('#stNo').textContent = `STAGE ${st.n} / ${STAGES.length}`; $('#stName').textContent = st.name;
+  $('#stInfo').textContent = !open ? `🔒 스테이지 ${st.n - 1}을 깨면 열려요` : st.n <= save.top ? '클리어 ✓ · 다시 도전할 수 있어요' : st.n === 1 ? '10분 버티고 보스를 잡아요!' : '새 스테이지! 몬스터가 더 단단해요';
+  $('#stagePick').classList.toggle('lock', !open);
+  $('#stagePick').style.backgroundImage = `url(assets/${st.bg}.webp${AV})`;
+  $('#stPrev').disabled = st.n <= 1; $('#stNext').disabled = st.n >= STAGES.length;
+  const bs = $('#btnStart'); bs.disabled = !open; bs.firstElementChild.textContent = open ? (st.n > 1 ? `스테이지 ${st.n} 시작` : '게임 시작') : '아직 잠겨 있어요';
+  if (open && save.st !== st.n) { save.st = st.n; persist(); }
 }
 function openChars() {
   const box = $('#charList'); box.innerHTML = '';
@@ -1971,7 +2028,7 @@ function autoLabel() { $('#btnAuto').classList.toggle('on', save.auto); $('#btnA
 function toggleAuto() { save.auto = !save.auto; persist(); autoLabel(); toast(save.auto ? '공이 계속 날아가요 · 방향은 끌어서 정해요' : '누르고 있는 동안만 공이 날아가요'); }
 async function brag() {
   const ch = byKey(run.char), sec = Math.floor(run.t);
-  const text = `볼빵! 아스트라 ${fmt(run.final)}점! ${ch.name}(으)로 ${Math.floor(sec / 60)}분 ${sec % 60}초 버텼어요${run.won ? ' · 보스 격파 👑' : ''}\n나도 해 볼래? → ${SHARE_URL}`;
+  const text = `볼빵! 아스트라 ${fmt(run.final)}점! ${run.daily ? '' : '스테이지 ' + run.stage + '에서 '}${ch.name}(으)로 ${Math.floor(sec / 60)}분 ${sec % 60}초 버텼어요${run.won ? ' · 보스 격파 👑' : ''}\n나도 해 볼래? → ${SHARE_URL}`;
   try { await navigator.clipboard.writeText(text); toast('복사했어요! 카톡에 붙여 넣어 보내 보세요.'); } catch (e) { prompt('아래 글을 복사해 주세요', text); }
 }
 
@@ -2072,10 +2129,12 @@ function confirmNew(btn) {
   clearTimeout(armT); armT = setTimeout(() => { armed = null; }, 3000);
   return false;
 }
-$('#btnStart').addEventListener('click', () => { if (!confirmNew('start')) return; clearRunSave(); startGame({char: save.sel}); });
+$('#stPrev').addEventListener('click', () => { stView = Math.max(1, stView - 1); renderStage(); });
+$('#stNext').addEventListener('click', () => { stView = Math.min(STAGES.length, stView + 1); renderStage(); });
+$('#btnStart').addEventListener('click', () => { if (!confirmNew('start')) return; clearRunSave(); startGame({char: save.sel, stage: save.st}); });
 $('#btnDaily').addEventListener('click', () => { if (!confirmNew('daily')) return; const d = kstDate(); clearRunSave(); startGame({daily: true, seed: d * 2654435761 >>> 0, dateNum: d, char: dailyChar(d).key}); });
 $('#btnContinue').addEventListener('click', () => { const sv = loadRunSave(); if (sv) startGame({resume: sv}); });
-$('#btnAgain').addEventListener('click', () => { if (run && run.daily) $('#btnDaily').click(); else startGame({char: run ? run.char : save.sel}); });
+$('#btnAgain').addEventListener('click', () => { if (run && run.daily) $('#btnDaily').click(); else startGame({char: run ? run.char : save.sel, stage: run ? run.unlocked || run.stage : save.st}); });
 $('#btnHome').addEventListener('click', goTitle);
 $('#btnPause').addEventListener('click', pauseGame);
 $('#btnResume').addEventListener('click', resumeGame);

@@ -311,6 +311,7 @@ body.wide .side{display:grid;gap:12px}
 .pick b{display:block;font:700 17px/1.3 var(--f-kr)}
 .pick small{display:block;font:500 13px/1.45 var(--f-kr);color:var(--ink2)}
 .pick em{font-style:normal;font:800 11px/1 var(--f-en);letter-spacing:.12em;padding:3px 7px;border-radius:6px;margin-left:6px;vertical-align:2px;background:#5E9BFF;color:#fff}
+.pick .fh{display:block;margin-top:3px;font:800 11.5px/1.25 var(--f-kr);color:#8A4FE0}
 .pick.fusion{background:linear-gradient(120deg,#FFF6D6,#FFE0F0);box-shadow:0 0 0 2.5px var(--gold),0 10px 26px rgba(255,180,50,.45)}
 .pick.fusion em{background:var(--gold);color:#4A2E00}
 @keyframes pickIn{0%{opacity:0;transform:translateY(18px)}100%{opacity:1;transform:none}}
@@ -416,7 +417,7 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="news" hidden>
   <div class="card"><span class="tag">UPDATE</span><h2 class="c-title">새로워졌어요!</h2>
     <ul class="news-list">
-      <li class="nw"><i>🔮</i><div><b>캐릭터 전용 합체 공</b>썬더 스톰 · 블리자드 · 맹독 폭탄 · 메테오 스타 · 강철 폭탄 등 7명 모두 자기만의 합체! (캐릭터 화면에서 재료 확인)</div></li>
+      <li class="nw"><i>🔮</i><div><b>캐릭터 전용 합체 공</b>썬더 스톰 · 블리자드 · 맹독 폭탄 · 메테오 스타 · 강철 폭탄 등 7명 모두 자기만의 합체! 재료는 캐릭터 화면·레벨업 🔮 표시로 확인 · 합체 도감 업적</div></li>
       <li class="nw"><i>⬆️</i><div><b>강화 상점 확장</b>단계가 늘고 기본 치명타 · 특기 위력 · 코인 획득 강화가 새로 생겼어요</div></li>
       <li class="nw"><i>🏆</i><div><b>랭킹 새 시즌</b>볼빵 랭킹을 새로 시작해요 · 속도를 조작한 판은 올라가지 않아요</div></li>
       <li><i>💪</i><div><b>캐릭터 상향</b>루비 · 리코 · 유키 · 소라 · 미라이 공과 특기가 더 세졌어요</div></li>
@@ -528,7 +529,7 @@ const CHARS = [
   {key: 'riko', name: '리코', en: 'BOLT · RIKO', ball: 'bolt', c1: '#2A2A3A', c2: '#9BFF4F', price: 500, skill: '기가 볼트', desc: '에너지 폭발 게이머 소녀. 특기: 가장 아래 3줄에 번개 낙뢰', line: '찌릿찌릿 간다~!'},
   {key: 'sora', name: '소라', en: 'WIND · SORA', ball: 'wind', c1: '#2FC8B8', c2: '#7FC8FF', price: 800, skill: '하늘 회오리', desc: '하늘을 나는 바람 소녀. 특기: 회오리로 모든 블록을 2줄 위로 날려 보내요', line: '바람 타고 간다~!'},
   {key: 'nene', name: '네네', en: 'POISON · NENE', ball: 'poison', c1: '#5A2E9A', c2: '#B57CFF', price: 0, unlock: {stat: 'bosses', n: 30, text: '보스 30마리를 잡으면 합류'}, skill: '독안개', desc: '졸린 눈의 독 마녀. 특기: 판 위 모든 블록에 진한 독을 뿌려요', line: '후후… 천천히 녹아내려.'},
-  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 12초 동안 피버 + 체력 회복 + 모든 공이 커져요', line: '무대 시작이야~ 반짝!'},
+  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 12초 동안 피버 + 체력 회복 + 모든 공이 커지고 더 세져요', line: '무대 시작이야~ 반짝!'},
   {key: 'karin', name: '카린', en: 'STEEL · KARIN', ball: 'iron', c1: '#4A5A80', c2: '#FF6F5E', price: 0, unlock: {stat: 'top', n: 15, text: '스테이지 15에 가면 합류'}, skill: '메테오 해머', desc: '씩씩한 강철 기사 소녀. 특기: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리쳐요', line: '정의의 철퇴~! 받아랏!'},
 ];
 const WIN_LINE = {karin: '강철은 꺾이지 않아! 승리다!', ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한 결과야. 고마워.', riko: '클리어! 하이스코어 갱신 가즈아~!', sora: '바람처럼 날아올랐지? 최고야!', nene: '후후… 독은 천천히 퍼지는 법이야.', mirai: '오늘의 센터는 나야~ 반짝!'};
@@ -553,17 +554,17 @@ const BALLS = {
   bomb: {i: 6, name: '폭탄 공', dmg: 6, color: 0x5A5A6A, desc: '맞힐 때마다 주변 폭발'},
   split: {i: 7, name: '분열 공', dmg: 8, color: 0xFF6FD8, desc: '처음 맞히면 작은 공 2개로 갈라짐'},
   heart: {i: 8, name: '하트 공', dmg: 8, color: 0xFF8FB8, desc: '10번 맞힐 때마다 체력 1 회복'},
-  star: {i: 9, name: '별 공', dmg: 19, color: 0x6F7CFF, desc: '가까운 블록 쪽으로 휘어 날아감'},
+  star: {i: 9, name: '별 공', dmg: 21, color: 0x6F7CFF, desc: '가까운 블록 쪽으로 휘어 날아감'},
   iron: {i: 10, name: '쇠 공', dmg: 22, color: 0xB8C2D6, owner: 'karin', desc: '느리지만 아주 큰 피해, 크기도 큼'},
   rubber: {i: 11, name: '고무 공', dmg: 6, color: 0xFFA24F, desc: '튕길 때마다 피해가 +3씩 커짐'},
-  plasma: {i: 12, name: '플라즈마 볼', dmg: 26, color: 0xFF4FD8, fusion: ['fire', 'bolt'], sig: 'ruby', desc: '불꽃+번개: 화상 + 번개 4갈래'},
+  plasma: {i: 12, name: '플라즈마 볼', dmg: 30, color: 0xFF4FD8, fusion: ['fire', 'bolt'], sig: 'ruby', desc: '불꽃+번개: 화상 + 번개 4갈래'},
   frost: {i: 13, name: '빙결 번개', dmg: 22, color: 0x7FF3FF, fusion: ['ice', 'bolt'], sig: 'yuki', desc: '얼음+번개: 번개 맞은 블록이 모두 얼어붙음'},
   steam: {i: 14, name: '스팀 버스트', dmg: 24, color: 0xF0F0FF, fusion: ['fire', 'ice'], desc: '불꽃+얼음: 맞힐 때마다 큰 수증기 폭발'},
   // 캐릭터 전용 합체 공 (2026-10-10 · 그림 balls2.webp 5×1 = i 15~19) — sig 캐릭터로 할 때만 나옴
-  thunder: {i: 15, name: '썬더 스톰', dmg: 22, color: 0xD8FF4F, fusion: ['bolt', 'wind'], sig: 'riko', desc: '번개+바람: 블록 3개를 뚫고 지나가며 번개 4갈래'},
+  thunder: {i: 15, name: '썬더 스톰', dmg: 26, color: 0xD8FF4F, fusion: ['bolt', 'wind'], sig: 'riko', desc: '번개+바람: 블록 3개를 뚫고 지나가며 번개 4갈래'},
   typhoon: {i: 16, name: '블리자드', dmg: 20, color: 0x9FF0FF, fusion: ['wind', 'ice'], sig: 'sora', desc: '바람+얼음: 블록 5개를 뚫고 지나가며 모두 얼림'},
-  venom: {i: 17, name: '맹독 폭탄', dmg: 16, color: 0x9B5CFF, fusion: ['poison', 'bomb'], sig: 'nene', desc: '독+폭탄: 맞힐 때마다 독 폭발 (주변 블록 모두 진한 독)'},
-  meteor: {i: 18, name: '메테오 스타', dmg: 30, color: 0xFF7A3D, fusion: ['star', 'fire'], sig: 'mirai', desc: '별+불꽃: 블록 쪽으로 휘어 날아가 큰 화상'},
+  venom: {i: 17, name: '맹독 폭탄', dmg: 16, color: 0x9B5CFF, fusion: ['poison', 'bomb'], sig: 'nene', desc: '독+폭탄: 맞힐 때마다 독 폭발 (맞은 블록은 진한 독, 주변 블록에도 독)'},
+  meteor: {i: 18, name: '메테오 스타', dmg: 42, color: 0xFF7A3D, fusion: ['star', 'fire'], sig: 'mirai', desc: '별+불꽃: 블록 쪽으로 휘어 날아가 작은 폭발 + 큰 화상'},
   steel: {i: 19, name: '강철 폭탄', dmg: 38, color: 0xC8D0E0, fusion: ['iron', 'bomb'], sig: 'karin', desc: '쇠+폭탄: 크고 무거운 공이 맞힐 때마다 큰 폭발'},
 };
 const NORMAL_BALLS = ['basic', 'fire', 'ice', 'bolt', 'wind', 'poison', 'bomb', 'split', 'heart', 'star', 'iron', 'rubber'];
@@ -760,6 +761,9 @@ const ACH = [
   {id: 'a30', name: '개근상', desc: '출석 체크 30일', stat: 'att', n: 30, coin: 3000, title: '개근상'},
   {id: 'd3', name: '오늘의 도전자', desc: '오늘의 도전 3번 하기', stat: 'dailies', n: 3, coin: 300},
   {id: 'm7', name: '꾸준함', desc: '오늘의 미션 7일 연속 완료', stat: 'streak', n: 7, coin: 1000, title: '성실한 볼러'},
+  {id: 'sg1', name: '나만의 합체', desc: '캐릭터 전용 합체 공 만들기 (캐릭터 화면에서 재료 확인)', stat: 'sigN', n: 1, coin: 800},
+  {id: 'sg3', name: '합체 마스터', desc: '캐릭터 3명으로 전용 합체 공 만들기', stat: 'sigN', n: 3, coin: 2500, title: '합체 마스터'},
+  {id: 'fu8', name: '합체 도감 완성', desc: '합체 공 8종 모두 만들기 (전용 합체 7종 + 스팀 버스트)', stat: 'fuN', n: 8, coin: 5000, title: '합체 박사'},
   {id: 'all', name: '팔방미인', desc: '처음 6명 모두로 스테이지 5 도달 (그만하기로 끝내도 돼요)', stat: 'allChar5', n: 1, coin: 1500, title: '팔방미인'},
 ];
 // 오늘의 미션: 날짜(한국 시간)로 3개를 골라 하루 동안 쌓임 · 3개 다 하면 연속 보너스
@@ -814,7 +818,9 @@ function loadSave() {
   // 기록·업적·도감·칭호·오늘의 미션
   const r0 = s.rec && typeof s.rec === 'object' ? s.rec : {}, cbest = {};
   if (r0.cbest && typeof r0.cbest === 'object') for (const k of Object.keys(r0.cbest)) if (CHARS.some(c => c.key === k)) cbest[k] = n(r0.cbest[k]);
-  const rec = {kills: n(r0.kills), bosses: n(r0.bosses), combo: n(r0.combo), chests: n(r0.chests), dailies: n(r0.dailies), cbest};
+  const sig = {}; if (r0.sig && typeof r0.sig === 'object') for (const k of Object.keys(r0.sig)) if (CHARS.some(c => c.key === k)) sig[k] = 1;   // 전용 합체를 만든 캐릭터
+  const fu = {}; if (r0.fu && typeof r0.fu === 'object') for (const k of Object.keys(r0.fu)) if (FUSIONS.includes(k)) fu[k] = 1;   // 합체 도감
+  const rec = {kills: n(r0.kills), bosses: n(r0.bosses), combo: n(r0.combo), chests: n(r0.chests), dailies: n(r0.dailies), cbest, sig, fu};
   const ach = Array.isArray(s.ach) ? s.ach.filter(id => ACH.some(a => a.id === id)) : [];
   const d0 = s.dm && typeof s.dm === 'object' ? s.dm : {}, dm = {d: String(d0.d || ''), p: {}, done: Array.isArray(d0.done) ? d0.done.map(String) : [], streak: n(d0.streak), last: String(d0.last || ''), best: n(d0.best)};
   MISSIONS.forEach(m => { dm.p[m.id] = n(d0.p && d0.p[m.id]); });
@@ -1689,7 +1695,7 @@ function collideBlocks(b) {
 /* ---------- 피해 ---------- */
 function ballDamage(b) {
   const def = BALLS[b.kind];
-  const fv = (run.fever > 0 ? 1.5 : 1) * (run.starT > 0 ? 1.25 : 1);   // 미라이 슈퍼스타 동안 +25% (2026-10-09 밸런스)
+  const fv = (run.fever > 0 ? 1.5 : 1) * (run.starT > 0 ? 1.4 : 1);   // 미라이 슈퍼스타 동안 +40% (2026-10-10 봇: 최대 강화에서 미라이만 17 → 올림)
   let d = def.dmg * (1 + .28 * ((b.lv || 1) - 1)) * atkMul();
   if (b.mini) d *= .5;
   if (b.kind === 'rubber') d += 3 * b.bounce * (1 + .25 * ((b.lv || 1) - 1));
@@ -1711,14 +1717,14 @@ function hitBlock(blk, b) {
     case 'bomb': if (b.age - (b.boomT || -1) > .25) { b.boomT = b.age; explode(blk, 70 + 8 * lv, d * 1.4); } break;
     case 'split': if (!b.split && !b.mini) { b.split = true; for (const a of [-.5, .5]) { const ang = Math.atan2(b.vy, b.vx) + a, sp = Math.hypot(b.vx, b.vy); spawnBall('split', b.x, b.y, -Math.cos(ang) * sp, -Math.sin(ang) * sp, true); } } break;
     case 'heart': if (run.hitCount % Math.max(4, 11 - lv) === 0) { run.hp = Math.min(run.hpMax, run.hp + 1); } break;
-    case 'plasma': burn(blk, 5 * lv * atkMul(), 3); chain(blk, 4, d * .5, false); break;
+    case 'plasma': burn(blk, 7 * lv * atkMul(), 3); chain(blk, 4, d * .5, false); break;   // 2026-10-10 봇: 루비 18 → 화상 5→7
     case 'frost': chain(blk, 4, d * .5, true); freeze(blk, 3); break;
     case 'steam': if (b.age - (b.boomT || -1) > .2) { b.boomT = b.age; explode(blk, 110, d * 1.2); } break;
-    case 'thunder': chain(blk, 4, d * .5, false); break;
+    case 'thunder': chain(blk, 4, d * .6, false); break;
     case 'typhoon': freeze(blk, 2.5 + .3 * lv); break;
-    case 'venom': { const pw = 1.5 * lv * atkMul(), pz = o => { o.poison = Math.min(8, o.poison + 2); o.poisonPow = Math.max(o.poisonPow || 0, pw); };
-      pz(blk); if (b.age - (b.boomT || -1) > .25) { b.boomT = b.age; explode(blk, 80 + 8 * lv, d); for (const o of neighbors(blk, 80 + 8 * lv)) if (!o.dead) pz(o); } break; }
-    case 'meteor': burn(blk, 9 * lv * atkMul(), 4); break;
+    case 'venom': { const pw = 1.5 * lv * atkMul(), pz = (o, n) => { o.poison = Math.min(8, o.poison + n); o.poisonPow = Math.max(o.poisonPow || 0, pw); };   // 봇: 네네 19→23이라 퍼지는 독을 줄임 (2026-10-10)
+      pz(blk, 2); if (b.age - (b.boomT || -1) > .3) { b.boomT = b.age; explode(blk, 70 + 6 * lv, d * .8); for (const o of neighbors(blk, 70 + 6 * lv)) if (!o.dead) pz(o, 1); } break; }
+    case 'meteor': burn(blk, 12 * lv * atkMul(), 4); if (b.age - (b.boomT || -1) > .35) { b.boomT = b.age; explode(blk, 60, d * .8); } break;   // 봇: 미라이 17→16이라 작은 폭발 더함
     case 'steel': if (b.age - (b.boomT || -1) > .3) { b.boomT = b.age; explode(blk, 90 + 8 * lv, d * 1.2); } break;
   }
   blk.flash = .1;
@@ -2261,7 +2267,7 @@ function useSkill() {
     }
     setTimeout(() => banner('메테오 해머!', true), 1250);
   } else {
-    run.fever = Math.max(run.fever || 0, 12); run.starT = 12; run.hp = Math.min(run.hpMax, run.hp + run.hpMax * .15); S.fever();   // 2026-10-09 밸런스: 8 → 12초 + 체력 15% 회복 (미라이가 일찍 쓰러져서) setTimeout(() => banner('슈퍼스타! 공이 커져요', false), 1250);
+    run.fever = Math.max(run.fever || 0, 12); run.starT = 12; run.hp = Math.min(run.hpMax, run.hp + run.hpMax * .25); S.fever();   /* 2026-10-10: 회복 15→25% (봇: 미라이만 버티는 힘이 모자람) */   // 2026-10-09 밸런스: 8 → 12초 + 체력 15% 회복 (미라이가 일찍 쓰러져서) setTimeout(() => banner('슈퍼스타! 공이 커지고 세져요', false), 1250);
   }
 }
 
@@ -2294,6 +2300,11 @@ function openChest() {
 }
 // 합체 공 시작 레벨: 재료 두 공의 평균 레벨 - 2 → 재료가 모두 Lv.5라 Lv.3으로 시작 (합체하면 공 칸도 하나 비어서 새 공을 더 얻을 수 있음)
 const fusionLv = k => { const [a, b] = BALLS[k].fusion; return Math.max(1, Math.min(5, Math.floor(((run.kinds[a] || 0) + (run.kinds[b] || 0)) / 2) - 2)); };
+// 레벨업 선택지 끝에 붙는 '🔮 ○○ 재료' (전용 합체가 먼저) — 아직 안 만든 합체만
+function fuseHint(k) {
+  const f = FUSIONS.find(f => fusionOk(f) && !run.kinds[f] && !(run.fusions || []).includes(f) && BALLS[f].fusion.includes(k));
+  return f ? ` · 🔮 ${BALLS[f].sig ? '전용 합체 ' : ''}${BALLS[f].name} 재료` : '';
+}
 function rollOffers() {
   const R = run.cr, pool = [];
   const kinds = Object.keys(run.kinds), full = kinds.length >= MAX_KINDS;
@@ -2320,8 +2331,8 @@ function rollOffers() {
 function offerText(o) {
   if (o.t === 'leg') return {title: LEG[o.k].name, sub: LEG[o.k].desc, badge: 'LEGEND'};
   if (o.t === 'fusion') { const d = BALLS[o.k], [a, b] = d.fusion, fl = fusionLv(o.k); return {ico: o.k, title: `합체! ${d.name}${fl > 1 ? ` (Lv.${fl}로 시작)` : ''}`, sub: `${BALLS[a].name} Lv.${run.kinds[a]} + ${BALLS[b].name} Lv.${run.kinds[b]} → ${d.desc}`, badge: 'FUSION'}; }
-  if (o.t === 'new') return {ico: o.k, title: BALLS[o.k].name, sub: BALLS[o.k].desc, badge: 'NEW'};
-  if (o.t === 'up') return {ico: o.k, title: `${BALLS[o.k].name} 강화`, sub: `Lv.${run.kinds[o.k]} → ${run.kinds[o.k] + 1} · 피해와 효과가 커져요`, badge: 'UP'};
+  if (o.t === 'new') return {ico: o.k, title: BALLS[o.k].name, sub: BALLS[o.k].desc, hint: fuseHint(o.k).slice(3), badge: 'NEW'};
+  if (o.t === 'up') return {ico: o.k, title: `${BALLS[o.k].name} 강화`, sub: `Lv.${run.kinds[o.k]} → ${run.kinds[o.k] + 1} · 피해와 효과가 커져요`, hint: fuseHint(o.k).slice(3), badge: 'UP'};
   const u = UPG[o.k]; return {emoji: u.ico, title: u.name, sub: U(o.k) ? `지금 ${U(o.k)}단계` : '능력치 강화', badge: U(o.k) ? `${U(o.k) + 1}단계` : 'STAT'};
 }
 function renderOffers() {
@@ -2331,7 +2342,7 @@ function renderOffers() {
     const pi = document.createElement('div'); pi.className = 'pi';
     if (t.ico) { const ii = document.createElement('i'); ballIco(ii, t.ico); pi.appendChild(ii); }
     else { const [d, c] = ICO[o.t === 'leg' ? LEG[o.k].ico : o.k] || ICO.atk; pi.style.background = ICO_BG[c]; pi.innerHTML = `<svg viewBox="0 0 24 24" style="width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))"><path d="${d}"/></svg>`; }
-    const tx = document.createElement('div'); tx.innerHTML = '<b></b><small></small>'; tx.querySelector('b').textContent = t.title; const em = document.createElement('em'); em.textContent = t.badge; tx.querySelector('b').appendChild(em); tx.querySelector('small').textContent = t.sub;
+    const tx = document.createElement('div'); tx.innerHTML = '<b></b><small></small>'; tx.querySelector('b').textContent = t.title; const em = document.createElement('em'); em.textContent = t.badge; tx.querySelector('b').appendChild(em); tx.querySelector('small').textContent = t.sub; if (t.hint) { const h = document.createElement('span'); h.className = 'fh'; h.textContent = t.hint; tx.appendChild(h); }
     b.appendChild(pi); b.appendChild(tx);
     b.addEventListener('click', () => choose(i));
     box.appendChild(b);
@@ -2357,6 +2368,8 @@ function applyOffer(o, quiet) {
     const d = BALLS[o.k], [a, b] = d.fusion;
     const fl = fusionLv(o.k);
     delete run.kinds[a]; delete run.kinds[b]; run.kinds[o.k] = fl; run.fusions.push(o.k);
+    if (d.sig && d.sig === run.char && !run.daily) { save.rec.sig = save.rec.sig || {}; if (!save.rec.sig[run.char]) { save.rec.sig[run.char] = 1; persist(); } }   // 업적 '나만의 합체'
+    save.rec.fu = save.rec.fu || {}; if (!save.rec.fu[o.k]) { save.rec.fu[o.k] = 1; persist(); }   // 합체 도감 (만든 합체 공 종류)
     const oa = d.sig || BALLS[a].owner, ob = d.sig ? null : BALLS[b].owner;
     if (!quiet) setTimeout(() => { cutIn(d.sig ? 'SIGNATURE FUSION' : 'COLLAB FUSION', d.name + '!', oa, ob, '#FF5FA2', '#5E9BFF'); S.fusion(); }, 120);
   } else if (o.t === 'leg') {
@@ -2585,6 +2598,8 @@ const popc = v => { let c = 0; for (let i = 0; i < 28; i++) if (v & (1 << i)) c+
 function statOf(k) {
   if (k === 'top') return save.top; if (k === 'dex') return popc(save.dex); if (k === 'streak') return save.dm.best;
   if (k === 'mast10') return CHARS.filter(c => mastLv(c.key) >= 10).length; if (k === 'rushB') return save.rush.b; if (k === 'att') return save.att.n;
+  if (k === 'sigN') return Object.keys(save.rec.sig || {}).length;
+  if (k === 'fuN') return Object.keys(save.rec.fu || {}).length;
   if (k === 'allChar5') return ['ruby', 'yuki', 'riko', 'sora', 'nene', 'mirai'].every(k2 => (save.rec.cbest[k2] || 0) >= 5) ? 1 : 0;   // 처음 6명 기준 (카린이 생겨도 목표가 늘지 않게)
   return save.rec[k] || 0;
 }
@@ -2822,7 +2837,8 @@ function openAch() {
   const al = $('#achList'); al.innerHTML = '';
   const six = ['ruby', 'yuki', 'riko', 'sora', 'nene', 'mirai'], c5 = k => (save.rec.cbest[k] || 0) >= 5, left = six.filter(k => !c5(k));   // 팔방미인 진행 (캐릭터마다 최고 스테이지)
   const allTxt = `${six.length - left.length} / 6${left.length ? ' · 남은 캐릭터: ' + left.map(k => `${byKey(k).name}(${save.rec.cbest[k] ? '최고 ' + save.rec.cbest[k] : '아직'})`).join(' · ') : ''}`;
-  ACH.forEach(a => { const cur = statOf(a.stat); al.appendChild(mrow(a.name + (a.title ? ' · 칭호' : ''), a.stat === 'allChar5' ? `${a.desc} · ${allTxt}` : `${a.desc} · ${fmt(Math.min(cur, a.n))} / ${fmt(a.n)}`, a.stat === 'allChar5' && cur < 1 ? (6 - left.length) / 6 : cur / a.n, `+${fmt(a.coin)}`, save.ach.includes(a.id))); });
+  const fuLeft = FUSIONS.filter(f => !(save.rec.fu || {})[f]).map(f => BALLS[f].name);
+  ACH.forEach(a => { const cur = statOf(a.stat); al.appendChild(mrow(a.name + (a.title ? ' · 칭호' : ''), a.stat === 'allChar5' ? `${a.desc} · ${allTxt}` : a.stat === 'fuN' && fuLeft.length && fuLeft.length <= 4 ? `${a.desc} · ${fmt(Math.min(cur, a.n))} / ${fmt(a.n)} · 남은 것: ${fuLeft.join(' · ')}` : `${a.desc} · ${fmt(Math.min(cur, a.n))} / ${fmt(a.n)}`, a.stat === 'allChar5' && cur < 1 ? (6 - left.length) / 6 : cur / a.n, `+${fmt(a.coin)}`, save.ach.includes(a.id))); });
   const dg = $('#dexGrid'); dg.innerHTML = ''; $('#dexCount').textContent = `${popc(save.dex)} / ${BOSS_NAMES.length}`;
   BOSS_NAMES.forEach((nm, i) => {
     const d = document.createElement('div'), got = save.dex & (1 << i), j = i & 3;

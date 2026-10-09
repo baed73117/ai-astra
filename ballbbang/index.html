@@ -413,7 +413,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=332648c6';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=9096577a';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -492,26 +492,26 @@ const SHOP = [
    보스 그림 번호: 0 젤리 킹 · 1 골렘 · 2 폭풍 구름 · 3 다크스타 · 4 선물상자 미믹 · 5 크리스탈 퀸 · 6 마그마 드래곤 · 7 보이드 문
                   8 회전목마 · 9 눈사람 기사 · 10 용광로 로봇 · 11 천둥새 · 12 복어 젤리 · 13 조개 여왕 · 14 벚꽃 오니 · 15 글리치 바이러스 */
 const THEMES = [
-  {name: '노을 옥상', bg: 'bg', mid: -1, fin: 0, rule: 'none'},
-  {name: '한밤의 놀이공원', bg: 'bg2', mid: 8, fin: 4, rule: 'fest'},
-  {name: '얼음 수정 동굴', bg: 'bg3', mid: 9, fin: 5, rule: 'ice'},
-  {name: '용암 공장', bg: 'bg4', mid: 10, fin: 6, rule: 'lava'},
-  {name: '폭풍 하늘섬', bg: 'bg6', mid: 11, fin: 2, rule: 'storm'},
-  {name: '강철 요새', bg: 'bg7', mid: 10, fin: 1, rule: 'steel'},
-  {name: '바닷속 궁전', bg: 'bg8', mid: 12, fin: 13, rule: 'sea'},
-  {name: '벚꽃 신사', bg: 'bg9', mid: 8, fin: 14, rule: 'sakura'},
-  {name: '사이버 공간', bg: 'bg10', mid: 1, fin: 15, rule: 'cyber'},
-  {name: '달 너머 우주', bg: 'bg5', mid: 3, fin: 7, rule: 'space'},
-  {name: '사탕 성', bg: 'bg11', mid: 4, fin: 16, rule: 'sweet'},
-  {name: '유령 저택', bg: 'bg12', mid: 14, fin: 17, rule: 'haunt'},
-  {name: '사막 유적', bg: 'bg13', mid: 26, fin: 18, rule: 'sand'},
-  {name: '정글 신전', bg: 'bg14', mid: 11, fin: 19, rule: 'jungle'},
-  {name: '천공의 성', bg: 'bg15', mid: 2, fin: 20, rule: 'sky'},
-  {name: '장난감 공장', bg: 'bg16', mid: 10, fin: 21, rule: 'toy'},
-  {name: '네온 골목', bg: 'bg17', mid: 27, fin: 22, rule: 'neon'},
-  {name: '오로라 설원', bg: 'bg18', mid: 9, fin: 23, rule: 'aurora'},
-  {name: '시계탑', bg: 'bg19', mid: 1, fin: 24, rule: 'clock'},
-  {name: '별의 왕좌', bg: 'bg20', mid: 7, fin: 25, rule: 'throne'},
+  {name: '노을 옥상', bg: 'bg', mid: -1, fin: 0, rule: 'none', bgm: 'battle'},
+  {name: '한밤의 놀이공원', bg: 'bg2', mid: 8, fin: 4, rule: 'fest', bgm: 'battle'},
+  {name: '얼음 수정 동굴', bg: 'bg3', mid: 9, fin: 5, rule: 'ice', bgm: 'b_frost'},
+  {name: '용암 공장', bg: 'bg4', mid: 10, fin: 6, rule: 'lava', bgm: 'b_fire'},
+  {name: '폭풍 하늘섬', bg: 'bg6', mid: 11, fin: 2, rule: 'storm', bgm: 'b_cyber'},
+  {name: '강철 요새', bg: 'bg7', mid: 10, fin: 1, rule: 'steel', bgm: 'b_fire'},
+  {name: '바닷속 궁전', bg: 'bg8', mid: 12, fin: 13, rule: 'sea', bgm: 'b_frost'},
+  {name: '벚꽃 신사', bg: 'bg9', mid: 8, fin: 14, rule: 'sakura', bgm: 'b_mystic'},
+  {name: '사이버 공간', bg: 'bg10', mid: 1, fin: 15, rule: 'cyber', bgm: 'b_cyber'},
+  {name: '달 너머 우주', bg: 'bg5', mid: 3, fin: 7, rule: 'space', bgm: 'b_cosmic'},
+  {name: '사탕 성', bg: 'bg11', mid: 4, fin: 16, rule: 'sweet', bgm: 'battle'},
+  {name: '유령 저택', bg: 'bg12', mid: 14, fin: 17, rule: 'haunt', bgm: 'b_mystic'},
+  {name: '사막 유적', bg: 'bg13', mid: 26, fin: 18, rule: 'sand', bgm: 'b_fire'},
+  {name: '정글 신전', bg: 'bg14', mid: 11, fin: 19, rule: 'jungle', bgm: 'b_mystic'},
+  {name: '천공의 성', bg: 'bg15', mid: 2, fin: 20, rule: 'sky', bgm: 'battle'},
+  {name: '장난감 공장', bg: 'bg16', mid: 10, fin: 21, rule: 'toy', bgm: 'battle'},
+  {name: '네온 골목', bg: 'bg17', mid: 27, fin: 22, rule: 'neon', bgm: 'b_cyber'},
+  {name: '오로라 설원', bg: 'bg18', mid: 9, fin: 23, rule: 'aurora', bgm: 'b_frost'},
+  {name: '시계탑', bg: 'bg19', mid: 1, fin: 24, rule: 'clock', bgm: 'b_fire'},
+  {name: '별의 왕좌', bg: 'bg20', mid: 7, fin: 25, rule: 'throne', bgm: 'b_cosmic'},
 ];
 const STAGE_LEN = 150, MID_AT = 75;          // 스테이지 시계(보스가 없을 때만 흐름): 75초에 중간 보스, 150초에 스테이지 보스
 const BOSS_HP = {mid: 14, fin: 20, midUp: 1.2, finUp: 2.5, midMax: 36, finMax: 55};   // 보스 체력 = hpBase × (기본 + 스테이지마다 Up, 최대 Max)
@@ -790,7 +790,29 @@ const BGM = {
     setTimeout(() => { c.srcs.forEach(x => { try { x.stop(); } catch (e) {} }); try { c.g.disconnect(); } catch (e) {} }, fade * 1000 + 120);
   },
 };
-const battleMusic = () => BGM.play(run && run.boss ? 'boss' : 'battle', .6);
+// 렉 지킴이: 게임 중 화면이 3초 넘게 버벅이면(평균 42fps 아래) 효과를 한 단계 줄임 — 해상도·파티클 수·공 잔상 (한 번 줄이면 다음에도 그 단계로 시작)
+const PERF_KEY = 'astra-universe-breaker-perf', FX_CAP = [TOUCH ? 220 : 400, 110, 50];
+const Perf = {
+  lv: 0, acc: 0, n: 0, slow: 0, fast: 0, upped: false,
+  sample(ms) {
+    if (state !== 'play' || paused || ms > 250) return;
+    this.acc += ms; this.n++;
+    if (this.acc < 1000) return;   // 1초마다 판단
+    const avg = this.acc / this.n; this.acc = 0; this.n = 0;
+    this.slow = avg > 24 ? this.slow + 1 : 0; this.fast = avg < 18 ? this.fast + 1 : 0;
+    if (this.slow >= 3 && this.lv < 2) { this.slow = 0; this.set(this.lv + 1, true); }
+    else if (this.fast >= 180 && this.lv > 0 && !this.upped) { this.fast = 0; this.upped = true; this.set(this.lv - 1, false); }   // 3분 내내 부드러우면 한 번만 다시 올림 (잠깐 버벅인 걸로 계속 낮게 남지 않게)
+  },
+  set(lv, tell) {
+    this.lv = Math.max(0, Math.min(2, lv | 0));
+    const base = Math.min(TOUCH ? 1.5 : 2, window.devicePixelRatio || 1), r = this.lv >= 2 ? Math.min(base, .85) : this.lv >= 1 ? Math.min(base, 1) : base;
+    if (app && app.renderer.resolution !== r) { app.renderer.resolution = r; app.renderer.resize(app.screen.width, app.screen.height); }
+    if (L.ballGlow) L.ballGlow.visible = this.lv < 2;
+    try { localStorage.setItem(PERF_KEY, String(this.lv)); } catch (e) {}
+    if (tell) toast(this.lv >= 2 ? '화면이 버벅여서 효과를 더 줄였어요' : '부드럽게 돌아가도록 효과를 조금 줄였어요');
+  },
+};
+const battleMusic = () => BGM.play(run && run.boss ? 'boss' : run ? themeOf(run.stage).bgm || 'battle' : 'battle', .6);   // 테마마다 전투 곡 (THEMES의 bgm)
 
 /* ---------- 세계 크기 (가로 720 고정, 세로는 화면에 맞춰 1180~1560) ---------- */
 const WW = 720, COLS = 8, CELL = 87, GAP = 6, FIELD_L = 12, FIELD_R = 708, FIELD_LEN = 830;
@@ -874,7 +896,7 @@ function fallbackBg() {
 class Fx {
   constructor(parent) { this.cN = new PIXI.Container(); this.cA = new PIXI.Container(); parent.addChild(this.cN); parent.addChild(this.cA); this.ps = []; this.pool = []; this.rp = []; }
   spawn(tex, o) {
-    if (this.ps.length > (TOUCH ? 220 : 400)) return;
+    if (this.ps.length > FX_CAP[Perf.lv]) return;
     const sp = this.pool.pop() || new PIXI.Sprite(tex);
     sp.texture = tex; sp.anchor.set(.5); sp.tint = o.tint ?? 0xFFFFFF; sp.blendMode = o.add ? PIXI.BLEND_MODES.ADD : PIXI.BLEND_MODES.NORMAL; sp.rotation = o.rot || 0; sp.visible = true;
     (o.add ? this.cA : this.cN).addChild(sp);
@@ -907,7 +929,7 @@ function initGraphics() {
     // 그리기만 10ms보다 짧은 간격이면 건너뜀 (120Hz 폰 → 60, 60·90Hz는 그대로) — Pixi maxFPS는 간격을 정수로 잘라 끊기므로 안 씀
     app.ticker.remove(app.render, app);
     let lastDraw = 0;
-    app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
+    app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; Perf.sample(t - lastDraw); lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
     const load = u => PIXI.Assets.load(u + AV).catch(() => null);
     const [mon, boss, balls, bg, boss2, boss3, boss4, boss5, boss6, boss7] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp', 'assets/bosses2.webp', 'assets/bosses3.webp', 'assets/bosses4.webp', 'assets/bosses5.webp', 'assets/bosses6.webp', 'assets/bosses7.webp'].map(load));
     TEX.mon = mon || fallbackMonsters(); TEX.boss = boss || fallbackBosses(); TEX.balls = balls || fallbackBalls(); TEX.bg = bg || fallbackBg(); TEX.bgs = {bg: TEX.bg};
@@ -1005,6 +1027,7 @@ function initGraphics() {
     L.guideHit = new PIXI.Sprite(TEX.ring); L.guideHit.anchor.set(.5); L.guideHit.blendMode = PIXI.BLEND_MODES.ADD; L.guideHit.tint = 0xFFC2E2; L.guideHit.visible = false; L.guide.addChild(L.guideHit);
     L.gems = new PIXI.ParticleContainer(300, {position: true, scale: true, alpha: true}); W.addChild(L.gems);
     L.ballGlow = new PIXI.ParticleContainer(1200, {position: true, scale: true, tint: true, alpha: true, rotation: true}); L.ballGlow.blendMode = PIXI.BLEND_MODES.ADD; W.addChild(L.ballGlow);
+    { let pl = 0; try { pl = +localStorage.getItem(PERF_KEY) || 0; } catch (e) {} Perf.set(pl, false); }   // 렉 지킴이: 지난번 단계로
     L.balls = new PIXI.ParticleContainer(1200, {position: true, scale: true, uvs: true, rotation: true}); W.addChild(L.balls);
     L.pad = new PIXI.Container(); W.addChild(L.pad);
     L.circle = new PIXI.Sprite(TEX.circle); L.circle.anchor.set(.5); L.circle.blendMode = PIXI.BLEND_MODES.ADD; L.pad.addChild(L.circle);
@@ -1698,7 +1721,7 @@ function hurt(d, x, force) {
   if (navigator.vibrate && TOUCH) try { navigator.vibrate(40); } catch (e) {}
 }
 function flashRed() { const f = $('#flash'); f.classList.remove('go'); requestAnimationFrame(() => requestAnimationFrame(() => f.classList.add('go'))); }
-function explodeFx(x, y, tint) { for (let i = 0; i < 10; i++) { const a = -Math.PI * Math.random(), sp = 200 + Math.random() * 300; fx.spawn(TEX.spark, {x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 600, tint, s0: 1, s1: 0, life: .5, add: true}); } }
+function explodeFx(x, y, tint) { for (let i = 0, n = Perf.lv ? 5 : 10; i < n; i++) { const a = -Math.PI * Math.random(), sp = 200 + Math.random() * 300; fx.spawn(TEX.spark, {x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 600, tint, s0: 1, s1: 0, life: .5, add: true}); } }
 let shake = 0, hurtT = 0;
 function logBoss(b, how) { (run.bossLog || (run.bossLog = [])).push([b.boss.name, Math.round(b.boss.t0), Math.round(run.t), how]); }
 function bossDown(b) {
@@ -1719,6 +1742,7 @@ function nextStage(cleared) {
   if (cleared) { addScore(20000); run.hp = Math.min(run.hpMax, run.hp + 15); cheerT = 1.5; save.clears++; S.win(); banner(`STAGE ${n} CLEAR!`, false); }
   else banner('보스를 놓쳤어요…', true);
   run.stage = n + 1; run.stT = 0; run.stPh = 0;
+  if (!run.boss) battleMusic();   // 다음 테마 곡으로
   if (run.stage > save.top) { save.top = run.stage; persist(); }
   useStageBg(run.stage, false, true);
   later(1.8, () => { if (run && !run.ended) banner(`스테이지 ${run.stage} · ${stageName(run.stage)}`, true); });

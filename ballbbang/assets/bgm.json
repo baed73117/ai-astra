@@ -16,5 +16,20 @@
   "xf": 0.25,
   "bpm": 139.7,
   "start": 22.177
+ },
+ "b_frost": {
+  "alias": "battle"
+ },
+ "b_fire": {
+  "alias": "battle"
+ },
+ "b_cyber": {
+  "alias": "battle"
+ },
+ "b_mystic": {
+  "alias": "battle"
+ },
+ "b_cosmic": {
+  "alias": "battle"
  }
 }

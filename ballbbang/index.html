@@ -76,6 +76,20 @@ body.wide .side{display:grid;gap:12px}
 .score{text-align:right;line-height:1}
 .score small{display:block;font:800 9px/1 var(--f-en);letter-spacing:.24em;opacity:.8;margin-bottom:3px}
 .score b{font:800 20px/1 var(--f-en);font-variant-numeric:tabular-nums}
+.score em{display:block;margin-top:3px;font:800 11px/1 var(--f-en);font-style:normal;color:#FFC07A}
+.evpill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;border-radius:999px;background:linear-gradient(120deg,rgba(255,138,40,.9),rgba(140,60,200,.9));box-shadow:0 6px 16px rgba(255,120,40,.35),inset 0 0 0 1px rgba(255,255,255,.4);font:800 12px/1 var(--f-kr);color:#fff}
+.hw-top{margin:-4px -4px 0;height:140px;border-radius:16px;background:#2A1240 center 18%/cover no-repeat}
+.hw-rew{display:grid;gap:6px;text-align:left}
+.hw-rew li{list-style:none;display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:12px;background:#F7F2FA;font:500 12.5px/1.3 var(--f-kr);color:var(--ink2)}
+.hw-rew li b{flex:none;width:62px;font:800 13px/1 var(--f-en);color:#E2701A}
+.hw-rew li span{flex:1;color:var(--ink)}
+.hw-rew li.got{background:#FFF1DE;box-shadow:inset 0 0 0 1.5px #FFB25A}
+.hw-rew li.got i{color:#2BA84A}
+.hw-rew li i{font-style:normal;font:800 12px/1 var(--f-kr);color:#A898B8}
+.hw-bar{height:8px;border-radius:5px;background:#EEE4F5;overflow:hidden}
+.hw-bar i{display:block;height:100%;background:linear-gradient(90deg,#FF9A3C,#B657E8)}
+.charc .cosrow{display:flex;flex-wrap:wrap;gap:6px}
+.charc .cos.on{background:linear-gradient(120deg,#FF86BF,#FF4F9A);color:#fff;box-shadow:none}
 .pause{pointer-events:auto;width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line)}
 .pause svg{width:15px;height:15px;fill:#fff}
 .xp{position:relative;margin-top:9px;height:9px;border-radius:999px;background:rgba(0,0,0,.45);box-shadow:0 0 0 1px rgba(255,255,255,.5);overflow:hidden}
@@ -305,7 +319,7 @@ body.wide .side{display:grid;gap:12px}
     <div class="hud-row">
       <div class="hpbox"><svg class="hp-ic" viewBox="0 0 24 24"><path d="M12 20.5s-7.6-4.6-9.5-9.3C1 7.8 3.1 4.2 6.8 4.2c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.7 0 5.8 3.6 4.3 7C19.6 15.9 12 20.5 12 20.5z"/></svg><div class="hp-track"><b id="hpFill"></b></div><span class="hp-num" id="hpNum">100</span></div>
       <div class="timer" id="timer"><b id="time">0:00</b><small id="phase">보스까지 10:00</small></div>
-      <div class="right"><div class="score"><small>SCORE</small><b id="score">0</b></div><button class="pause" id="btnPause" type="button" aria-label="일시정지"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4.2" height="15" rx="1.6"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.6"/></svg></button></div>
+      <div class="right"><div class="score"><small>SCORE</small><b id="score">0</b><em id="hwC" hidden>🍬 0</em></div><button class="pause" id="btnPause" type="button" aria-label="일시정지"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4.2" height="15" rx="1.6"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.6"/></svg></button></div>
     </div>
     <div class="xp"><b id="xpFill"></b></div>
     <div class="hud-row2" id="hudRow2"><div class="balls" id="ballsBar"></div><span class="lv" id="lv">Lv.1</span></div>
@@ -328,7 +342,7 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay title" id="title">
   <div class="t-bg"></div><div class="t-fade"></div>
   <header class="t-head">
-    <div><span class="brand-en">BALL BBANG! ASTRA</span><h1 class="logo">볼빵! 아스트라</h1><span class="brand-sub">공을 쏴서 몬스터 블록을 부숴요!</span></div>
+    <div><span class="brand-en">BALL BBANG! ASTRA</span><h1 class="logo">볼빵! 아스트라</h1><span class="brand-sub">공을 쏴서 몬스터 블록을 부숴요!</span><button class="evpill" id="btnHw" type="button" hidden>🎃 할로윈 이벤트</button></div>
     <div class="t-right"><span class="coinpill"><i></i><b id="tCoins">0</b></span><button class="appchip" id="btnInstall" type="button" hidden>📲 앱 설치</button></div>
   </header>
   <div class="t-foot">
@@ -382,6 +396,18 @@ body.wide .side{display:grid;gap:12px}
       <li><i>♾️</i><div><b>무한 스테이지 · 체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
     </ul>
     <button class="btn main" id="newsOk" type="button">좋아요!</button>
+  </div>
+</div>
+<div class="overlay" id="hwEv" hidden>
+  <div class="card"><div class="hw-top" id="hwTop"></div><span class="tag">HALLOWEEN EVENT</span><h2 class="c-title">🎃 할로윈 이벤트</h2>
+    <p class="inst-lead" id="hwWhen"></p>
+    <ul class="news-list" id="hwHow">
+      <li><i>🎃</i><div><b>호박 블록을 부수면 사탕 🍬</b>이벤트 동안 판에 호박 블록이 나와요</div></li>
+      <li><i>👻</i><div><b>할로윈 보스는 사탕 5개</b>짝수 스테이지 중간 보스 · 10스테이지부터 사탕 두 배</div></li>
+    </ul>
+    <div class="hw-bar"><i id="hwBar"></i></div>
+    <ul class="hw-rew" id="hwRew"></ul>
+    <button class="btn main" id="hwOk" type="button">좋아요!</button>
   </div>
 </div>
 <div class="overlay" id="install" hidden>
@@ -445,7 +471,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=bacf8d9b';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=de33161a';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -463,7 +489,9 @@ const WIN_LINE = {ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한
 const GOOD_LINE = {ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
 const LOSE_LINE = {ruby: '으으… 한 번만 더 하자!', yuki: '괜찮아. 다시 하면 돼.', riko: '에이~ 몸풀기였어! 다시 고고!', sora: '에헤헤, 바람이 좀 셌네. 다시!', nene: '졸려… 한 판만 더 할까.', mirai: '연습은 끝! 이제 본무대야!'};
 const byKey = k => CHARS.find(c => c.key === k) || CHARS[0];
-const skin = k => save && save.cos && save.cos[k] && mastLv(k) >= 10 ? '_' + save.cos[k] : '';   // 숙련도 Lv.10 의상 (지금은 c1 = 축제 유카타)
+// 의상: c1 = 축제 유카타(숙련도 Lv.10) · c2 = 할로윈(이벤트 보상)
+const cosOk = (k, c) => c === 'c1' ? mastLv(k) >= 10 : c === 'c2' ? hwCos() : false;
+const skin = k => save && save.cos && save.cos[k] && cosOk(k, save.cos[k]) ? '_' + save.cos[k] : '';
 const PT_URL = k => `assets/pt_${k}${skin(k)}.webp${AV}`, SD_URL = k => `assets/sd_${k}${skin(k)}.webp${AV}`, BLINK_URL = k => `assets/sd_${k}${skin(k)}_blink.webp${AV}`;
 // 공 15종 (balls.webp 5×3 칸 번호 = i). dmg = 기본 피해, owner = 콜라보 합체 연출에 나오는 캐릭터
 const BALLS = {
@@ -555,6 +583,7 @@ const BOSS_NAMES = ['젤리 킹', '아이언 골렘 박스', '폭풍 구름 큐�
   '사탕 성 킹', '유령 샹들리에', '스핑크스 블록', '정글 토템', '하늘고래 성', '깜짝 상자 광대', '네온 호랑이 오락기', '오로라 설인 큐브',
   '태엽 부엉이', '은하 왕좌 여왕', '미라 상자', '우산 요괴 블록'];
 // 보스마다 부하가 다름 (null = 보통 젤리)
+const BOSS_MINIONS_HW = [['pumpkin', null], ['ghost', 'pumpkin'], ['bomb', 'pumpkin'], ['armor', 'pumpkin', null]];   // 할로윈 보스 부하 (호박 = 사탕)
 const BOSS_MINIONS = [[null], ['armor'], ['ghost'], ['bomb', 'healer', null], ['split', 'gold', null], ['armor', 'ghost'], ['bomb', 'armor'], ['ghost', 'healer', 'bomb', 'armor'],
   ['split', null], ['armor', null], ['bomb', 'armor'], ['ghost', null], ['bomb', null], ['healer', 'armor', null], ['ghost', 'bomb'], ['split', 'ghost', 'bomb'],
   ['gold', 'split', null], ['ghost', null], ['armor', 'bomb'], ['healer', 'armor', null], ['ghost', 'split'], ['split', 'bomb'], ['bomb', 'ghost'], ['armor', null],
@@ -666,6 +695,28 @@ function mastBonus(k) { const l = mastLv(k); return {atk: (l >= 2 ? .03 : 0) + (
 
 /* ---------- 저장 (새 키: astra-universe-breaker-v1) ---------- */
 const SAVE_KEY = 'astra-universe-breaker-v1', RUN_KEY = 'astra-universe-breaker-run';
+/* ---------- 할로윈 이벤트 (한국 시간 날짜): 예고 → 진행 → 끝 · 호박 블록·할로윈 보스에서 사탕 → 보상 (의상·칭호는 이벤트 뒤에도 남음) ---------- */
+const HW = {id: 'h26', from: 20261017, to: 20261102};
+const HW_TEST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && (() => { try { return localStorage.getItem('astra-universe-breaker-hwtest') === '1'; } catch (e) { return false; } })();   // 시험용 (내 컴퓨터에서만)
+const hwState = () => { if (HW_TEST) return 'on'; const d = kstDate(); return d < HW.from ? 'soon' : d <= HW.to ? 'on' : 'off'; };
+const HW_REW = [
+  {n: 50, coin: 500, text: '코인 500'},
+  {n: 150, title: 'candy', text: "칭호 '사탕 사냥꾼'"},
+  {n: 300, cos: true, text: '🎃 할로윈 의상 (6명 모두)'},
+  {n: 600, coin: 3000, text: '코인 3,000'},
+  {n: 1000, coin: 5000, title: 'witch', text: "칭호 '할로윈의 마녀' + 코인 5,000"},
+];
+const EV_TITLES = {candy: '사탕 사냥꾼', witch: '할로윈의 마녀'};
+const HW_BOSS_NAMES = ['잭오랜턴 킹', '마녀 모자 큐브', '드라큘라 젤리 백작', '캔디콘 골렘'];   // 보스 그림 번호 28~31 (도감에는 안 들어감)
+const bossName = tex => tex >= 28 ? HW_BOSS_NAMES[tex - 28] : BOSS_NAMES[tex];
+const hwSave = () => save.ev[HW.id] || (save.ev[HW.id] = {c: 0, g: 0});   // c = 모은 사탕 · g = 받은 보상 수
+const hwGot = () => HW_REW.slice(0, (save.ev[HW.id] || {}).g || 0);
+const hwCos = () => hwGot().some(r => r.cos);
+const evTitleOk = id => hwGot().some(r => r.title === id);
+function hwClaim(out) {   // 사탕이 모이면 보상을 차례로 받음
+  const e = hwSave();
+  while (e.g < HW_REW.length && e.c >= HW_REW[e.g].n) { const r = HW_REW[e.g]; e.g++; if (r.coin) save.coins += r.coin; if (out) out.push(`🎃 이벤트 보상: ${r.text}`); }
+}
 function loadSave() {
   let s = {};
   try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}') || {}; } catch (e) { s = {}; }
@@ -683,8 +734,10 @@ function loadSave() {
   MISSIONS.forEach(m => { dm.p[m.id] = n(d0.p && d0.p[m.id]); });
   const mast = {}, cos = {};
   if (s.mast && typeof s.mast === 'object') for (const k of Object.keys(s.mast)) if (CHARS.some(c => c.key === k)) mast[k] = n(s.mast[k]);
-  if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && s.cos[k] === 'c1') cos[k] = 'c1';
-  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123])$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, wbest: n(s.wbest), wseen: String(s.wseen || ''),
+  if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && (s.cos[k] === 'c1' || s.cos[k] === 'c2')) cos[k] = s.cos[k];
+  const ev = {};   // 이벤트 기록: {h26: {c: 사탕, g: 받은 보상 수}}
+  if (s.ev && typeof s.ev === 'object') for (const k of Object.keys(s.ev)) if (/^h\d\d$/.test(k) && s.ev[k] && typeof s.ev[k] === 'object') ev[k] = {c: n(s.ev[k].c), g: Math.min(HW_REW.length, n(s.ev[k].g))};
+  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123]|e:[a-z]+)$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, ev, wbest: n(s.wbest), wseen: String(s.wseen || ''),
     muted: s.muted === true, auto: s.auto !== false, daily: s.daily && typeof s.daily === 'object' ? {d: String(s.daily.d || ''), best: n(s.daily.best)} : {d: '', best: 0}};
 }
 const save = loadSave();
@@ -883,7 +936,7 @@ const Perf = {
     if (tell) toast(this.lv >= 2 ? '화면이 버벅여서 효과를 더 줄였어요' : '부드럽게 돌아가도록 효과를 조금 줄였어요');
   },
 };
-const battleMusic = () => BGM.play(run && run.boss ? 'boss' : run ? themeOf(run.stage).bgm || 'battle' : 'battle', .6);   // 테마마다 전투 곡 (THEMES의 bgm)
+const battleMusic = () => BGM.play(run && run.boss ? 'boss' : run && run.hw && run.stage % 2 === 0 && BGM.meta && BGM.meta.b_hw ? 'b_hw' : run ? themeOf(run.stage).bgm || 'battle' : 'battle', .6);   // 할로윈 곡(수노 b_hw)이 있으면 짝수 스테이지에   // 테마마다 전투 곡 (THEMES의 bgm)
 
 /* ---------- 세계 크기 (가로 720 고정, 세로는 화면에 맞춰 1180~1560) ---------- */
 const WW = 720, COLS = 8, CELL = 87, GAP = 6, FIELD_L = 12, FIELD_R = 708, FIELD_LEN = 830;
@@ -1002,7 +1055,9 @@ function initGraphics() {
     let lastDraw = 0;
     app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; Perf.sample(t - lastDraw); lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
     const load = u => PIXI.Assets.load(u + AV).catch(() => null);
-    const [mon, boss, balls, bg, boss2, boss3, boss4, boss5, boss6, boss7] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp', 'assets/bosses2.webp', 'assets/bosses3.webp', 'assets/bosses4.webp', 'assets/bosses5.webp', 'assets/bosses6.webp', 'assets/bosses7.webp'].map(load));
+    const hwOn = hwState() === 'on';   // 할로윈 그림은 이벤트 중에만 받음
+    const [mon, boss, balls, bg, boss2, boss3, boss4, boss5, boss6, boss7, hwBoss, hwMon, hwX] = await Promise.all(['assets/monsters.webp', 'assets/bosses.webp', 'assets/balls.webp', 'assets/bg.webp', 'assets/bosses2.webp', 'assets/bosses3.webp', 'assets/bosses4.webp', 'assets/bosses5.webp', 'assets/bosses6.webp', 'assets/bosses7.webp',
+      hwOn ? 'assets/bosses_hw.webp' : '', hwOn ? 'assets/monsters_hw.webp' : '', 'assets/hw_extra.webp'].map(u => u ? load(u) : null));
     TEX.mon = mon || fallbackMonsters(); TEX.boss = boss || fallbackBosses(); TEX.balls = balls || fallbackBalls(); TEX.bg = bg || fallbackBg(); TEX.bgs = {bg: TEX.bg};
     const mc = TEX.mon.width / 4; TEX.m = []; for (let i = 0; i < 12; i++) TEX.m.push(sub(TEX.mon, (i % 4) * mc, Math.floor(i / 4) * mc, mc, mc));
     // 부서질 때 날아가는 블록 조각: 몬스터 몸통을 4등분
@@ -1010,7 +1065,14 @@ function initGraphics() {
     for (let i = 0; i < 12; i++) { const ox = (i % 4) * mc + bx0, oy = Math.floor(i / 4) * mc + by0; TEX.mp.push([0, 1, 2, 3].map(q => sub(TEX.mon, ox + (q % 2) * bs / 2, oy + (q >> 1) * bs / 2, bs / 2, bs / 2))); }
     const bw = TEX.boss.width / 2, bh = TEX.boss.height / 2; TEX.b = []; for (let i = 0; i < 4; i++) TEX.b.push(sub(TEX.boss, (i % 2) * bw, Math.floor(i / 2) * bh, bw, bh));
     // 4~7 = 스테이지 2~5 마지막 보스 (그림이 없으면 1단계 보스 그림을 빌려 씀)
-    [boss2, boss3, boss4, boss5, boss6, boss7].forEach(sh => { for (let i = 0; i < 4; i++) TEX.b.push(sh ? sub(sh, (i % 2) * sh.width / 2, Math.floor(i / 2) * sh.height / 2, sh.width / 2, sh.height / 2) : TEX.b[TEX.b.length % 8]); });
+    [boss2, boss3, boss4, boss5, boss6, boss7, hwBoss].forEach(sh => { for (let i = 0; i < 4; i++) TEX.b.push(sh ? sub(sh, (i % 2) * sh.width / 2, Math.floor(i / 2) * sh.height / 2, sh.width / 2, sh.height / 2) : TEX.b[TEX.b.length % 8]); });
+    // 할로윈: 호박 블록(12번)·사탕, 이벤트 중에는 블록 옷도 할로윈판 (그림이 없으면 원래 그림)
+    const xc = hwX ? hwX.width / 4 : 0;
+    TEX.m.push(hwX ? sub(hwX, 0, 0, xc, xc) : TEX.m[3]); TEX.candy = hwX ? sub(hwX, xc, 0, xc, xc) : TEX.star;
+    if (hwX) { const q2 = xc * MON_BODY, x0 = (xc - q2) / 2, y0 = xc * (MON_AY - MON_BODY / 2); TEX.mp.push([0, 1, 2, 3].map(q => sub(hwX, x0 + (q % 2) * q2 / 2, y0 + (q >> 1) * q2 / 2, q2 / 2, q2 / 2))); } else TEX.mp.push(TEX.mp[3]);
+    if (hwMon) { const hc = hwMon.width / 4, hs = hc * MON_BODY, hy0 = hc * (MON_AY - MON_BODY / 2), hx0 = (hc - hs) / 2; TEX.mHw = []; TEX.mpHw = [];
+      for (let i = 0; i < 12; i++) { TEX.mHw.push(sub(hwMon, (i % 4) * hc, Math.floor(i / 4) * hc, hc, hc)); const ox = (i % 4) * hc + hx0, oy = Math.floor(i / 4) * hc + hy0; TEX.mpHw.push([0, 1, 2, 3].map(q => sub(hwMon, ox + (q % 2) * hs / 2, oy + (q >> 1) * hs / 2, hs / 2, hs / 2))); }
+      TEX.mHw.push(TEX.m[12]); TEX.mpHw.push(TEX.mp[12]); }
     const kc = TEX.balls.width / 5; TEX.k = []; for (let i = 0; i < 15; i++) TEX.k.push(sub(TEX.balls, (i % 5) * kc, Math.floor(i / 5) * kc, kc, kc));
     TEX.spark = canvasTex(64, 64, (g, w) => { const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.4, 'rgba(255,255,255,.65)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, w); });
     TEX.star = canvasTex(64, 64, (g, w) => { g.fillStyle = '#fff'; g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 12 : 30; g.lineTo(w / 2 + Math.cos(a) * r, w / 2 + Math.sin(a) * r); } g.closePath(); g.fill(); });
@@ -1175,6 +1237,7 @@ function newRun(opts) {
     wr: rng(seed), cr: rng(seed ^ 0x9E3779B9),          // 블록용 · 선택지용 (고른 것이 블록 배치를 바꾸지 않게)
     t: 0, scroll: 0, nextK: 0, score: 0, kills: 0, level: 1, xp: 0, xpNeed: xpNeedFor(1),
     hp: 100 + shop.hp * 10 + mb.hp, hpMax: 100 + shop.hp * 10 + mb.hp, atkMeta: (1 + shop.atk * .08) * (1 + mb.atk), xpMeta: 1 + shop.xp * .06,
+    hw: !daily && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
     rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
     upg: {}, skillT: 0, skillCd: 22 * mb.cd, frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
     hitCount: 0, pendingLv: 0, minK: 0, bossN: 0, maxCombo: 0, chestN: 0, dexRun: 0, leg: {}, pendingChest: 0, revived: false, starT: 0,
@@ -1223,14 +1286,14 @@ function gridRow(k) { let r = grid.get(k); if (!r) { r = new Array(COLS).fill(nu
 
 // 블록 종류: 그림 칸 번호(monsters.webp 4×3)와 성질
 const BT = {
-  pink: {tex: 0}, mint: {tex: 1}, blue: {tex: 2}, yellow: {tex: 3}, lav: {tex: 4},
+  pink: {tex: 0}, mint: {tex: 1}, blue: {tex: 2}, yellow: {tex: 3}, lav: {tex: 4}, pumpkin: {tex: 12, candy: 1},
   armor: {tex: 5, armor: .35}, healer: {tex: 6}, bomb: {tex: 7}, gem: {tex: 8, xp: 6}, split: {tex: 9}, ghost: {tex: 10, dodge: .25}, gold: {tex: 11, coin: 5},
 };
 const COLORS = ['pink', 'mint', 'blue', 'yellow', 'lav'];
 function addBlock(k, c, w, h, hp, type, extra) {
   const b = Object.assign({k, c, w, h, hp, maxHp: hp, type, burn: 0, burnT: 0, poison: 0, frozenT: 0, flash: 0, healT: 2, hitN: 0, dead: false, sp: null, txt: null, boss: null, jig: 0, jigT: 9, kx: 0, ky: 0, crackLv: 0, fl: null, ck: null}, extra || {});
   for (let i = 0; i < h; i++) { const r = gridRow(k + i); for (let j = 0; j < w; j++) r[c + j] = b; }
-  b.sp = spPool.pop() || new PIXI.Sprite(); b.sp.texture = b.boss ? TEX.b[b.boss.tex] : TEX.m[BT[type] ? BT[type].tex : 0];
+  b.sp = spPool.pop() || new PIXI.Sprite(); b.sp.texture = b.boss ? TEX.b[b.boss.tex] : (run && run.hw && TEX.mHw ? TEX.mHw : TEX.m)[BT[type] ? BT[type].tex : 0];
   b.sp.anchor.set(.5, b.boss ? .5 : MON_AY); b.sp.tint = 0xFFFFFF; b.sp.alpha = 1; b.sp.visible = true;
   L.blocks.addChild(b.sp);
   b.fl = flPool.pop() || new PIXI.Sprite(); b.fl.texture = b.sp.texture; b.fl.anchor.copyFrom(b.sp.anchor); b.fl.blendMode = PIXI.BLEND_MODES.ADD; b.fl.visible = false; L.flashes.addChild(b.fl);
@@ -1278,6 +1341,7 @@ function spawnRow() {
     else if (roll > .975) type = 'gem';
     else if (roll > .965) type = 'gold';
     type = ruleType(type, roll, t);
+    if (run.hw && COLORS.includes(type) && roll >= .46 && roll < .52) type = 'pumpkin';   // 할로윈: 호박 블록 (씨앗 순서는 그대로)
     const hp = Math.max(1, Math.round(base * (.75 + R() * .5) * (type === 'armor' ? 1.4 : type === 'gem' || type === 'gold' ? .6 : 1)));
     addBlock(k, c, 1, 1, hp, type);
     placed++;
@@ -1360,11 +1424,11 @@ function spawnBoss(final) {
   const k = run.nextK; run.nextK += h;
   // 자리에 있던 블록은 치움
   for (let i = 0; i < h; i++) { const r = gridRow(k + i); for (let j = 0; j < w; j++) if (r[c + j]) removeBlock(r[c + j]); }
-  const th = themeOf(run.stage), tex = final ? th.fin : th.mid;
+  const th = themeOf(run.stage), tex = final ? th.fin : run.hw && run.stage % 2 === 0 ? 28 + ((run.stage >> 1) + 3) % 4 : th.mid;   // 할로윈: 짝수 스테이지 중간 보스는 할로윈 보스
   const hm = final ? Math.min(BOSS_HP.finMax, BOSS_HP.fin + BOSS_HP.finUp * (run.stage - 1)) : Math.min(BOSS_HP.midMax, BOSS_HP.mid + BOSS_HP.midUp * (run.stage - 1));
   const hp = Math.round(hpBase(run.t) * hm);
   const aw = lapOf(run.stage) > 0;   // 2회차부터 각성 보스: 색이 바뀌고 체력 절반에서 한 번 분노(부하 많이)
-  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: (aw ? '각성 ' : '') + BOSS_NAMES[tex] + lapTag(run.stage), spawnT: 5, t0: run.t, awake: aw ? worldOf(run.stage).boss : 0, rage: aw ? 1 : 0}});
+  const b = addBlock(k, c, w, h, hp, 'boss', {boss: {tex, final, name: (aw ? '각성 ' : '') + bossName(tex) + lapTag(run.stage), spawnT: 5, t0: run.t, awake: aw ? worldOf(run.stage).boss : 0, rage: aw ? 1 : 0}});
   if (final) useStageBg(run.stage + 1, true);   // 다음 스테이지 배경 미리 받아 둠
   run.boss = b;
   $('#bossName').textContent = b.boss.name; $('#bossbar').hidden = false; updateBossBar();
@@ -1609,6 +1673,7 @@ function killBlock(blk) {
   if (!blk.boss) addScore(KILL_PTS * (blk.big ? 3 : 1) * (1 + Math.min(run.combo, 50) * .01));   // 보스 점수는 bossDown에서
   addXp(blk.boss ? (blk.boss.final ? 40 : 25) : (bt.xp || 1) * (blk.big ? 3 : 1) * xpTime());   // 뒤로 갈수록 블록이 단단해지니 경험치도 늘림 (상한 있음)
   if (bt.coin) run.coinBonus = (run.coinBonus || 0) + bt.coin;
+  if (bt.candy && run.hw) hwCandy(bt.candy, x, y);
   // 부서지는 효과
   const col = blk.boss ? 0xFFB0D0 : [0xFF8FC0, 0x6FE3C0, 0x7FC8FF, 0xFFE070, 0xC9A8FF][(blk.c + blk.k) % 5];
   shatter(blk, R, x, y, col);
@@ -1625,7 +1690,7 @@ function killBlock(blk) {
 // 부서지는 연출: 블록 조각 4개가 돌며 튀고, 하얀 번쩍 + 충격파 + 젤리 방울. 큰 블록·보스는 잠깐 멈춤(묵직한 손맛)
 function shatter(blk, R, x, y, col) {
   if (!blk.boss) {
-    const parts = TEX.mp[BT[blk.type] ? BT[blk.type].tex : 0], s0 = (R.w / 2) / parts[0].width * 1.04;
+    const parts = (run.hw && TEX.mpHw ? TEX.mpHw : TEX.mp)[BT[blk.type] ? BT[blk.type].tex : 0], s0 = (R.w / 2) / parts[0].width * 1.04;
     for (let i = 0; i < 4; i++) {
       const dx = i % 2 ? 1 : -1, dy = i < 2 ? -1 : 1, v = 150 + Math.random() * 170;
       fx.spawn(parts[i], {x: x + dx * R.w * .22, y: y + dy * R.h * .22, vx: dx * v + (Math.random() - .5) * 90, vy: dy * v * .5 - 280 - Math.random() * 140, g: 1600,
@@ -1790,10 +1855,15 @@ function bossRage(b) {   // 각성 보스가 체력 절반 아래로: 한 번 �
   const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFF6F8F); shake = Math.min(14, shake + 8);
   banner(`${b.boss.name}의 분노!`, true); S.warn();
 }
+function hwCandy(n, x, y) {   // 사탕 얻기 (10스테이지부터 두 배)
+  n *= run.stage >= 10 ? 2 : 1; run.candy = (run.candy || 0) + n;
+  popText(x, y - 12, '+' + n, 0xFFA040);
+  fx.spawn(TEX.candy, {x, y, vy: -190, g: 260, s0: .42, s1: .3, a0: 1, a1: 0, life: .8, vr: 3});
+}
 function bossMinions(b) {
   const k = b.k + b.h, row = gridRow(k), base = hpBase(run.t);
   let n = b.boss.final && run.stage >= 6 ? 3 : 2;   // 6스테이지부터 스테이지 보스는 부하 3마리
-  const kinds = BOSS_MINIONS[b.boss.tex] || [null];   // 보스마다 부하가 다름 (BOSS_MINIONS)
+  const kinds = (b.boss.tex >= 28 ? BOSS_MINIONS_HW[b.boss.tex - 28] : BOSS_MINIONS[b.boss.tex]) || [null];   // 보스마다 부하가 다름 (BOSS_MINIONS)
   for (let c = 0; c < COLS && n > 0; c++) {
     const cc = (c * 5 + Math.floor(run.t)) % COLS;
     if (!row[cc]) { const t = kinds[(cc + n) % kinds.length] || COLORS[cc % 5]; addBlock(k, cc, 1, 1, Math.round(base * (t === 'armor' ? .9 : .7)), t); n--; }
@@ -1817,6 +1887,7 @@ function bossDown(b) {
   logBoss(b, 'down');
   run.bossN = (run.bossN || 0) + 1; run.dexRun = (run.dexRun || 0) | (1 << b.boss.tex);   // 기록 · 보스 도감
   addScore(b.boss.final ? 24000 : 8000);
+  if (b.boss.tex >= 28 && run.hw) { const R = blockRect(b); hwCandy(5, R.x + R.w / 2, R.y + R.h / 2); }   // 할로윈 보스: 사탕 5개
   if (b.boss.final) {
     for (const o of [...blocks]) if (o.boss && o.boss.partner && !o.dead) { const R = blockRect(o); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFFB0D0); run.bossN++; run.dexRun |= 1 << o.boss.tex; removeBlock(o); addScore(8000); }
     nextStage(true);
@@ -1984,6 +2055,7 @@ function updateHud() {
     $('#timer').classList.toggle('boss', !!run.boss);
   }
   if (c.score !== run.score && (!c.st || now - c.st > 100)) { c.score = run.score; c.st = now; $('#score').textContent = fmt(run.score); }
+  if (c.candy !== run.candy) { c.candy = run.candy; const e = $('#hwC'); e.hidden = !run.hw; if (run.hw) e.textContent = '🍬 ' + (run.candy || 0); }
   const sk = Math.min(1, run.skillT / skillCdNow()), skr = Math.round(sk * 50) / 50;
   if (c.sk !== skr) { c.sk = skr; $('#skillCd').style.transform = `scaleY(${1 - skr})`; $('#btnSkill').classList.toggle('ready', skr >= 1); }
 }
@@ -2191,7 +2263,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -2336,6 +2408,7 @@ function applyRewards(r) {
   R.kills += r.kills || 0; R.bosses += r.bossN || 0; R.combo = Math.max(R.combo, r.maxCombo || 0); R.chests += r.chestN || 0; if (r.daily) R.dailies++;
   if ((r.startStage || 1) === 1 || r.stage > r.startStage) R.cbest[r.char] = Math.max(R.cbest[r.char] || 0, r.stage);
   save.dex = (save.dex | (r.dexRun || 0)) & 0xFFFFFFF;
+  if (r.hw) { const e = hwSave(); e.c += r.candy || 0; out.push(`🍬 할로윈 사탕 +${r.candy || 0} (모두 ${fmt(e.c)})`); hwClaim(out); }
   dmRoll(); const P = save.dm.p;
   P.kill += r.kills || 0; P.boss += r.bossN || 0; P.stage = Math.max(P.stage, r.stage - (r.startStage || 1)); P.combo = Math.max(P.combo, r.maxCombo || 0);
   P.chest += r.chestN || 0; P.plays++; P.level = Math.max(P.level, r.level); if (r.daily) P.daily++;
@@ -2386,6 +2459,7 @@ function importCode(code) {
 const titleText = () => {
   const t = save.title || '';
   if (t.startsWith('m:')) { const k = t.slice(2); return mastLv(k) >= 10 ? byKey(k).name + ' 마스터' : ''; }
+  if (t.startsWith('e:')) return evTitleOk(t.slice(2)) ? EV_TITLES[t.slice(2)] || '' : '';
   if (t.startsWith('w:')) return save.wbest && save.wbest <= +t.slice(2) ? `주간 ${t.slice(2)}등` : '';
   const a = ACH.find(x => x.id === t); return a ? a.title : '';
 };
@@ -2471,7 +2545,22 @@ function goTitle() {
 }
 
 /* ---------- 첫 화면 · 캐릭터 · 강화 ---------- */
+function renderHwPill() {
+  const st = hwState(), b = $('#btnHw');
+  b.hidden = st === 'off' && !(save.ev[HW.id] && save.ev[HW.id].c);
+  b.textContent = st === 'soon' ? `🎃 할로윈 이벤트 ${Math.floor(HW.from / 100) % 100}월 ${HW.from % 100}일부터!` : st === 'on' ? `🎃 할로윈 이벤트 · 🍬 ${fmt(hwSave().c)}` : `🎃 할로윈 이벤트 끝 · 🍬 ${fmt(hwSave().c)}`;
+}
+function openHw() {
+  const st = hwState(), e = save.ev[HW.id] || {c: 0, g: 0}, m = d => `${Math.floor(d / 100) % 100}월 ${d % 100}일`;
+  $('#hwWhen').textContent = st === 'soon' ? `${m(HW.from)} ~ ${m(HW.to)} · 곧 시작해요!` : st === 'on' ? `${m(HW.from)} ~ ${m(HW.to)} · 지금 진행 중 · 모은 사탕 🍬 ${fmt(e.c)}` : `이벤트가 끝났어요 · 받은 의상·칭호는 계속 쓸 수 있어요`;
+  const next = HW_REW[e.g];
+  $('#hwBar').style.width = (next ? Math.min(100, Math.round(e.c / next.n * 100)) : 100) + '%';
+  $('#hwRew').innerHTML = HW_REW.map((r, i) => `<li class="${i < e.g ? 'got' : ''}"><b>🍬 ${fmt(r.n)}</b><span>${r.text}</span><i>${i < e.g ? '받음 ✓' : st === 'off' ? '' : fmt(Math.max(0, r.n - e.c)) + '개 남음'}</i></li>`).join('');
+  $('#hwTop').style.backgroundImage = `url(assets/hw_key.webp${AV})`;
+  $('#hwEv').hidden = false;
+}
 function renderTitle() {
+  renderHwPill();
   $('#tCoins').textContent = fmt(save.coins); $('#tBest').textContent = fmt(save.best); $('#tClears').textContent = save.top || '-';
   const sv = loadRunSave();
   $('#btnContinue').hidden = !sv;
@@ -2526,6 +2615,7 @@ function openAch() {
   const tl = $('#titleList'); tl.innerHTML = '';
   tl.appendChild(chip('칭호 없음', !save.title, false, () => { save.title = ''; persist(); openAch(); }));
   CHARS.filter(c => mastLv(c.key) >= 10).forEach(c => tl.appendChild(chip(c.name + ' 마스터', save.title === 'm:' + c.key, false, () => { save.title = 'm:' + c.key; persist(); openAch(); })));
+  Object.keys(EV_TITLES).filter(evTitleOk).forEach(id => tl.appendChild(chip(EV_TITLES[id], save.title === 'e:' + id, false, () => { save.title = 'e:' + id; persist(); openAch(); })));
   [1, 2, 3].filter(n => save.wbest && save.wbest <= n).slice(0, 1).forEach(n => tl.appendChild(chip(`주간 ${n}등`, save.title === 'w:' + n, false, () => { save.title = 'w:' + n; persist(); openAch(); })));
   ACH.filter(a => a.title).forEach(a => { const got = save.ach.includes(a.id); tl.appendChild(chip(a.title, save.title === a.id, !got, () => { if (!got) { toast(`「${a.name}」 업적을 달성하면 열려요`); return; } save.title = a.id; persist(); openAch(); })); });
   $('#achCount').textContent = `${save.ach.length} / ${ACH.length}`;
@@ -2553,10 +2643,16 @@ function openChars() {
       const l = mastLv(c.key), x = mastXp(c.key), pct = l >= 10 ? 100 : Math.round((x - MAST_XP[l - 1]) / (MAST_XP[l] - MAST_XP[l - 1]) * 100);
       const mw = document.createElement('div'); mw.innerHTML = `<div class="mast"><span>숙련도 Lv.${l}</span><i style="--p:${pct}%"></i></div><span class="mnext"></span>`;
       mw.querySelector('.mnext').textContent = l >= 10 ? '최고 단계! 유카타 의상을 입을 수 있어요' : `다음 Lv.${l + 1}: ${MAST_TXT[l + 1]} (${fmt(x)} / ${fmt(MAST_XP[l])})` + (l < 9 ? ' · Lv.10엔 🎐유카타' : '');
-      if (l >= 10) {
-        const cb = document.createElement('span'); cb.className = 'cos'; cb.setAttribute('role', 'button'); cb.textContent = save.cos[c.key] ? '기본 옷으로 갈아입기' : '🎐 유카타 입기';
-        cb.addEventListener('click', ev => { ev.stopPropagation(); if (save.cos[c.key]) delete save.cos[c.key]; else save.cos[c.key] = 'c1'; persist(); openChars(); renderTitle(); });
-        mw.appendChild(cb);
+      const opts = [['', '기본 옷']]; if (l >= 10) opts.push(['c1', '🎐 유카타']); if (hwCos()) opts.push(['c2', '🎃 할로윈']);
+      if (opts.length > 1) {
+        const row = document.createElement('div'); row.className = 'cosrow';
+        const cur = cosOk(c.key, save.cos[c.key]) ? save.cos[c.key] : '';
+        opts.forEach(([v, t]) => {
+          const cb = document.createElement('span'); cb.className = 'cos' + (cur === v ? ' on' : ''); cb.setAttribute('role', 'button'); cb.dataset.cos = v; cb.textContent = t;
+          cb.addEventListener('click', ev => { ev.stopPropagation(); if (v) save.cos[c.key] = v; else delete save.cos[c.key]; persist(); openChars(); renderTitle(); });
+          row.appendChild(cb);
+        });
+        mw.appendChild(row);
       }
       b.querySelector('.kit').after(mw);
     }
@@ -2768,6 +2864,8 @@ $('#btnInstall').addEventListener('click', async () => {
   openInstall();
 });
 $('#instOk').addEventListener('click', () => { $('#install').hidden = true; });
+$('#btnHw').addEventListener('click', openHw);
+$('#hwOk').addEventListener('click', () => { $('#hwEv').hidden = true; renderTitle(); });
 $('#btnInstCode').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(exportCode()); toast('복사했어요! 앱을 열고 업적 → ‘코드로 불러오기’에 붙여 넣어 주세요'); }
   catch (e) { $('#install').hidden = true; openAch(); $('#ach').scrollTop = 99999; $('#btnExport').click(); }

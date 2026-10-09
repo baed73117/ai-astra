@@ -202,7 +202,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
       </div>
       <div class="games">
         <a class="game g6 wide reveal" href="ballbbang/" data-tilt>
-          <span class="badge">NEW</span>
+          <span class="badge" id="bbBadge">NEW</span>
           <div class="art"><img src="ballbbang/assets/key.webp?v=9a3c727b" alt="볼빵! 아스트라 게임 이미지 (캐릭터 6명)" width="1200" height="800" loading="lazy" decoding="async" style="object-position:55% 35%"></div>
           <div class="body">
             <span class="genre">Brick Breaker</span>
@@ -312,6 +312,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 </footer>
 <div class="toast" id="toast" role="status"></div>
 
+<script>
+// 볼빵 할로윈 이벤트 기간(한국 시간 10/17~11/2)에는 카드 표시를 바꿈 (게임의 HW 날짜와 같이 바꾸기)
+(function () { var d = new Date(Date.now() + 9 * 3600e3), n = d.getUTCFullYear() * 1e4 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate(), b = document.getElementById('bbBadge');
+  if (b && n >= 20261017 && n <= 20261102) { b.textContent = '🎃 할로윈 이벤트'; b.style.fontStyle = 'normal'; b.style.letterSpacing = '0'; } })();
+</script>
 <script>
 (() => {
 'use strict';

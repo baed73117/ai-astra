@@ -487,7 +487,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=de33161a';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=fed8ade6';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -500,10 +500,11 @@ const CHARS = [
   {key: 'sora', name: '소라', en: 'WIND · SORA', ball: 'wind', c1: '#2FC8B8', c2: '#7FC8FF', price: 800, skill: '하늘 회오리', desc: '하늘을 나는 바람 소녀. 특기: 회오리로 모든 블록을 2줄 위로 날려 보내요', line: '바람 타고 간다~!'},
   {key: 'nene', name: '네네', en: 'POISON · NENE', ball: 'poison', c1: '#5A2E9A', c2: '#B57CFF', price: 0, unlock: {stat: 'bosses', n: 30, text: '보스 30마리를 잡으면 합류'}, skill: '독안개', desc: '졸린 눈의 독 마녀. 특기: 판 위 모든 블록에 진한 독을 뿌려요', line: '후후… 천천히 녹아내려.'},
   {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 8초 동안 피버 + 모든 공이 커져요', line: '무대 시작이야~ 반짝!'},
+  {key: 'karin', name: '카린', en: 'STEEL · KARIN', ball: 'iron', c1: '#4A5A80', c2: '#FF6F5E', price: 0, unlock: {stat: 'top', n: 15, text: '스테이지 15에 가면 합류'}, skill: '메테오 해머', desc: '씩씩한 강철 기사 소녀. 특기: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리쳐요', line: '정의의 철퇴~! 받아랏!'},
 ];
-const WIN_LINE = {ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한 결과야. 고마워.', riko: '클리어! 하이스코어 갱신 가즈아~!', sora: '바람처럼 날아올랐지? 최고야!', nene: '후후… 독은 천천히 퍼지는 법이야.', mirai: '오늘의 센터는 나야~ 반짝!'};
-const GOOD_LINE = {ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
-const LOSE_LINE = {ruby: '으으… 한 번만 더 하자!', yuki: '괜찮아. 다시 하면 돼.', riko: '에이~ 몸풀기였어! 다시 고고!', sora: '에헤헤, 바람이 좀 셌네. 다시!', nene: '졸려… 한 판만 더 할까.', mirai: '연습은 끝! 이제 본무대야!'};
+const WIN_LINE = {karin: '강철은 꺾이지 않아! 승리다!', ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한 결과야. 고마워.', riko: '클리어! 하이스코어 갱신 가즈아~!', sora: '바람처럼 날아올랐지? 최고야!', nene: '후후… 독은 천천히 퍼지는 법이야.', mirai: '오늘의 센터는 나야~ 반짝!'};
+const GOOD_LINE = {karin: '조금만 더 버텼으면! 다시 돌격!', ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
+const LOSE_LINE = {karin: '으윽… 갑옷 닦고 다시 올게!', ruby: '으으… 한 번만 더 하자!', yuki: '괜찮아. 다시 하면 돼.', riko: '에이~ 몸풀기였어! 다시 고고!', sora: '에헤헤, 바람이 좀 셌네. 다시!', nene: '졸려… 한 판만 더 할까.', mirai: '연습은 끝! 이제 본무대야!'};
 const byKey = k => CHARS.find(c => c.key === k) || CHARS[0];
 // 의상: c1 = 축제 유카타(숙련도 Lv.10) · c2 = 할로윈(이벤트 보상)
 const cosOk = (k, c) => c === 'c1' ? mastLv(k) >= 10 : c === 'c2' ? hwCos() : false;
@@ -521,7 +522,7 @@ const BALLS = {
   split: {i: 7, name: '분열 공', dmg: 8, color: 0xFF6FD8, desc: '처음 맞히면 작은 공 2개로 갈라짐'},
   heart: {i: 8, name: '하트 공', dmg: 8, color: 0xFF8FB8, desc: '10번 맞힐 때마다 체력 1 회복'},
   star: {i: 9, name: '별 공', dmg: 10, color: 0x6F7CFF, desc: '가까운 블록 쪽으로 휘어 날아감'},
-  iron: {i: 10, name: '쇠 공', dmg: 22, color: 0xB8C2D6, desc: '느리지만 아주 큰 피해, 크기도 큼'},
+  iron: {i: 10, name: '쇠 공', dmg: 22, color: 0xB8C2D6, owner: 'karin', desc: '느리지만 아주 큰 피해, 크기도 큼'},
   rubber: {i: 11, name: '고무 공', dmg: 6, color: 0xFFA24F, desc: '튕길 때마다 피해가 +3씩 커짐'},
   plasma: {i: 12, name: '플라즈마 볼', dmg: 26, color: 0xFF4FD8, fusion: ['fire', 'bolt'], desc: '불꽃+번개: 화상 + 번개 4갈래'},
   frost: {i: 13, name: '빙결 번개', dmg: 22, color: 0x7FF3FF, fusion: ['ice', 'bolt'], desc: '얼음+번개: 번개 맞은 블록이 모두 얼어붙음'},
@@ -718,7 +719,7 @@ const hwState = () => { if (HW_TEST) return 'on'; const d = kstDate(); return d 
 const HW_REW = [
   {n: 50, coin: 500, text: '코인 500'},
   {n: 150, title: 'candy', text: "칭호 '사탕 사냥꾼'"},
-  {n: 300, cos: true, text: '🎃 할로윈 의상 (6명 모두)'},
+  {n: 300, cos: true, text: '🎃 할로윈 의상 (모든 캐릭터)'},
   {n: 600, coin: 3000, text: '코인 3,000'},
   {n: 1000, coin: 5000, title: 'witch', text: "칭호 '할로윈의 마녀' + 코인 5,000"},
 ];
@@ -1257,7 +1258,7 @@ function newRun(opts) {
     hp: 100 + shop.hp * 10 + mb.hp, hpMax: 100 + shop.hp * 10 + mb.hp, atkMeta: (1 + shop.atk * .08) * (1 + mb.atk), xpMeta: 1 + shop.xp * .06,
     hw: !daily && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
     rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
-    upg: {}, skillT: 0, skillCd: 22 * mb.cd, frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
+    upg: {}, skillT: 0, skillCd: 22 * mb.cd * (ch.key === 'karin' ? 1.1 : 1),   // 카린 메테오 해머는 대기 10% 길게 frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
     hitCount: 0, pendingLv: 0, minK: 0, bossN: 0, maxCombo: 0, chestN: 0, dexRun: 0, leg: {}, pendingChest: 0, revived: false, starT: 0,
   };
 }
@@ -2122,7 +2123,7 @@ function cutIn(small, text, a, b, c1, c2) {
 let skillPoseT = 0;
 const skillCdNow = () => run.skillCd * Math.pow(.88, U('skillcd')) * (LG('charge') ? .6 : 1);
 const skillPow = () => (1 + .3 * U('skillpow')) * atkMul() * (1 + run.level * .06) * (run.mPow || 1);
-function later(sec, fn) { (run.skillQ || (run.skillQ = [])).push({t: run.t + sec, fn}); }   // 게임 시간으로 잠시 뒤에 (차례대로 넣음)
+function later(sec, fn) { const q = run.skillQ || (run.skillQ = []), t = run.t + sec; let i = q.length; while (i > 0 && q[i - 1].t > t) i--; q.splice(i, 0, {t, fn}); }   // 게임 시간으로 잠시 뒤에 (시간 순서대로 끼워 넣음 — 늦은 일이 먼저 들어 있어도 막히지 않게)
 function useSkill() {
   if (state !== 'play' || paused || !run || run.skillT < skillCdNow()) return;
   run.skillT = 0; skillPoseT = .8;
@@ -2148,6 +2149,21 @@ function useSkill() {
   } else if (ch.key === 'nene') {
     live.forEach(b => { b.poison = Math.min(8, (b.poison || 0) + 2); b.poisonPow = Math.max(b.poisonPow || 0, .08 * powRef() * skillPow()); b.flash = .1; });
     setTimeout(() => banner('독안개!', false), 1250);
+  } else if (ch.key === 'karin') {   // 메테오 해머: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리침 + 주변 충격
+    const tgt = run.boss && !run.boss.dead ? run.boss : live.filter(b => !b.boss).sort((a, b) => b.hp - a.hp)[0];
+    if (tgt) {
+      const R = blockRect(tgt), x = R.x + R.w / 2, y = R.y + R.h / 2;
+      fx.spawn(TEX.k[BALLS.iron.i], {x, y: y - 520, vy: 1500, s0: 1.7, s1: 1.7, a0: 1, a1: 1, life: .34});
+      later(.34, () => {
+        if (!run || run.ended) return;
+        const P = powRef() * skillPow();
+        if (!tgt.dead) damage(tgt, (tgt.boss ? 34 : 22) * P, true, 'iron');   // 봇 기준으로 다른 캐릭터와 비슷하게 맞춤 (쇠 공 자체가 세서)
+        explodeFx(x, y, 0xD8E4FF); fx.spawn(TEX.ring, {x, y, tint: 0xBFD4FF, s0: .5, s1: 4.2, a0: 1, a1: 0, life: .45, add: true});
+        for (const b of [...blocks]) if (!b.dead && !b.boss) { const Q = blockRect(b), dx = Q.x + Q.w / 2 - x, dy = Q.y + Q.h / 2 - y; if (dx * dx + dy * dy < (CELL * 2.6) ** 2) damage(b, 5 * P, false, 'iron'); }
+        shake = Math.min(16, shake + 12); S.boom();
+      });
+    }
+    setTimeout(() => banner('메테오 해머!', true), 1250);
   } else {
     run.fever = Math.max(run.fever || 0, 8); run.starT = 8; S.fever(); setTimeout(() => banner('슈퍼스타! 공이 커져요', false), 1250);
   }
@@ -2447,7 +2463,7 @@ function applyRewards(r) {
 const popc = v => { let c = 0; for (let i = 0; i < 28; i++) if (v & (1 << i)) c++; return c; };
 function statOf(k) {
   if (k === 'top') return save.top; if (k === 'dex') return popc(save.dex); if (k === 'streak') return save.dm.best;
-  if (k === 'allChar5') return CHARS.every(c => (save.rec.cbest[c.key] || 0) >= 5) ? 1 : 0;
+  if (k === 'allChar5') return ['ruby', 'yuki', 'riko', 'sora', 'nene', 'mirai'].every(k2 => (save.rec.cbest[k2] || 0) >= 5) ? 1 : 0;   // 처음 6명 기준 (카린이 생겨도 목표가 늘지 않게)
   return save.rec[k] || 0;
 }
 function prevDay(d) { const t = new Date(Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100) - 864e5); return t.getUTCFullYear() * 1e4 + (t.getUTCMonth() + 1) * 100 + t.getUTCDate(); }

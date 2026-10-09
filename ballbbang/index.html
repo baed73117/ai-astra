@@ -772,6 +772,7 @@ const MISSIONS = [
   {id: 'stage', text: n => `한 판에 스테이지 ${n}개 넘기기`, n: [2, 3, 4], coin: 150}, {id: 'combo', text: n => `콤보 ${n} 만들기`, n: [30, 40, 60], coin: 100},
   {id: 'chest', text: () => '보물 상자 1개 열기', n: [1], coin: 150}, {id: 'plays', text: n => `${n}판 하기`, n: [2, 3], coin: 100},
   {id: 'level', text: n => `한 판에 레벨 ${n} 달성`, n: [25, 35], coin: 120}, {id: 'daily', text: () => '오늘의 도전 1판', n: [1], coin: 100},
+  {id: 'fuse', text: () => '합체 공 1개 만들기 (재료 두 공 Lv.5)', n: [1], coin: 250, from: 20261011},   // 2026-10-11부터 (오늘 미션 목록이 바뀌지 않게)
 ];
 const SCORE_CAP = 99990000;
 // 캐릭터 숙련도: 판이 끝나면 그 캐릭터에 경험치(간 스테이지·부순 블록·잡은 보스) → Lv.1~10, 단계마다 작은 보너스, Lv.10 = 유카타 의상 + '○○ 마스터' 칭호 (오늘의 도전엔 보너스 없음)
@@ -2367,7 +2368,7 @@ function applyOffer(o, quiet) {
   else if (o.t === 'fusion') {
     const d = BALLS[o.k], [a, b] = d.fusion;
     const fl = fusionLv(o.k);
-    delete run.kinds[a]; delete run.kinds[b]; run.kinds[o.k] = fl; run.fusions.push(o.k);
+    delete run.kinds[a]; delete run.kinds[b]; run.kinds[o.k] = fl; run.fusions.push(o.k); if (!quiet) run.fuseN = (run.fuseN || 0) + 1;   // 오늘의 미션 '합체 공 만들기' (자동 성장으로 생긴 합체는 빼고)
     if (d.sig && d.sig === run.char && !run.daily) { save.rec.sig = save.rec.sig || {}; if (!save.rec.sig[run.char]) { save.rec.sig[run.char] = 1; persist(); } }   // 업적 '나만의 합체'
     save.rec.fu = save.rec.fu || {}; if (!save.rec.fu[o.k]) { save.rec.fu[o.k] = 1; persist(); }   // 합체 도감 (만든 합체 공 종류)
     const oa = d.sig || BALLS[a].owner, ob = d.sig ? null : BALLS[b].owner;
@@ -2409,7 +2410,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy', 'rush', 'skipT', 'tk', 'gt', 'wall', 'fast', 'critMeta', 'spowMeta', 'coinMeta'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy', 'rush', 'skipT', 'tk', 'gt', 'wall', 'fast', 'critMeta', 'spowMeta', 'coinMeta', 'fuseN'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -2583,7 +2584,7 @@ function applyRewards(r) {
   if (r.hw) { const e = hwSave(); e.c += r.candy || 0; out.push(`🍬 할로윈 사탕 +${r.candy || 0} (모두 ${fmt(e.c)})`); hwClaim(out); }
   dmRoll(); const P = save.dm.p;
   P.kill += r.kills || 0; P.boss += r.bossN || 0; if (!r.rush) P.stage = Math.max(P.stage, r.stage - (r.startStage || 1)); P.combo = Math.max(P.combo, r.maxCombo || 0);
-  P.chest += r.chestN || 0; P.plays++; P.level = Math.max(P.level, r.level); if (r.daily) P.daily++;
+  P.chest += r.chestN || 0; P.fuse = (P.fuse || 0) + (r.fuseN || 0); P.plays++; P.level = Math.max(P.level, r.level); if (r.daily) P.daily++;
   for (const m of todayMissions()) if (!save.dm.done.includes(m.id) && P[m.id] >= m.n) { save.dm.done.push(m.id); save.coins += m.coin; out.push(`미션 「${m.text}」 +${m.coin}`); }
   if (save.dm.done.length >= 3 && save.dm.last !== save.dm.d) {
     save.dm.streak = save.dm.last === String(prevDay(+save.dm.d)) ? save.dm.streak + 1 : 1; save.dm.last = save.dm.d; save.dm.best = Math.max(save.dm.best, save.dm.streak);
@@ -2606,7 +2607,7 @@ function statOf(k) {
 function prevDay(d) { const t = new Date(Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100) - 864e5); return t.getUTCFullYear() * 1e4 + (t.getUTCMonth() + 1) * 100 + t.getUTCDate(); }
 function dmRoll() { const d = String(kstDate()); if (save.dm.d !== d) { save.dm.d = d; save.dm.done = []; MISSIONS.forEach(m => { save.dm.p[m.id] = 0; }); } }
 function todayMissions() {
-  const R = rng((kstDate() * 2246822519) >>> 0), pool = MISSIONS.slice(), out = [];
+  const R = rng((kstDate() * 2246822519) >>> 0), pool = MISSIONS.filter(m => !m.from || kstDate() >= m.from), out = [];
   while (out.length < 3) { const m = pool.splice(Math.floor(R() * pool.length), 1)[0], n = m.n[Math.floor(R() * m.n.length)]; out.push({id: m.id, n, coin: m.coin, text: m.text(n)}); }
   return out;
 }

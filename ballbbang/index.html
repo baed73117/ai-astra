@@ -738,7 +738,7 @@ const S = {
 
 /* ---------- 배경음 파일 (수노 곡: assets/bgm_<이름>.m4a + bgm.json {loop, xf, alias}) — 없으면 코드로 만든 반주 ---------- */
 const BGM = {
-  meta: null, raw: {}, rawP: {}, buf: {}, order: [], cur: null, want: '',
+  meta: null, raw: {}, rawP: {}, buf: {}, bufP: {}, order: [], cur: null, want: '',
   fetchRaw(id) {
     if (this.raw[id]) return Promise.resolve(this.raw[id]);
     return this.rawP[id] || (this.rawP[id] = fetch(`assets/bgm_${id}.m4a${AV}`).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); })
@@ -750,8 +750,11 @@ const BGM = {
     return {};                                      // 연결 실패는 기억하지 않음 (다음에 다시 받기)
   },
   // 압축 파일은 받아 두고, 소리 데이터로 푸는 건 필요할 때 (폰 메모리 아끼기: 풀어 둔 곡은 최대 2개)
-  async getBuf(id) {
-    if (this.buf[id]) return this.buf[id];
+  getBuf(id) {
+    if (this.buf[id]) return Promise.resolve(this.buf[id]);
+    return this.bufP[id] || (this.bufP[id] = this.decode(id).finally(() => { delete this.bufP[id]; }));
+  },
+  async decode(id) {
     try {
       await this.fetchRaw(id);
       const ab = this.raw[id].slice(0);
@@ -766,6 +769,8 @@ const BGM = {
     } catch (e) { return null; }
   },
   prefetch(ids) { this.getMeta().then(m => ids.map(id => (m[id] && m[id].alias) || id).forEach(id => { if (m[id]) this.fetchRaw(id).catch(() => {}); })); },
+  // 플레이 누르자마자: 그 판 첫 곡을 받고 소리로 풀기 시작 (그림 불러오는 동안 같이) → 시작하면 바로 나옴
+  warm(id) { if (!S.ctx) return; this.getMeta().then(m => { const r = (m[id] && m[id].alias) || id; if (m[r]) this.getBuf(r); }); },
   async play(id, fade = .8) {
     this.want = id;
     if (!S.ctx) return;
@@ -1765,6 +1770,7 @@ function nextStage(cleared) {
   else banner('보스를 놓쳤어요…', true);
   run.stage = n + 1; run.stT = 0; run.stPh = 0;
   if (!run.boss) battleMusic();   // 다음 테마 곡으로
+  BGM.prefetch([themeOf(run.stage + 1).bgm || 'battle']);
   if (run.stage > save.top) { save.top = run.stage; persist(); }
   useStageBg(run.stage, false, true);
   later(1.8, () => { if (run && !run.ended) banner(`스테이지 ${run.stage} · ${stageName(run.stage)}`, true); });
@@ -2155,6 +2161,8 @@ async function startGame(opts) {
 }
 async function startInner(opts) {
   S.init();
+  { const r = opts.resume, st0 = r ? r.stage : !opts.daily && opts.startStage > 1 && opts.startStage <= save.top ? opts.startStage : 1;
+    BGM.warm(r && r.bo ? 'boss' : themeOf(st0).bgm || 'battle'); }
   const btns = ['#btnStart', '#btnDaily', '#btnContinue', '#btnAgain'].map($); btns.forEach(b => { b.disabled = true; });
   try { await initGraphics(); await Promise.all([loadChar(opts.resume ? opts.resume.char : opts.char), useStageBg(opts.resume ? opts.resume.stage : !opts.daily && opts.startStage > 1 && opts.startStage <= save.top ? opts.startStage : 1)]); }
   catch (e) { toast('이 브라우저에서는 게임 그래픽을 켤 수 없어요. 크롬이나 사파리 최신 버전으로 열어 주세요.'); return; }
@@ -2200,7 +2208,7 @@ async function startInner(opts) {
   app.start();
   $('#hint').hidden = false; $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4500);
   banner(run.daily ? `오늘의 도전 · ${ch.name}` : `스테이지 ${run.stage} · ${stageName(run.stage)}`, run.daily);
-  restoreVolume(); battleMusic(); BGM.prefetch(['boss']);
+  restoreVolume(); battleMusic(); BGM.prefetch(['boss', themeOf(run.stage + 1).bgm || 'battle']);
   inputLock = performance.now() + 300;
   clearInterval(autosave); autosave = setInterval(() => { if (state === 'play' || state === 'levelup') saveRun(); }, 10000);
 }
@@ -2417,6 +2425,7 @@ function renderStage() {
   $('#stInfo').textContent = st > 1 ? `레벨 ${CP_LV(st)}까지 자동 성장해서 시작 · 점수는 여기서부터` : many ? '처음부터 차근차근 · 점수를 가장 많이 모을 수 있어요' : '쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요';
   $('#btnStart').firstElementChild.textContent = st > 1 ? `스테이지 ${st}부터 시작` : many ? '처음부터 시작' : '게임 시작';
   $('#stagePick').style.backgroundImage = `url(assets/${themeOf(st).bg}.webp${AV})`;
+  BGM.prefetch([themeOf(st).bgm || 'battle']);
   if (save.st !== st) { save.st = st; persist(); }
 }
 // 업적 · 도감 · 칭호 · 오늘의 미션 화면
@@ -2663,7 +2672,7 @@ UNLOCK.forEach(t => document.addEventListener(t, unlockAudio, true));
 
 layoutFrame();
 renderTitle();
-BGM.prefetch(['title', 'battle']);
+BGM.prefetch(['title']);   // 전투 곡은 첫 화면에서 고른 시작 스테이지 곡으로 (renderStage)
 initGraphics().catch(() => {});
 })();
 </script>

@@ -78,6 +78,9 @@ body.wide .side{display:grid;gap:12px}
 .score b{font:800 20px/1 var(--f-en);font-variant-numeric:tabular-nums}
 .score em{display:block;margin-top:3px;font:800 11px/1 var(--f-en);font-style:normal;color:#FFC07A}
 .evpill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;border-radius:999px;background:linear-gradient(120deg,rgba(255,138,40,.9),rgba(140,60,200,.9));box-shadow:0 6px 16px rgba(255,120,40,.35),inset 0 0 0 1px rgba(255,255,255,.4);font:800 12px/1 var(--f-kr);color:#fff}
+.vol{display:grid;grid-template-columns:76px 1fr 44px;align-items:center;gap:10px;font:800 13px/1 var(--f-kr);color:var(--ink)}
+.vol input{width:100%;accent-color:var(--pink);height:28px}
+.vol b{font:800 13px/1 var(--f-en);color:var(--ink2);text-align:right}
 .attg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .attg div{display:grid;justify-items:center;gap:3px;padding:9px 4px 8px;border-radius:13px;background:#F5EFF9;box-shadow:inset 0 0 0 1px #EADFF2;font:800 10.5px/1.2 var(--f-kr);color:var(--ink2)}
 .attg div b{font:800 15px/1 var(--f-en);color:var(--ink)}
@@ -98,6 +101,7 @@ body.wide .side{display:grid;gap:12px}
 .hw-bar{height:8px;border-radius:5px;background:#EEE4F5;overflow:hidden}
 .hw-bar i{display:block;height:100%;background:linear-gradient(90deg,#FF9A3C,#B657E8)}
 .charc .cosrow{display:flex;flex-wrap:wrap;gap:6px}
+.charc .cos.lock{background:#F1ECF5;box-shadow:inset 0 0 0 1px #DDD0E8;color:var(--ink2);font-weight:700}
 .charc .cos.on{background:linear-gradient(120deg,#FF86BF,#FF4F9A);color:#fff;box-shadow:none}
 .pause{pointer-events:auto;width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line)}
 .pause svg{width:15px;height:15px;fill:#fff}
@@ -261,6 +265,12 @@ body.wide .side{display:grid;gap:12px}
 .sp-mid small{font:800 11px/1 var(--f-en);letter-spacing:.14em;color:#FFB8DA}
 .sp-mid b{font:900 17px/1.15 var(--f-kr);color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
 .sp-mid em{font:500 11.5px/1.3 var(--f-kr);font-style:normal;color:#fff;opacity:.88}
+.modes{display:grid;grid-template-columns:1.35fr 1fr;gap:8px}
+.modes .daily{min-width:0}
+.modes .daily span{min-width:0}
+.modes .daily em{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.daily.rushb{background:rgba(255,95,95,.18);box-shadow:inset 0 0 0 1px rgba(255,150,150,.5)}
+.daily .rushic{display:grid;place-items:center;font-size:24px;background:#3A1A2A}
 .daily{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:rgba(94,155,255,.18);box-shadow:inset 0 0 0 1px rgba(150,190,255,.5);text-align:left}
 .daily .dc{width:44px;height:44px;border-radius:13px;flex:none;background:#2A1A3A center 10%/150% no-repeat;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7)}
 .daily span{flex:1;font:500 12px/1.4 var(--f-kr);opacity:.92}
@@ -359,7 +369,10 @@ body.wide .side{display:grid;gap:12px}
     <div class="stagepick" id="stagePick"><button class="sp-arr" id="stPrev" type="button" aria-label="이전 시작 스테이지" hidden>‹</button><div class="sp-mid"><small id="stNo">ENDLESS STAGES</small><b id="stName">스테이지 1 · 노을 옥상부터</b><em id="stInfo">쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요</em></div><button class="sp-arr" id="stNext" type="button" aria-label="다음 시작 스테이지" hidden>›</button></div>
     <button class="btn gold" id="btnContinue" type="button" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg><span id="contLbl">이어 하기</span></button>
     <button class="btn main xl" id="btnStart" type="button"><span>게임 시작</span><svg class="ico" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></svg></button>
+    <div class="modes">
     <button class="daily" id="btnDaily" type="button"><div class="dc" id="dailyFace"></div><span><b>오늘의 도전</b><em style="font-style:normal" id="dailyInfo">모두가 같은 판으로 랭킹 대결!</em></span><svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button class="daily rushb" id="btnRush" type="button"><div class="dc rushic">👹</div><span><b>보스 러시</b><em style="font-style:normal" id="rushInfo">보스만 연달아!</em></span></button>
+    </div>
     <div class="row4">
       <button class="btn glass" id="btnChars" type="button">캐릭터</button>
       <button class="btn glass" id="btnShop" type="button">강화</button>
@@ -372,6 +385,7 @@ body.wide .side{display:grid;gap:12px}
 <!-- 캐릭터 -->
 <div class="overlay" id="chars" hidden>
   <div class="card"><span class="tag">CHARACTER</span><h2 class="c-title">누구로 할까요?</h2>
+    <p class="inst-lead">👗 의상은 카드에서 눌러 미리 보고 코인으로 살 수 있어요</p>
     <div class="charlist" id="charList"></div>
     <button class="btn soft" id="charsBack" type="button">닫기</button>
   </div>
@@ -396,13 +410,13 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="news" hidden>
   <div class="card"><span class="tag">UPDATE</span><h2 class="c-title">새로워졌어요!</h2>
     <ul class="news-list">
-      <li class="nw"><i>💾</i><div><b>저장하고 나가기</b>일시정지 → 저장하고 나가면 다음에 '이어 하기'로 그 자리부터</div></li>
-      <li class="nw"><i>📲</i><div><b>앱으로 설치</b>첫 화면 오른쪽 위 버튼 · 홈 화면 아이콘으로 바로 열려요</div></li>
-      <li class="nw"><i>🌙</i><div><b>21스테이지부터 밤의 세계</b>규칙이 두 개씩 겹치고, 보스가 각성해요</div></li>
-      <li><i>🎐</i><div><b>캐릭터 숙련도 · 유카타 의상</b>한 캐릭터로 할수록 강해지고, Lv.10이면 축제 유카타</div></li>
-      <li><i>📅</i><div><b>주간 랭킹</b>월요일마다 새로 시작 · 1~3등은 '주간 ○등' 칭호</div></li>
-      <li><i>🎵</i><div><b>테마마다 다른 전투 곡</b>얼음·용암·네온·벚꽃·우주 스테이지에 새 곡</div></li>
-      <li><i>♾️</i><div><b>무한 스테이지 · 체크포인트 시작</b>최고 기록 스테이지부터 바로 시작할 수 있어요</div></li>
+      <li class="nw"><i>🛡️</i><div><b>새 친구 카린</b>강철 기사 소녀 · 스테이지 15에 가면 합류</div></li>
+      <li class="nw"><i>👗</i><div><b>의상 상점 · 새 교복 의상</b>캐릭터 화면에서 눌러 미리 보고 코인으로 사요</div></li>
+      <li class="nw"><i>👹</i><div><b>보스 러시</b>보스만 연달아! 짧고 굵게 한 판</div></li>
+      <li class="nw"><i>📅</i><div><b>출석 체크</b>7일째엔 전설 강화 하나 들고 시작</div></li>
+      <li class="nw"><i>🎃</i><div><b>할로윈 이벤트 10월 17일부터</b>호박 블록·사탕 모으기 · 한정 의상</div></li>
+      <li><i>🎵</i><div><b>소리 따로 조절</b>배경음·효과음 크기를 따로 맞춰요</div></li>
+      <li><i>💾</i><div><b>저장하고 나가기 · 앱으로 설치</b>일시정지에서 저장 · 첫 화면 📲 버튼</div></li>
     </ul>
     <button class="btn main" id="newsOk" type="button">좋아요!</button>
   </div>
@@ -451,6 +465,14 @@ body.wide .side{display:grid;gap:12px}
   </div>
 </div>
 <!-- 일시정지 -->
+<div class="overlay" id="snd" hidden style="z-index:24">
+  <div class="card"><span class="tag">SOUND</span><h2 class="c-title">🎵 소리 설정</h2>
+    <label class="vol"><span>🎵 배경음</span><input type="range" id="volM" min="0" max="100" step="5"><b id="volMv"></b></label>
+    <label class="vol"><span>🔊 효과음</span><input type="range" id="volS" min="0" max="100" step="5"><b id="volSv"></b></label>
+    <button class="btn soft" id="sndMute" type="button"></button>
+    <button class="btn main" id="sndOk" type="button">닫기</button>
+  </div>
+</div>
 <div class="overlay" id="pause" hidden>
   <div class="card"><span class="tag">PAUSE</span><h2 class="c-title">잠깐 쉬어요</h2>
     <button class="btn main xl" id="btnResume" type="button">계속하기</button>
@@ -487,7 +509,7 @@ const $ = s => document.querySelector(s);
 const SHARE_URL = 'https://baed73117.github.io/ai-astra/ballbbang/';
 const TOUCH = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-const AV = '?v=fed8ade6';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
+const AV = '?v=40c9fb4f';   // 배포 때 build.py 가 '?v=그림버전' 으로 바꿈
 const fmt = n => Math.floor(Number(n) || 0).toLocaleString('ko-KR');
 const short = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.ceil(n));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -506,8 +528,11 @@ const WIN_LINE = {karin: '강철은 꺾이지 않아! 승리다!', ruby: '봤지
 const GOOD_LINE = {karin: '조금만 더 버텼으면! 다시 돌격!', ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
 const LOSE_LINE = {karin: '으윽… 갑옷 닦고 다시 올게!', ruby: '으으… 한 번만 더 하자!', yuki: '괜찮아. 다시 하면 돼.', riko: '에이~ 몸풀기였어! 다시 고고!', sora: '에헤헤, 바람이 좀 셌네. 다시!', nene: '졸려… 한 판만 더 할까.', mirai: '연습은 끝! 이제 본무대야!'};
 const byKey = k => CHARS.find(c => c.key === k) || CHARS[0];
-// 의상: c1 = 축제 유카타(숙련도 Lv.10) · c2 = 할로윈(이벤트 보상)
-const cosOk = (k, c) => c === 'c1' ? mastLv(k) >= 10 : c === 'c2' ? hwCos() : false;
+// 의상 (캐릭터 화면이 의상 상점): c1 유카타(숙련도 Lv.10이면 공짜 · 아니면 코인) · c2 할로윈(이벤트 보상 · 이벤트가 끝나면 코인) · c3 교복(코인)
+const COSTUMES = {c1: {name: '🎐 유카타', price: 15000}, c2: {name: '🎃 할로윈', price: 30000}, c3: {name: '🎒 교복', price: 8000}};
+const cosBought = (k, c) => !!(save.cosBuy && save.cosBuy[k] && save.cosBuy[k].includes(c));
+const cosOk = (k, c) => c === 'c1' ? mastLv(k) >= 10 || cosBought(k, c) : c === 'c2' ? hwCos() || cosBought(k, c) : c === 'c3' ? cosBought(k, c) : false;
+const cosBuyable = c => c !== 'c2' || hwState() === 'off';   // 할로윈 의상은 이벤트가 끝난 뒤에만 코인으로
 const skin = k => save && save.cos && save.cos[k] && cosOk(k, save.cos[k]) ? '_' + save.cos[k] : '';
 const PT_URL = k => `assets/pt_${k}${skin(k)}.webp${AV}`, SD_URL = k => `assets/sd_${k}${skin(k)}.webp${AV}`, BLINK_URL = k => `assets/sd_${k}${skin(k)}_blink.webp${AV}`;
 // 공 15종 (balls.webp 5×3 칸 번호 = i). dmg = 기본 피해, owner = 콜라보 합체 연출에 나오는 캐릭터
@@ -591,7 +616,9 @@ const THEMES = [
   {name: '시계탑', bg: 'bg19', mid: 1, fin: 24, rule: 'clock', bgm: 'b_fire'},
   {name: '별의 왕좌', bg: 'bg20', mid: 7, fin: 25, rule: 'throne', bgm: 'b_cosmic'},
 ];
-const STAGE_LEN = 150, MID_AT = 75;          // 스테이지 시계(보스가 없을 때만 흐름): 75초에 중간 보스, 150초에 스테이지 보스
+const STAGE_LEN = 150, MID_AT = 75;
+const RUSH = {len: 32, mid: 14, skip: 200, xp: 2.2};   // 보스 러시: 스테이지 32초(중간 보스 14초) · 스테이지마다 200초 건너뜀(난이도가 빨리 오름) · 경험치 2.2배
+const stLen = () => run && run.rush ? RUSH.len : STAGE_LEN, midAt = () => run && run.rush ? RUSH.mid : MID_AT;          // 스테이지 시계(보스가 없을 때만 흐름): 75초에 중간 보스, 150초에 스테이지 보스
 const BOSS_HP = {mid: 14, fin: 20, midUp: 1.2, finUp: 2.5, midMax: 36, finMax: 55};   // 보스 체력 = hpBase × (기본 + 스테이지마다 Up, 최대 Max)
 const BOOM_CAP = {bomb: 25, blast: 20, laser: 12};   // 폭발·레이저 피해 상한 = powRef × 이 값
 const XP_T = 720, BASIC_CAP = 32, MINI_CAP = 60;
@@ -753,10 +780,12 @@ function loadSave() {
   MISSIONS.forEach(m => { dm.p[m.id] = n(d0.p && d0.p[m.id]); });
   const mast = {}, cos = {};
   if (s.mast && typeof s.mast === 'object') for (const k of Object.keys(s.mast)) if (CHARS.some(c => c.key === k)) mast[k] = n(s.mast[k]);
-  if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && (s.cos[k] === 'c1' || s.cos[k] === 'c2')) cos[k] = s.cos[k];
+  if (s.cos && typeof s.cos === 'object') for (const k of Object.keys(s.cos)) if (CHARS.some(c => c.key === k) && ['c1', 'c2', 'c3'].includes(s.cos[k])) cos[k] = s.cos[k];
+  const cosBuy = {};   // 산 의상: {ruby: ['c3'], …}
+  if (s.cosBuy && typeof s.cosBuy === 'object') for (const k of Object.keys(s.cosBuy)) if (CHARS.some(c => c.key === k) && Array.isArray(s.cosBuy[k])) cosBuy[k] = [...new Set(s.cosBuy[k].filter(c => ['c1', 'c2', 'c3'].includes(c)))];
   const ev = {};   // 이벤트 기록: {h26: {c: 사탕, g: 받은 보상 수}}
   if (s.ev && typeof s.ev === 'object') for (const k of Object.keys(s.ev)) if (/^h\d\d$/.test(k) && s.ev[k] && typeof s.ev[k] === 'object') ev[k] = {c: n(s.ev[k].c), g: Math.min(HW_REW.length, n(s.ev[k].g))};
-  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123]|e:[a-z]+)$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, ev, att: {d: String((s.att && s.att.d) || ''), n: n(s.att && s.att.n)}, legT: Math.min(9, n(s.legT)), wbest: n(s.wbest), wseen: String(s.wseen || ''),
+  return {best: n(s.best), clears: n(s.clears), coins: Math.min(9999999, n(s.coins)), plays: n(s.plays), owned, sel: owned.includes(s.sel) ? s.sel : 'ruby', shop, top, st: n(s.st), idleT: n(s.idleT), news: String(s.news || ''), rec, dex: n(s.dex) & 0xFFFFFFF, ach, title: ach.includes(s.title) || /^(m:[a-z]+|w:[123]|e:[a-z]+)$/.test(String(s.title || '')) ? String(s.title) : '', dm, mast, cos, cosBuy, ev, rush: {b: n(s.rush && s.rush.b), s: n(s.rush && s.rush.s)}, vol: {m: s.vol && s.vol.m >= 0 ? Math.min(100, n(s.vol.m)) : 100, s: s.vol && s.vol.s >= 0 ? Math.min(100, n(s.vol.s)) : 100}, att: {d: String((s.att && s.att.d) || ''), n: n(s.att && s.att.n)}, legT: Math.min(9, n(s.legT)), wbest: n(s.wbest), wseen: String(s.wseen || ''),
     muted: s.muted === true, auto: s.auto !== false, daily: s.daily && typeof s.daily === 'object' ? {d: String(s.daily.d || ''), best: n(s.daily.best)} : {d: '', best: 0}};
 }
 const save = loadSave();
@@ -770,6 +799,7 @@ const dailyChar = d => { const pool = d <= 20261009 ? CHARS.slice(0, 3) : CHARS;
 
 /* ---------- 소리 (효과음은 코드로, 배경음은 수노 곡 · 곡이 없으면 코드 반주) ---------- */
 const BGM_VOL = .6;
+const volM = () => (save.vol ? save.vol.m : 100) / 100, volS = () => (save.vol ? save.vol.s : 100) / 100;   // 배경음·효과음 크기 (소리 설정 창)
 const S = {
   ctx: null, master: null, sfx: null, music: null, noise: null, step: 0, next: 0, timer: 0, last: {},
   init() {
@@ -777,9 +807,9 @@ const S = {
       try {
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
         this.ctx = new AC(); this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
-        this.sfx = this.ctx.createGain(); this.sfx.gain.value = .8; this.sfx.connect(this.master);
-        this.music = this.ctx.createGain(); this.music.gain.value = .32; this.music.connect(this.master);
-        this.bgm = this.ctx.createGain(); this.bgm.gain.value = BGM_VOL; this.bgm.connect(this.master);   // 수노 배경음
+        this.sfx = this.ctx.createGain(); this.sfx.gain.value = .8 * volS(); this.sfx.connect(this.master);
+        this.music = this.ctx.createGain(); this.music.gain.value = .32 * volM(); this.music.connect(this.master);
+        this.bgm = this.ctx.createGain(); this.bgm.gain.value = BGM_VOL * volM(); this.bgm.connect(this.master);   // 수노 배경음
         const len = this.ctx.sampleRate * .4, b = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = b.getChannelData(0);
         for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
         this.noise = b;
@@ -1256,7 +1286,8 @@ function newRun(opts) {
     wr: rng(seed), cr: rng(seed ^ 0x9E3779B9),          // 블록용 · 선택지용 (고른 것이 블록 배치를 바꾸지 않게)
     t: 0, scroll: 0, nextK: 0, score: 0, kills: 0, level: 1, xp: 0, xpNeed: xpNeedFor(1),
     hp: 100 + shop.hp * 10 + mb.hp, hpMax: 100 + shop.hp * 10 + mb.hp, atkMeta: (1 + shop.atk * .08) * (1 + mb.atk), xpMeta: 1 + shop.xp * .06,
-    hw: !daily && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
+    rush: !!opts.rush && !daily, skipT: 0,   // 보스 러시
+    hw: !daily && !opts.rush && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
     rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
     upg: {}, skillT: 0, skillCd: 22 * mb.cd * (ch.key === 'karin' ? 1.1 : 1),   // 카린 메테오 해머는 대기 10% 길게 frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
     hitCount: 0, pendingLv: 0, minK: 0, bossN: 0, maxCombo: 0, chestN: 0, dexRun: 0, leg: {}, pendingChest: 0, revived: false, starT: 0,
@@ -1264,7 +1295,7 @@ function newRun(opts) {
 }
 // 체크포인트 시작: 스테이지 N은 보통 (N-1)×3분 30초쯤에 도착 → 그 시간의 난이도로 시작하고, 그만큼 자동 성장 (봇 시험 평균)
 const CP_T = n => 200 * (Math.max(1, n) - 1);
-const played = () => Math.max(0, run.t - CP_T(run.startStage || 1));   // 실제로 버틴 시간 (체크포인트 시작이면 시작 시점부터)
+const played = () => Math.max(0, run.t - CP_T(run.startStage || 1) - (run.skipT || 0));   // 보스 러시가 건너뛴 시간은 빼고   // 실제로 버틴 시간 (체크포인트 시작이면 시작 시점부터)
 const CP_LV = n => n > 1 ? Math.round(4 * CP_T(n) / 60 + 3) : 1;   // 평균보다 살짝 넉넉하게 (체크포인트 시작이 기분 좋게)
 function startOptions() { const t = save.top, o = [1]; for (let k = 5; k <= t; k += 5) o.push(k); if (t > 1 && !o.includes(t)) o.push(t); return o; }
 const ballCount = k => k === 'basic' ? run.extraBasic : (BALLS[k].fusion ? 3 : 2) + (run.kinds[k] >= 3 ? 1 : 0) + (run.kinds[k] >= 5 ? 1 : 0);
@@ -1762,7 +1793,7 @@ function showNum(blk, d, crit) {
   p.life = .7; p.vy = -110;
 }
 function addXp(n) {
-  run.xp += n * run.xpMeta * (1 + .15 * U('xp'));
+  run.xp += n * run.xpMeta * (1 + .15 * U('xp')) * (run.rush ? RUSH.xp : 1);
   while (run.xp >= run.xpNeed) { run.xp -= run.xpNeed; run.level++; run.xpNeed = xpNeedFor(run.level); run.pendingLv++; }
 }
 
@@ -1825,8 +1856,8 @@ function stepWorld(dt) {
   run.skillT += dt;
   // 스테이지 시계 (보스가 있으면 멈춤): 중간 보스 → 스테이지 보스
   if (!run.boss) run.stT += dt;
-  if (!run.boss && run.stPh === 0 && themeOf(run.stage).mid >= 0 && run.stT >= MID_AT) { run.stPh = 1; spawnBoss(false); }
-  else if (!run.boss && run.stPh < 2 && run.stT >= STAGE_LEN) { run.stPh = 2; spawnBoss(true); }
+  if (!run.boss && run.stPh === 0 && themeOf(run.stage).mid >= 0 && run.stT >= midAt()) { run.stPh = 1; spawnBoss(false); }
+  else if (!run.boss && run.stPh < 2 && run.stT >= stLen()) { run.stPh = 2; spawnBoss(true); }
   // 0.25초마다: 화상·독·회복·얼음 시간
   effT -= dt;
   if (effT <= 0) {
@@ -1921,7 +1952,8 @@ function nextStage(cleared) {
   run.stage = n + 1; run.stT = 0; run.stPh = 0;
   if (!run.boss) battleMusic();   // 다음 테마 곡으로
   BGM.prefetch([themeOf(run.stage + 1).bgm || 'battle']);
-  if (run.stage > save.top) { save.top = run.stage; persist(); }
+  if (run.rush) { run.t += RUSH.skip; run.skipT = (run.skipT || 0) + RUSH.skip; }   // 보스 러시: 시간을 건너뛰어 다음 스테이지 난이도로
+  else if (run.stage > save.top) { save.top = run.stage; persist(); }
   useStageBg(run.stage, false, true);
   const newWorld = lapOf(run.stage) > lapOf(n), sh = newWorld ? 2.6 : 0;
   if (newWorld) later(1.8, () => { if (run && !run.ended) { const w = worldOf(run.stage); banner(`${w.ico} ${w.name}에 들어왔어요!`, true); shake = 10; S.win(); } });
@@ -2069,7 +2101,7 @@ function updateHud() {
   if (c.lv !== run.level) { c.lv = run.level; $('#lv').textContent = 'Lv.' + run.level; }
   const sec = Math.floor(played()); if (c.sec !== sec) {
     c.sec = sec; $('#time').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
-    const midNext = run.stPh === 0 && themeOf(run.stage).mid >= 0, left = Math.max(0, Math.ceil((midNext ? MID_AT : STAGE_LEN) - run.stT));
+    const midNext = run.stPh === 0 && themeOf(run.stage).mid >= 0, left = Math.max(0, Math.ceil((midNext ? midAt() : stLen()) - run.stT));
     $('#phase').textContent = run.boss ? `S${run.stage} · ${run.boss.boss.final ? '스테이지 보스!' : '중간 보스!'}` : `S${run.stage} · ${midNext ? '중간 보스' : '보스'}까지 ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
     $('#timer').classList.toggle('boss', !!run.boss);
   }
@@ -2297,7 +2329,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy', 'rush', 'skipT'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -2385,7 +2417,7 @@ async function startInner(opts) {
   state = 'play'; paused = false; overT = 0; hudCache = {};
   app.start();
   $('#hint').hidden = false; $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4500);
-  banner(run.daily ? `오늘의 도전 · ${ch.name}` : `스테이지 ${run.stage} · ${stageName(run.stage)}`, run.daily);
+  banner(run.daily ? `오늘의 도전 · ${ch.name}` : run.rush ? `👹 보스 러시 시작! · ${ch.name}` : `스테이지 ${run.stage} · ${stageName(run.stage)}`, run.daily);
   if (!opts.resume && !run.daily && save.legT > 0) {   // 출석 7일째 선물: 전설 강화 하나 들고 시작
     const pool = Object.keys(LEG).filter(k => !LG(k));
     if (pool.length) { const k = pool[Math.floor(Math.random() * pool.length)]; run.leg[k] = 1; save.legT--; persist(); later(1.2, () => { if (run && !run.ended) banner(`🎁 출석 선물: ${LEG[k].name}!`, false); }); }
@@ -2423,15 +2455,21 @@ function endRun(won) {
   let coins = Math.floor(Math.sqrt(finalScore) * .8) + Math.floor(run.coinBonus || 0) + 60 * (run.stage - 1);   // 짧게 끝나도 조금은, 멀리 갈수록 더
   if (!Number.isFinite(coins) || coins < 0) coins = 0;
   if (LG('gold')) coins = Math.floor(coins * 1.5);
+  if (run.rush) coins = Math.floor(coins / 2);   // 보스 러시는 코인 절반
   run.final = finalScore; run.coinsGot = coins;
   save.coins = Math.min(9999999, save.coins + coins);
-  run.isBest = finalScore > save.best; if (run.isBest) save.best = finalScore;
-  run.bestStage = run.stage > (run.prevTop || 0) && run.stage > 1;   // 가장 멀리 간 기록 (nextStage에서 이미 top을 올림)
-  save.top = Math.max(save.top, run.stage);
+  if (run.rush) {   // 보스 러시 기록은 따로 (보통 판 최고 점수·최고 스테이지는 그대로)
+    const rb = save.rush; run.isBest = (run.bossN || 0) > rb.b || ((run.bossN || 0) === rb.b && finalScore > rb.s); run.bestStage = false;
+    if (run.isBest) { rb.b = run.bossN || 0; rb.s = finalScore; }
+  } else {
+    run.isBest = finalScore > save.best; if (run.isBest) save.best = finalScore;
+    run.bestStage = run.stage > (run.prevTop || 0) && run.stage > 1;   // 가장 멀리 간 기록 (nextStage에서 이미 top을 올림)
+    save.top = Math.max(save.top, run.stage);
+  }
   run.rewards = applyRewards(run);
   if (run.daily) { if (save.daily.d !== String(run.dateNum)) save.daily = {d: String(run.dateNum), best: 0}; save.daily.best = Math.max(save.daily.best, finalScore); }
   persist();
-  sendStat(run);
+  if (!run.rush) sendStat(run);
   const r = run;
   setTimeout(() => { if (run === r) showResult(won); }, won ? 1800 : 900);
 }
@@ -2439,16 +2477,16 @@ function endRun(won) {
 function applyRewards(r) {
   const out = [], R = save.rec;
   // 숙련도: 간 스테이지 수 ×10 + 블록 100개당 1 + 보스 1마리당 2
-  const mg = Math.round(10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)), lv0 = mastLv(r.char);
+  const mg = Math.round((10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)) * (r.rush ? .5 : 1)), lv0 = mastLv(r.char);
   save.mast[r.char] = mastXp(r.char) + mg;
   const lv1 = mastLv(r.char);
   out.push(`${byKey(r.char).name} 숙련도 +${mg}` + (lv1 > lv0 ? ` · Lv.${lv1}! ${MAST_TXT[lv1]}` : ''));
   R.kills += r.kills || 0; R.bosses += r.bossN || 0; R.combo = Math.max(R.combo, r.maxCombo || 0); R.chests += r.chestN || 0; if (r.daily) R.dailies++;
-  if ((r.startStage || 1) === 1 || r.stage > r.startStage) R.cbest[r.char] = Math.max(R.cbest[r.char] || 0, r.stage);
+  if (!r.rush && ((r.startStage || 1) === 1 || r.stage > r.startStage)) R.cbest[r.char] = Math.max(R.cbest[r.char] || 0, r.stage);
   save.dex = (save.dex | (r.dexRun || 0)) & 0xFFFFFFF;
   if (r.hw) { const e = hwSave(); e.c += r.candy || 0; out.push(`🍬 할로윈 사탕 +${r.candy || 0} (모두 ${fmt(e.c)})`); hwClaim(out); }
   dmRoll(); const P = save.dm.p;
-  P.kill += r.kills || 0; P.boss += r.bossN || 0; P.stage = Math.max(P.stage, r.stage - (r.startStage || 1)); P.combo = Math.max(P.combo, r.maxCombo || 0);
+  P.kill += r.kills || 0; P.boss += r.bossN || 0; if (!r.rush) P.stage = Math.max(P.stage, r.stage - (r.startStage || 1)); P.combo = Math.max(P.combo, r.maxCombo || 0);
   P.chest += r.chestN || 0; P.plays++; P.level = Math.max(P.level, r.level); if (r.daily) P.daily++;
   for (const m of todayMissions()) if (!save.dm.done.includes(m.id) && P[m.id] >= m.n) { save.dm.done.push(m.id); save.coins += m.coin; out.push(`미션 「${m.text}」 +${m.coin}`); }
   if (save.dm.done.length >= 3 && save.dm.last !== save.dm.d) {
@@ -2482,7 +2520,7 @@ function idleReward() {
   setTimeout(() => toast(`쉬는 동안 캐릭터들이 코인 ${fmt(got)}개를 모아 왔어요! (시간당 ${rate}개)`), 600);
 }
 // 기록 옮기기 코드: 'BB1-확인값-내용' (내용 = 저장 JSON을 base64로). 확인값이 안 맞으면 거절
-const NEWS_V = '20261009c';   // 바꾸면 모두에게 안내 창이 한 번 더 뜸
+const NEWS_V = '20261009d';   // 바꾸면 모두에게 안내 창이 한 번 더 뜸
 function codeSum(t) { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
 function exportCode() { const b = btoa(unescape(encodeURIComponent(JSON.stringify(save)))); return 'BB1-' + codeSum('astra-bb' + b) + '-' + b; }
 function importCode(code) {
@@ -2528,7 +2566,7 @@ function sendStat(r) {
     shop: Object.values(save.shop).reduce((a, b) => a + b, 0), m: mastLv(r.char), daily: r.daily ? 1 : 0, score: r.final || 0};
   setTimeout(() => RankNet.req({method: 'POST', body: JSON.stringify(body)}).catch(() => {}), 2500);
 }
-function restoreVolume() { if (S.music) S.music.gain.value = .32; if (S.bgm) S.bgm.gain.value = BGM_VOL; }
+function restoreVolume() { if (S.music) S.music.gain.value = .32 * volM(); if (S.bgm) S.bgm.gain.value = BGM_VOL * volM(); if (S.sfx) S.sfx.gain.value = .8 * volS(); }
 function showResult(won) {
   state = 'over'; paused = false; overT = 0;
   const finalScore = run.final, coins = run.coinsGot, isBest = run.isBest;
@@ -2537,7 +2575,8 @@ function showResult(won) {
   $('#rPt').style.backgroundImage = `url(${PT_URL(chR.key)})`;
   $('#rLine').textContent = run.bestStage ? WIN_LINE[chR.key] : run.stage >= 4 ? GOOD_LINE[chR.key] : LOSE_LINE[chR.key];
   $('#rTag').textContent = run.daily ? `TODAY'S CHALLENGE · ${String(run.dateNum).slice(4, 6)}/${String(run.dateNum).slice(6)} · STAGE ${run.stage}` : `${run.bestStage ? 'NEW BEST · ' : ''}STAGE ${run.stage} · ${stageName(run.stage)}`;
-  $('#rTitle').textContent = `스테이지 ${run.stage}까지 갔어요!`;
+  $('#rTitle').textContent = run.rush ? `보스 ${run.bossN || 0}마리를 쓰러뜨렸어요!` : `스테이지 ${run.stage}까지 갔어요!`;
+  if (run.rush) $('#rTag').textContent = `BOSS RUSH · ${run.isBest ? 'NEW BEST · ' : ''}최고 ${save.rush.b}마리 · STAGE ${run.stage}`;
   if (run.startStage > 1) $('#rTag').textContent += ` · ${run.startStage}부터 시작`;
   countUp($('#rScore'), finalScore);
   $('#rNew').hidden = !isBest;
@@ -2548,6 +2587,7 @@ function showResult(won) {
   const ch = byKey(run.char), info = `${run.daily ? '도전 ' + String(run.dateNum).slice(4) + ' · ' : ''}${titleText() ? titleText() + ' · ' : ''}${ch.name} · ${run.startStage > 1 ? 'S' + run.startStage + '→' : '스테이지 '}${run.stage}`;
   const game = run.daily ? 'bbd' + run.dateNum : 'ballbbang';    // 오늘의 도전은 날짜별 랭킹
   const meta = {st: run.stage, s0: run.startStage || 1, sec: Math.floor(played())};   // 시트가 점수가 말이 되는지 확인할 때 씀
+  if (run.rush) { $('#rankBox').hidden = true; $('#result').hidden = false; lockEl($('#result .card'), 500); const r0 = run; setTimeout(() => { if (state === 'over' && run === r0) BGM.play('title', 1.2); }, 1600); return; }   // 보스 러시는 랭킹 없음 (내 최고 기록만)
   if (!run.daily) sendWeekly(finalScore, info, 6500, meta);   // 주간 랭킹 (전체 랭킹 올린 뒤 몇 초 있다가 — 시트가 한 기기에서 5초에 한 번만 받음)
   if (rankSupported) RankUI.show(game, finalScore, info, meta); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info, meta); }); }
   $('#result').hidden = false; lockEl($('#result .card'), 500);
@@ -2562,8 +2602,8 @@ function lockEl(el, ms) { el.style.pointerEvents = 'none'; setTimeout(() => { el
 function pauseGame() {
   if (state !== 'play' || paused) return;
   paused = true; aiming = false; $('#pause').hidden = false; saveRun();
-  if (S.music) S.music.gain.value = .06;
-  if (S.bgm) S.bgm.gain.value = .12;
+  if (S.music) S.music.gain.value = .06 * volM();
+  if (S.bgm) S.bgm.gain.value = .12 * volM();
   setTimeout(() => { if (paused && state === 'play' && app) app.stop(); }, 120);
 }
 function resumeGame() {
@@ -2621,7 +2661,8 @@ function renderTitle() {
   $('#tCoins').textContent = fmt(save.coins); $('#tBest').textContent = fmt(save.best); $('#tClears').textContent = save.top || '-';
   const sv = loadRunSave();
   $('#btnContinue').hidden = !sv;
-  if (sv) { const pt = Math.max(0, sv.t - (sv.daily ? 0 : CP_T(sv.startStage || 1))), m = Math.floor(pt / 60); $('#contLbl').textContent = `이어 하기 · ${sv.daily ? '오늘의 도전 · ' : '스테이지 ' + (sv.stage || 1) + ' · '}${byKey(sv.char).name} · ${m ? m + '분' : Math.floor(pt) + '초'}`; }
+  if (sv) { const pt = Math.max(0, sv.t - (sv.daily ? 0 : CP_T(sv.startStage || 1)) - (sv.skipT || 0)), m = Math.floor(pt / 60); $('#contLbl').textContent = `이어 하기 · ${sv.daily ? '오늘의 도전 · ' : sv.rush ? '보스 러시 · ' : '스테이지 ' + (sv.stage || 1) + ' · '}${byKey(sv.char).name} · ${m ? m + '분' : Math.floor(pt) + '초'}`; }
+  $('#rushInfo').textContent = save.rush.b ? `최고 ${save.rush.b}마리` : '보스만 연달아!';
   const d = kstDate(), dc = dailyChar(d);
   $('#dailyFace').style.backgroundImage = `url(${PT_URL(dc.key)})`;
   const lead = rankTop && rankTop['bbd' + d] && rankTop['bbd' + d][0];
@@ -2701,17 +2742,17 @@ function openChars() {
       const l = mastLv(c.key), x = mastXp(c.key), pct = l >= 10 ? 100 : Math.round((x - MAST_XP[l - 1]) / (MAST_XP[l] - MAST_XP[l - 1]) * 100);
       const mw = document.createElement('div'); mw.innerHTML = `<div class="mast"><span>숙련도 Lv.${l}</span><i style="--p:${pct}%"></i></div><span class="mnext"></span>`;
       mw.querySelector('.mnext').textContent = l >= 10 ? '최고 단계! 유카타 의상을 입을 수 있어요' : `다음 Lv.${l + 1}: ${MAST_TXT[l + 1]} (${fmt(x)} / ${fmt(MAST_XP[l])})` + (l < 9 ? ' · Lv.10엔 🎐유카타' : '');
-      const opts = [['', '기본 옷']]; if (l >= 10) opts.push(['c1', '🎐 유카타']); if (hwCos()) opts.push(['c2', '🎃 할로윈']);
-      if (opts.length > 1) {
-        const row = document.createElement('div'); row.className = 'cosrow';
-        const cur = cosOk(c.key, save.cos[c.key]) ? save.cos[c.key] : '';
-        opts.forEach(([v, t]) => {
-          const cb = document.createElement('span'); cb.className = 'cos' + (cur === v ? ' on' : ''); cb.setAttribute('role', 'button'); cb.dataset.cos = v; cb.textContent = t;
-          cb.addEventListener('click', ev => { ev.stopPropagation(); if (v) save.cos[c.key] = v; else delete save.cos[c.key]; persist(); openChars(); renderTitle(); });
-          row.appendChild(cb);
-        });
-        mw.appendChild(row);
-      }
+      // 의상 칩: 가진 것은 갈아입기 · 없는 것은 가격 (한 번 누르면 미리 보기 · 한 번 더 누르면 구매)
+      const row = document.createElement('div'); row.className = 'cosrow';
+      const cur = cosOk(c.key, save.cos[c.key]) ? save.cos[c.key] : '';
+      [['', '기본 옷'], ...Object.entries(COSTUMES).map(([v, d]) => [v, d.name])].forEach(([v, t]) => {
+        const have = !v || cosOk(c.key, v);
+        const cb = document.createElement('span'); cb.className = 'cos' + (cur === v ? ' on' : '') + (have ? '' : ' lock'); cb.setAttribute('role', 'button'); cb.dataset.cos = v;
+        cb.textContent = have ? t : `${t} ${cosBuyable(v) ? '🪙' + fmt(COSTUMES[v].price) : '· 이벤트'}`;
+        cb.addEventListener('click', ev => { ev.stopPropagation(); if (have) { if (v) save.cos[c.key] = v; else delete save.cos[c.key]; persist(); openChars(); renderTitle(); } else buyCos(c.key, v, b); });
+        row.appendChild(cb);
+      });
+      mw.appendChild(row);
       b.querySelector('.kit').after(mw);
     }
     b.addEventListener('click', () => {
@@ -2745,6 +2786,21 @@ let toastT = 0;
 function toast(m) { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2400); }
 function soundLabels() { document.querySelectorAll('#btnSound .lbl, #btnSound2 .lbl').forEach(e => { e.textContent = save.muted ? '소리 꺼짐' : '소리 켜짐'; }); }
 function toggleSound() { save.muted = !save.muted; persist(); S.init(); soundLabels(); }
+// 소리 설정 창: 배경음·효과음 크기 따로 (움직이면 바로 들림)
+function openSound() {
+  $('#volM').value = save.vol.m; $('#volS').value = save.vol.s; soundPanel();
+  $('#snd').hidden = false;
+}
+function soundPanel() {
+  $('#volMv').textContent = save.vol.m + '%'; $('#volSv').textContent = save.vol.s + '%';
+  $('#sndMute').textContent = save.muted ? '🔇 소리 꺼짐 · 눌러서 켜기' : '🔊 소리 켜짐 · 눌러서 끄기';
+}
+$('#volM').addEventListener('input', e => { save.vol.m = +e.target.value; S.init(); if (!paused) restoreVolume(); else { if (S.bgm) S.bgm.gain.value = .12 * volM(); if (S.music) S.music.gain.value = .06 * volM(); } soundPanel(); });
+$('#volS').addEventListener('input', e => { save.vol.s = +e.target.value; S.init(); if (S.sfx) S.sfx.gain.value = .8 * volS(); soundPanel(); });
+$('#volS').addEventListener('change', () => { S.item(); persist(); });
+$('#volM').addEventListener('change', () => persist());
+$('#sndMute').addEventListener('click', () => { toggleSound(); soundPanel(); });
+$('#sndOk').addEventListener('click', () => { persist(); $('#snd').hidden = true; });
 function autoLabel() { $('#btnAuto').classList.toggle('on', save.auto); $('#btnAuto').textContent = 'AUTO'; $('#btnAutoP').textContent = save.auto ? '자동 발사 켜짐' : '자동 발사 꺼짐 (놓으면 발사)'; }
 function toggleAuto() { save.auto = !save.auto; persist(); autoLabel(); toast(save.auto ? '공이 계속 날아가요 · 방향은 끌어서 정해요' : '누르고 있는 동안만 공이 날아가요'); }
 async function brag() {
@@ -2855,9 +2911,10 @@ function confirmNew(btn) {
   return false;
 }
 $('#btnStart').addEventListener('click', () => { if (!confirmNew('start')) return; clearRunSave(); startGame({char: save.sel, startStage: startOptions()[Math.max(0, stView)] || 1}); });
+$('#btnRush').addEventListener('click', () => { if (!confirmNew('rush')) return; clearRunSave(); startGame({char: save.sel, rush: true}); });
 $('#btnDaily').addEventListener('click', () => { if (!confirmNew('daily')) return; const d = kstDate(); clearRunSave(); startGame({daily: true, seed: d * 2654435761 >>> 0, dateNum: d, char: dailyChar(d).key}); });
 $('#btnContinue').addEventListener('click', () => { const sv = loadRunSave(); if (sv) startGame({resume: sv}); });
-$('#btnAgain').addEventListener('click', () => { if (run && run.daily) $('#btnDaily').click(); else startGame({char: run ? run.char : save.sel, startStage: run ? run.startStage : 1}); });
+$('#btnAgain').addEventListener('click', () => { if (run && run.daily) $('#btnDaily').click(); else if (run && run.rush) startGame({char: run.char, rush: true}); else startGame({char: run ? run.char : save.sel, startStage: run ? run.startStage : 1}); });
 $('#btnHome').addEventListener('click', goTitle);
 $('#btnPause').addEventListener('click', pauseGame);
 $('#btnResume').addEventListener('click', resumeGame);
@@ -2891,6 +2948,24 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instal
 window.addEventListener('appinstalled', () => { installEvt = null; $('#btnInstall').hidden = true; $('#install').hidden = true; toast('설치했어요! 이제 홈 화면의 볼빵 아이콘으로 열어요'); });
 $('#btnInstall').hidden = IS_APP;
 if ('serviceWorker' in navigator && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)) navigator.serviceWorker.register('sw.js').catch(() => {});
+// 의상 사기: 한 번 누르면 카드 그림이 그 의상으로 (미리 보기) · 4초 안에 한 번 더 누르면 구매
+let cosArm = '', cosArmT = 0;
+function buyCos(k, v, card) {
+  const d = COSTUMES[v];
+  if (!cosBuyable(v)) { toast(hwState() === 'soon' ? '할로윈 이벤트(10월 17일부터)에서 사탕으로 받아요' : '할로윈 이벤트 중에는 사탕 300개로 받아요'); return; }
+  const url = `url(assets/pt_${k}_${v}.webp${AV})`, ph = card && card.querySelector('.ph');
+  if (ph) ph.style.backgroundImage = url;
+  $('#sidePt').style.backgroundImage = url;
+  if (cosArm !== k + v) {
+    cosArm = k + v; clearTimeout(cosArmT); cosArmT = setTimeout(() => { cosArm = ''; }, 4000);
+    toast(save.coins >= d.price ? `미리 보기 · 한 번 더 누르면 ${fmt(d.price)} 코인에 사요` : `미리 보기 · 코인이 ${fmt(d.price - save.coins)} 모자라요`);
+    return;
+  }
+  cosArm = ''; clearTimeout(cosArmT);
+  if (save.coins < d.price) { toast(`코인이 ${fmt(d.price - save.coins)} 모자라요`); return; }
+  save.coins -= d.price; (save.cosBuy[k] || (save.cosBuy[k] = [])).push(v); save.cos[k] = v; persist();
+  S.init(); S.item(); toast(`${byKey(k).name}의 ${d.name} 의상을 샀어요!`); openChars(); renderTitle();
+}
 function openInstall() {
   const steps = [], li = (i, b, t) => steps.push(`<li><i>${i}</i><div><b>${b}</b>${t}</div></li>`);
   let warn = '', code = false;
@@ -2949,8 +3024,8 @@ $('#btnImportGo').addEventListener('click', () => {
 $('#newsOk').addEventListener('click', () => { save.news = NEWS_V; persist(); $('#news').hidden = true; setTimeout(maybeAtt, 300); });
 $('#attGo').addEventListener('click', takeAtt);
 $('#shopBack').addEventListener('click', () => { $('#shop').hidden = true; renderTitle(); });
-$('#btnSound').addEventListener('click', toggleSound);
-$('#btnSound2').addEventListener('click', toggleSound);
+$('#btnSound').addEventListener('click', openSound);
+$('#btnSound2').addEventListener('click', openSound);
 $('#btnBrag').addEventListener('click', brag);
 $('#btnRankUp').addEventListener('click', () => RankUI.up(false));
 $('#rankName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); RankUI.up(false); } });

@@ -2579,6 +2579,7 @@ function applyRewards(r) {
   // 숙련도: 간 스테이지 수 ×10 + 블록 100개당 1 + 보스 1마리당 2
   const mg = Math.round((10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)) * (r.rush ? .5 : 1) * (r.feat ? 1.5 : 1)), lv0 = mastLv(r.char);
   if (r.feat) out.push(`✨ 오늘의 캐릭터 보너스 · 코인 +30% · 숙련도 +50%`);
+  if ((r.fusions || []).length) out.push(`🔮 이번 판 합체: ${r.fusions.map(f => BALLS[f] ? BALLS[f].name : f).join(' · ')}`);
   save.mast[r.char] = mastXp(r.char) + mg;
   const lv1 = mastLv(r.char);
   out.push(`${byKey(r.char).name} 숙련도 +${mg}` + (lv1 > lv0 ? ` · Lv.${lv1}! ${MAST_TXT[lv1]}` : ''));

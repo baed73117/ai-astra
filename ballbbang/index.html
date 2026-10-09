@@ -2245,13 +2245,13 @@ function openChest() {
   $('#lvup').hidden = false; lockEl($('#lvup'), 500); S.fusion();
   setTimeout(() => { if (state === 'levelup' && app) app.stop(); }, 380);
 }
-// 합체 공 시작 레벨: 재료 두 공의 평균 레벨 - 2 (3+3 → Lv.1, 4+4 → Lv.2, 5+5 → Lv.3) — 재료를 더 키워도 손해 없게 (2026-10-09 플레이어 의견)
+// 합체 공 시작 레벨: 재료 두 공의 평균 레벨 - 2 → 재료가 모두 Lv.5라 Lv.3으로 시작 (합체하면 공 칸도 하나 비어서 새 공을 더 얻을 수 있음)
 const fusionLv = k => { const [a, b] = BALLS[k].fusion; return Math.max(1, Math.min(5, Math.floor(((run.kinds[a] || 0) + (run.kinds[b] || 0)) / 2) - 2)); };
 function rollOffers() {
   const R = run.cr, pool = [];
   const kinds = Object.keys(run.kinds), full = kinds.length >= MAX_KINDS;
   // 합체 가능하면 맨 앞에 꼭
-  const fusion = FUSIONS.find(f => !run.kinds[f] && BALLS[f].fusion.every(p => (run.kinds[p] || 0) >= 3));
+  const fusion = FUSIONS.find(f => !run.kinds[f] && BALLS[f].fusion.every(p => (run.kinds[p] || 0) >= 5));   // 재료 두 공이 모두 Lv.5(최고)일 때만 (2026-10-09 플레이어 의견: 덜 키우고 합체하면 손해)
   for (const k of NORMAL_BALLS) {
     if (k === 'basic') continue;
     if (run.kinds[k]) { if (run.kinds[k] < 5) pool.push({t: 'up', k, w: 3}); }

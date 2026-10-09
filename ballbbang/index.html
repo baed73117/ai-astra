@@ -2336,13 +2336,13 @@ const titleText = () => {
 // 주간 랭킹: 'bbw' + 이번 주 월요일(한국 시간). 시트는 이번 주·지난주 것만 받음. 지난주 1~3등(같은 닉네임)은 '주간 ○등' 칭호
 function weekKey(off) { const d = new Date(Date.now() + 9 * 3600e3), dow = (d.getUTCDay() + 6) % 7, m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - dow - 7 * (off || 0))); return 'bbw' + (m.getUTCFullYear() * 1e4 + (m.getUTCMonth() + 1) * 100 + m.getUTCDate()); }
 let wkBusy = false;
-function sendWeekly(score, info, delay) {
+function sendWeekly(score, info, delay, meta) {
   const g = weekKey(), nm = RankNet.name;
   if (!RankNet.on || !nm || !rankTop || !Object.prototype.hasOwnProperty.call(rankTop, g) || !(score > RankNet.sent(g))) return;
   setTimeout(() => {   // 결과 화면·랭킹 올리기 두 곳에서 불려도 한 번만 (보내기 직전에 다시 확인)
     if (wkBusy || !(score > RankNet.sent(g))) return;
     wkBusy = true;
-    RankNet.send(g, RankNet.name || nm, score, info).then(j => { if (j && j.ok && j.top) rankTop = j.top; }).catch(() => {}).then(() => { wkBusy = false; });
+    RankNet.send(g, RankNet.name || nm, score, info, meta).then(j => { if (j && j.ok && j.top) rankTop = j.top; }).catch(() => {}).then(() => { wkBusy = false; });
   }, delay);
 }
 function weeklyCheck() {
@@ -2379,8 +2379,9 @@ function showResult(won) {
   // 랭킹 (시트가 이 게임을 받을 준비가 됐을 때만)
   const ch = byKey(run.char), info = `${run.daily ? '도전 ' + String(run.dateNum).slice(4) + ' · ' : ''}${titleText() ? titleText() + ' · ' : ''}${ch.name} · ${run.startStage > 1 ? 'S' + run.startStage + '→' : '스테이지 '}${run.stage}`;
   const game = run.daily ? 'bbd' + run.dateNum : 'ballbbang';    // 오늘의 도전은 날짜별 랭킹
-  if (!run.daily) sendWeekly(finalScore, info, 6500);   // 주간 랭킹 (전체 랭킹 올린 뒤 몇 초 있다가 — 시트가 한 기기에서 5초에 한 번만 받음)
-  if (rankSupported) RankUI.show(game, finalScore, info); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info); }); }
+  const meta = {st: run.stage, s0: run.startStage || 1, sec: Math.floor(played())};   // 시트가 점수가 말이 되는지 확인할 때 씀
+  if (!run.daily) sendWeekly(finalScore, info, 6500, meta);   // 주간 랭킹 (전체 랭킹 올린 뒤 몇 초 있다가 — 시트가 한 기기에서 5초에 한 번만 받음)
+  if (rankSupported) RankUI.show(game, finalScore, info, meta); else { $('#rankBox').hidden = true; if (RankNet.on) checkRank().then(ok => { if (ok && state === 'over') RankUI.show(game, finalScore, info, meta); }); }
   $('#result').hidden = false; lockEl($('#result .card'), 500);
   const r = run; setTimeout(() => { if (state === 'over' && run === r) BGM.play('title', 1.2); }, 1600);
 }
@@ -2553,20 +2554,23 @@ const RankNet = {
   set name(v) { try { localStorage.setItem('astra-rank-name', v); } catch (e) {} },
   sent(game) { try { return Number(localStorage.getItem('astra-rank-sent-' + game)) || 0; } catch (e) { return 0; } },
   async req(opt) { const ac = typeof AbortController === 'function' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 15000); try { const r = await fetch(RANK_URL, Object.assign({}, opt, ac ? {signal: ac.signal} : {})); return await r.json(); } finally { if (t) clearTimeout(t); } },
-  async send(game, name, score, info) {
+  // meta = 이 판의 도달 스테이지·시작 스테이지·버틴 초 → 시트가 말이 안 되는 점수(조작)를 거름. k = 확인값
+  async send(game, name, score, info, meta) {
     if (/^[\d\s.,:\/+\-]+$|^(true|false)$/i.test(name)) name = '​' + Array.from(name).slice(0, 9).join('');
-    const j = await this.req({method: 'POST', body: JSON.stringify({game, name, score: Math.floor(score), info, id: this.id()})});
+    const body = {game, name, score: Math.floor(score), info, id: this.id()};
+    if (meta) { Object.assign(body, {st: meta.st | 0, s0: meta.s0 | 0, sec: meta.sec | 0, v: 2}); body.k = codeSum(`bbr|${game}|${body.score}|${body.st}|${body.s0}|${body.sec}|${body.id}`); }
+    const j = await this.req({method: 'POST', body: JSON.stringify(body)});
     if (j && j.ok) { try { localStorage.setItem('astra-rank-sent-' + game, String(Math.max(this.sent(game), Number(j.best) || 0))); } catch (e) {} }
     return j;
   },
   top() { return this.req({cache: 'no-store'}); },
 };
 const RankUI = {
-  game: '', score: 0, info: '', run: 0,
-  show(game, score, info) {
+  game: '', score: 0, info: '', meta: null, run: 0,
+  show(game, score, info, meta) {
     const box = $('#rankBox'); this.run++;
     box.hidden = !RankNet.on || !(score > 0); if (box.hidden) return;
-    Object.assign(this, {game, score: Math.floor(score), info});
+    Object.assign(this, {game, score: Math.floor(score), info, meta: meta || null});
     const btn = $('#btnRankUp'); $('#rankName').value = RankNet.name; btn.disabled = false; btn.textContent = '랭킹 올리기';
     $('#rankMsg').textContent = RankNet.name ? '1·2·3등은 홈페이지에 이름이 나와요' : '카톡방 닉네임을 적고 올려 주세요 · 1·2·3등은 홈페이지에 나와요';
     if (RankNet.name && this.score > RankNet.sent(game)) this.up(true);
@@ -2579,12 +2583,12 @@ const RankUI = {
     RankNet.name = name; btn.disabled = true; btn.textContent = '올리는 중…';
     let text;
     try {
-      const r = await RankNet.send(this.game, name, this.score, this.info);
-      if (r && r.ok && this.game === 'ballbbang') sendWeekly(this.score, this.info, 6000);
+      const r = await RankNet.send(this.game, name, this.score, this.info, this.meta);
+      if (r && r.ok && this.game === 'ballbbang') sendWeekly(this.score, this.info, 6000, this.meta);
       if (r && r.ok) { if (run !== this.run) return; msg.textContent = r.rank <= 3 ? `전체 ${r.rank}등! 홈페이지에 이름이 올라가요` : `전체 ${r.rank}등이에요 · 내 최고 ${Number(r.best).toLocaleString('ko-KR')}`; btn.textContent = '올렸어요'; return; }
       const retry = r && (r.why === 'slow' || r.why === 'busy' || r.why === 'error');
       if (retry && auto === true && run === this.run) { msg.textContent = '잠시 후 자동으로 다시 올려요…'; btn.disabled = false; btn.textContent = '랭킹 올리기'; setTimeout(() => { if (run === this.run) this.up('retry'); }, 5500); return; }
-      text = retry ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';
+      text = retry ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : r && r.why === 'check' ? '점수 확인이 안 돼요. 새로고침한 뒤 다음 판부터 올려 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';
     } catch (e) { text = '지금은 연결이 안 돼요. 잠시 후 다시 눌러 주세요.'; }
     if (run !== this.run) return;
     msg.textContent = text; btn.disabled = false; btn.textContent = '랭킹 올리기';

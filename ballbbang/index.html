@@ -101,6 +101,7 @@ body.wide .side{display:grid;gap:12px}
 .hw-bar{height:8px;border-radius:5px;background:#EEE4F5;overflow:hidden}
 .hw-bar i{display:block;height:100%;background:linear-gradient(90deg,#FF9A3C,#B657E8)}
 .charc .cosrow{display:flex;flex-wrap:wrap;gap:6px}
+.charc .feat{display:block;margin-top:5px;padding:3px 8px;border-radius:8px;background:linear-gradient(90deg,#FFF3C4,#FFE0F0);font:800 11px/1.3 var(--f-kr);color:#B5781A}
 .charc .sigf{display:flex;align-items:center;gap:6px;margin-top:5px;font:700 11px/1.3 var(--f-kr);color:#7A4FB8}
 .charc .sigf i{flex:none;width:20px;height:20px;border-radius:50%}
 .charc .ch1{display:block;margin-top:5px;font:700 11px/1.3 var(--f-kr);color:#B5781A}
@@ -419,10 +420,9 @@ body.wide .side{display:grid;gap:12px}
     <ul class="news-list">
       <li class="nw"><i>🔮</i><div><b>캐릭터 전용 합체 공</b>썬더 스톰 · 블리자드 · 맹독 폭탄 · 메테오 스타 · 강철 폭탄 등 7명 모두 자기만의 합체! 재료는 캐릭터 화면·레벨업 🔮 표시로 확인 · 합체 도감 업적</div></li>
       <li class="nw"><i>⬆️</i><div><b>강화 상점 확장</b>단계가 늘고 기본 치명타 · 특기 위력 · 코인 획득 강화가 새로 생겼어요</div></li>
+      <li class="nw"><i>✨</i><div><b>오늘의 캐릭터 보너스</b>오늘의 도전 캐릭터로 보통 판을 하면 코인 +30% · 숙련도 +50%</div></li>
       <li class="nw"><i>🏆</i><div><b>랭킹 새 시즌</b>볼빵 랭킹을 새로 시작해요 · 속도를 조작한 판은 올라가지 않아요</div></li>
       <li><i>💪</i><div><b>캐릭터 상향</b>루비 · 리코 · 유키 · 소라 · 미라이 공과 특기가 더 세졌어요</div></li>
-      <li><i>🛡️</i><div><b>새 친구 카린</b>강철 기사 소녀 · 스테이지 15에 가면 합류</div></li>
-      <li><i>👹</i><div><b>보스 러시</b>보스만 연달아! 짧고 굵게 한 판</div></li>
       <li><i>🎃</i><div><b>할로윈 이벤트 10월 17일부터</b>호박 블록·사탕 모으기 · 한정 의상</div></li>
       <li><i>💾</i><div><b>저장하고 나가기 · 앱으로 설치</b>일시정지에서 저장 · 첫 화면 📲 버튼</div></li>
     </ul>
@@ -1348,6 +1348,7 @@ function newRun(opts) {
     hp: 100 + shop.hp * 10 + mb.hp, hpMax: 100 + shop.hp * 10 + mb.hp, atkMeta: (1 + shop.atk * .08) * (1 + mb.atk), xpMeta: 1 + shop.xp * .06,
     critMeta: .02 * (shop.crit || 0), spowMeta: 1 + .05 * (shop.spow || 0), coinMeta: 1 + .05 * (shop.coin || 0),   // 상점 새 강화 (2026-10-10)
     rush: !!opts.rush && !daily, skipT: 0,   // 보스 러시
+    feat: !daily && !opts.rush && ch.key === dailyChar(kstDate()).key,   // 오늘의 캐릭터 보너스 (판 시작 날짜 기준)
     hw: !daily && !opts.rush && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
     rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
     upg: {}, skillT: 0, skillCd: 22 * mb.cd * (ch.key === 'karin' ? 1.1 : 1),   // 카린 메테오 해머는 대기 10% 길게 frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
@@ -2410,7 +2411,7 @@ function snapshot() {
   if (!run || run.ended || !run.started) return null;
   const bl = [...blocks].filter(b => !b.dead && !b.boss).map(b => [b.k, b.c, b.w, b.h, Math.round(b.hp), Math.round(b.maxHp), b.type]);
   const bo = run.boss && !run.boss.dead ? [run.boss.k, run.boss.c, run.boss.w, run.boss.h, Math.round(run.boss.hp), Math.round(run.boss.maxHp), run.boss.boss.tex, run.boss.boss.final ? 1 : 0, run.boss.boss.name] : null;
-  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy', 'rush', 'skipT', 'tk', 'gt', 'wall', 'fast', 'critMeta', 'spowMeta', 'coinMeta', 'fuseN'];
+  const keep = ['daily', 'seed', 'dateNum', 'char', 'stage', 't', 'scroll', 'nextK', 'score', 'kills', 'level', 'xp', 'xpNeed', 'hp', 'hpMax', 'atkMeta', 'xpMeta', 'rerolls', 'kinds', 'extraBasic', 'fusions', 'upg', 'skillT', 'skillCd', 'stT', 'stPh', 'hitCount', 'coinBonus', 'dmgTotal', 'bossN', 'maxCombo', 'chestN', 'dexRun', 'leg', 'pendingChest', 'revived', 'startStage', 'prevTop', 'mPow', 'hw', 'candy', 'rush', 'skipT', 'tk', 'gt', 'wall', 'fast', 'critMeta', 'spowMeta', 'coinMeta', 'fuseN', 'feat'];
   const o = {}; keep.forEach(k => { o[k] = run[k]; });
   o.wr = run.wr.get(); o.cr = run.cr.get(); o.bl = bl; o.bo = bo; o.WH = WH; o.at = Date.now();
   o.it = items.map(it => [it.type, it.k, it.c, it.uses]);
@@ -2503,6 +2504,7 @@ async function startInner(opts) {
     const pool = Object.keys(LEG).filter(k => !LG(k));
     if (pool.length) { const k = pool[Math.floor(Math.random() * pool.length)]; run.leg[k] = 1; save.legT--; persist(); later(1.2, () => { if (run && !run.ended) banner(`🎁 출석 선물: ${LEG[k].name}!`, false); }); }
   }
+  if (!opts.resume && run.feat) later(1.2, () => { if (run && !run.ended) toast('✨ 오늘의 캐릭터! 코인 +30% · 숙련도 +50%'); });
   if (!opts.resume && !run.daily) {   // 시작할 때도 세계(2회차~)·규칙 안내
     const aw = lapOf(run.stage) > 0;
     if (aw) later(2.2, () => { if (run && !run.ended) { const w = worldOf(run.stage); banner(`${w.ico} ${w.name}`, true); } });
@@ -2551,7 +2553,8 @@ function endRun(won) {
   if (!Number.isFinite(coins) || coins < 0) coins = 0;
   if (LG('gold')) coins = Math.floor(coins * 1.5);
   if (U('luck')) coins = Math.floor(coins * (1 + .12 * U('luck')));
-  if (run.coinMeta > 1) coins = Math.floor(coins * run.coinMeta);   // 상점 '코인 획득'   // 행운: 코인 +12%씩 (설명만 있고 빠져 있던 것 — 2026-10-09)
+  if (run.coinMeta > 1) coins = Math.floor(coins * run.coinMeta);   // 상점 '코인 획득'
+  if (run.feat) coins = Math.floor(coins * 1.3);   // 오늘의 캐릭터 보너스   // 행운: 코인 +12%씩 (설명만 있고 빠져 있던 것 — 2026-10-09)
   if (run.rush) coins = Math.floor(coins / 2);   // 보스 러시는 코인 절반
   run.final = finalScore; run.coinsGot = coins;
   save.coins = Math.min(9999999, save.coins + coins);
@@ -2574,7 +2577,8 @@ function endRun(won) {
 function applyRewards(r) {
   const out = [], R = save.rec;
   // 숙련도: 간 스테이지 수 ×10 + 블록 100개당 1 + 보스 1마리당 2
-  const mg = Math.round((10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)) * (r.rush ? .5 : 1)), lv0 = mastLv(r.char);
+  const mg = Math.round((10 * Math.max(1, r.stage - (r.startStage || 1) + 1) + (r.kills || 0) / 100 + 2 * (r.bossN || 0)) * (r.rush ? .5 : 1) * (r.feat ? 1.5 : 1)), lv0 = mastLv(r.char);
+  if (r.feat) out.push(`✨ 오늘의 캐릭터 보너스 · 코인 +30% · 숙련도 +50%`);
   save.mast[r.char] = mastXp(r.char) + mg;
   const lv1 = mastLv(r.char);
   out.push(`${byKey(r.char).name} 숙련도 +${mg}` + (lv1 > lv0 ? ` · Lv.${lv1}! ${MAST_TXT[lv1]}` : ''));
@@ -2781,7 +2785,7 @@ function renderTitle() {
   const d = kstDate(), dc = dailyChar(d);
   $('#dailyFace').style.backgroundImage = `url(${PT_URL(dc.key)})`;
   const lead = rankTop && rankTop['bbd' + d] && rankTop['bbd' + d][0];
-  $('#dailyInfo').textContent = `${String(d).slice(4, 6)}월 ${String(d).slice(6)}일 · 오늘의 캐릭터 ${dc.name}` +
+  $('#dailyInfo').textContent = `${String(d).slice(4, 6)}월 ${String(d).slice(6)}일 · 오늘의 캐릭터 ${dc.name}${save.owned.includes(dc.key) ? ' ✨보통 판도 보너스' : ''}` +
     (lead ? ` · 1위 ${lead.name} ${fmt(lead.score)}` : '') + (save.daily.d === String(d) && save.daily.best ? ` · 내 최고 ${fmt(save.daily.best)}` : '');
   soundLabels();
   $('#sideBest').textContent = fmt(save.best); $('#sideClears').textContent = save.clears; $('#sideTop').textContent = save.top || '-';
@@ -2858,6 +2862,7 @@ function openChars() {
     b.innerHTML = `<div class="ph" style="background-image:url(${PT_URL(c.key)})"></div><div style="flex:1;min-width:0"><span class="en"></span><h4></h4><p></p><div class="kit"><i style="background-image:url(assets/balls.webp${AV});background-position:${(bd.i % 5) * 25}% ${Math.floor(bd.i / 5) * 50}%"></i><span></span></div></div>${own ? '' : c.unlock ? `<span class="pr cond">🔒 ${c.unlock.text}</span>` : `<span class="pr">🔒 ${fmt(c.price)}</span>`}`;
     b.querySelector('.en').textContent = c.en; b.querySelector('h4').textContent = c.name; b.querySelector('p').textContent = c.desc;
     b.querySelector('.kit span').textContent = `${bd.name}으로 시작 · 「${c.skill}」`;
+    if (own && c.key === dailyChar(kstDate()).key) { const e = document.createElement('span'); e.className = 'feat'; e.textContent = '✨ 오늘의 캐릭터 · 보통 판 코인 +30% · 숙련도 +50%'; b.querySelector('.kit').after(e); }
     { const sf = FUSIONS.find(f => BALLS[f].sig === c.key); if (sf) { const [m1, m2] = BALLS[sf].fusion, e = document.createElement('span'), ic = document.createElement('i'); e.className = 'sigf'; ballIco(ic, sf); e.appendChild(ic); e.append(`전용 합체 ${BALLS[sf].name} = ${BALLS[m1].name} Lv.5 + ${BALLS[m2].name} Lv.5`); b.querySelector('.kit').after(e); } }   // 플레이어 질문 '합체공 리스트 주세요'
     { const t1 = rankTop && rankTop['bbc_' + c.key] && rankTop['bbc_' + c.key][0]; if (t1) { const e = document.createElement('span'); e.className = 'ch1'; e.textContent = `🏆 ${c.name} 1등 ${t1.name} · ${fmt(t1.score)}`; b.querySelector('.kit').after(e); } }
     if (own) {   // 숙련도 · 의상

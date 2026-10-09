@@ -54,7 +54,7 @@ svg{display:block}
 .hp{position:relative;display:flex;align-items:center}
 .hp-ic{position:absolute;left:-7px;top:50%;width:24px;height:24px;transform:translateY(-50%);z-index:2;fill:#FF5FA2;stroke:#fff;stroke-width:2.2;filter:drop-shadow(0 2px 3px rgba(20,8,30,.35))}
 .hp-track{position:relative;flex:1;height:14px;margin-left:8px;border-radius:999px;background:rgba(20,8,30,.5);box-shadow:inset 0 1px 3px rgba(0,0,0,.35),0 0 0 1.5px rgba(255,255,255,.85);overflow:hidden}
-.hp-track b,.hp-track i{position:absolute;inset:0;transform-origin:0 50%;border-radius:999px}
+.hp-track b,.hp-track i{position:absolute;inset:0;transform-origin:0 50%;border-radius:999px;will-change:transform}
 .hp-track i{background:rgba(255,255,255,.78)}
 .hp-track b{background:linear-gradient(180deg,#FFA9D2 0%,#FF5FA2 58%,#EE468B 100%)}
 .hp-track b::after{content:"";position:absolute;left:7px;right:7px;top:2px;height:3px;border-radius:2px;background:rgba(255,255,255,.55)}
@@ -64,7 +64,7 @@ svg{display:block}
 .skill{display:flex;align-items:center;gap:6px;margin-left:8px}
 .skill span{font:800 9px/1 var(--f-en);letter-spacing:.2em;opacity:.9}
 .sk-track{position:relative;flex:1;height:6px;border-radius:999px;background:rgba(20,8,30,.45);box-shadow:0 0 0 1px rgba(255,255,255,.6);overflow:hidden}
-.sk-track b{position:absolute;inset:0;transform-origin:0 50%;background:linear-gradient(90deg,#FFE08A,#FFC24A);border-radius:999px}
+.sk-track b{position:absolute;inset:0;transform-origin:0 50%;will-change:transform;background:linear-gradient(90deg,#FFE08A,#FFC24A);border-radius:999px}
 .sk-track b::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(-100%);opacity:0}
 .skill.on .sk-track b::after{opacity:1;animation:shineX .9s linear infinite}
 .letters{display:flex;gap:4px;margin-left:8px}
@@ -84,7 +84,7 @@ svg{display:block}
 
 /* ── 조작 버튼 ── */
 .pads{position:fixed;left:0;right:0;bottom:0;z-index:4;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 20px calc(22px + var(--safe-b))}
-.pad{width:88px;height:88px;border-radius:28px;display:grid;place-items:center;align-content:center;gap:5px;color:#fff;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line),inset 0 14px 22px rgba(255,255,255,.08),0 10px 26px rgba(20,8,30,.3);transition:transform .08s ease,background .08s ease,box-shadow .08s ease}
+.pad{width:88px;height:88px;border-radius:28px;display:grid;place-items:center;align-content:center;gap:5px;color:#fff;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line),inset 0 14px 22px rgba(255,255,255,.08),0 10px 26px rgba(20,8,30,.3);transition:transform .08s ease}
 .pad svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .pad span{font:700 12px/1 var(--f-kr);opacity:.95}
 .pad.on{transform:scale(.93);background:rgba(255,95,162,.62);box-shadow:inset 0 0 0 1.5px #fff,0 0 26px rgba(255,95,162,.75)}
@@ -465,17 +465,22 @@ const S = {
 
 /* ---------- 수노 배경음 (끊김 없는 반복 · 장면마다 부드럽게 바꾸기) ---------- */
 const BGM = {
-  meta: null, raw: {}, buf: {}, order: [], cur: null, want: '',
+  meta: null, raw: {}, rawP: {}, buf: {}, order: [], cur: null, want: '',
+  fetchRaw(id) {
+    if (this.raw[id]) return Promise.resolve(this.raw[id]);
+    return this.rawP[id] || (this.rawP[id] = fetch(`assets/bgm_${id}.m4a${AV}`).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); })
+      .then(ab => (this.raw[id] = ab), e => { delete this.rawP[id]; throw e; }));
+  },
   async getMeta() {
     if (this.meta) return this.meta;
-    try { const r = await fetch('assets/bgm.json', {cache: 'no-cache'}); this.meta = r.ok ? await r.json() : {}; } catch (e) { this.meta = {}; }
-    return this.meta;
+    try { const r = await fetch('assets/bgm.json' + AV, {cache: 'no-cache'}); if (r.ok) return (this.meta = await r.json()); } catch (e) {}
+    return {};                                      // 실패는 기억하지 않음 (다음에 다시 받기)
   },
   // 압축 파일은 받아 두고, 소리 데이터로 푸는 건 필요할 때 (폰 메모리 아끼기: 풀어 둔 곡은 최대 2개)
   async getBuf(id) {
     if (this.buf[id]) return this.buf[id];
     try {
-      if (!this.raw[id]) { const r = await fetch(`assets/bgm_${id}.m4a${AV}`); if (!r.ok) throw 0; this.raw[id] = await r.arrayBuffer(); }
+      await this.fetchRaw(id);
       const ab = this.raw[id].slice(0);
       const b = await new Promise((res, rej) => { const pr = S.ctx.decodeAudioData(ab, res, rej); if (pr && pr.catch) pr.catch(rej); });
       this.buf[id] = b; this.order = this.order.filter(k => k !== id); this.order.push(id);
@@ -487,7 +492,7 @@ const BGM = {
       return b;
     } catch (e) { return null; }
   },
-  prefetch(ids) { this.getMeta().then(m => ids.map(id => (m[id] && m[id].alias) || id).forEach(id => { if (m[id] && !this.raw[id]) fetch(`assets/bgm_${id}.m4a${AV}`).then(r => r.ok ? r.arrayBuffer() : null).then(ab => { if (ab) this.raw[id] = ab; }).catch(() => {}); })); },
+  prefetch(ids) { this.getMeta().then(m => ids.map(id => (m[id] && m[id].alias) || id).forEach(id => { if (m[id]) this.fetchRaw(id).catch(() => {}); })); },
   async play(id, fade = .8) {
     this.want = id;
     if (!S.ctx) return;
@@ -593,12 +598,13 @@ const RankUI = {
         btn.textContent = '올렸어요';
         return;
       }
-      if (r && r.why === 'slow' && auto === true && run === this.run) {
+      const retry = r && (r.why === 'slow' || r.why === 'busy' || r.why === 'error');
+      if (retry && auto === true && run === this.run) {
         msg.textContent = '잠시 후 자동으로 다시 올려요…'; btn.disabled = false; btn.textContent = '랭킹 올리기';
         setTimeout(() => { if (run === this.run) this.up('retry'); }, 5500);
         return;
       }
-      text = r && r.why === 'slow' ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';
+      text = retry ? '잠깐만요, 몇 초 뒤에 다시 눌러 주세요.' : '이 점수는 랭킹에 올릴 수 없어요.';
     } catch (e) { text = '지금은 연결이 안 돼요. 잠시 후 다시 눌러 주세요.'; }
     if (run !== this.run) return;
     msg.textContent = text; btn.disabled = false; btn.textContent = '랭킹 올리기';
@@ -716,9 +722,13 @@ function initGraphics() {
     const res = Math.min(TOUCH ? 1.5 : 2, window.devicePixelRatio || 1);
     app = new PIXI.Application({resizeTo: $('#stage'), backgroundColor: 0xBFE6FF, antialias: false, autoDensity: true, resolution: res});
     $('#stage').appendChild(app.view);
-    if (TOUCH) app.ticker.maxFPS = 60;
+    app.ticker.remove(app.render, app);
+    let lastDraw = 0;
+    app.ticker.add(() => { const t = performance.now(); if (t - lastDraw < 10) return; lastDraw = t; app.render(); }, null, PIXI.UPDATE_PRIORITY.LOW);
     const within = (pr, ms) => Promise.race([pr, new Promise(r => setTimeout(() => r(null), ms))]);
-    try { SHEET = await within(fetch('assets/sheet.json', {cache: 'no-cache'}).then(r => r.json()), 4000); } catch (e) { SHEET = null; }
+    const SHEET_DEF = {obstacles: {cell: 384, boxes: [[14, 163, 355, 217], [31, 116, 322, 264], [94, 4, 195, 376], [84, 4, 216, 376], [18, 56, 347, 271], [10, 5, 364, 374], [4, 144, 376, 96], [76, 20, 232, 360]]}, ground: [52, 41, 28]};
+    try { SHEET = await within(fetch('assets/sheet.json' + AV, {cache: 'no-cache'}).then(r => r.json()), 4000); } catch (e) { SHEET = null; }
+    if (!SHEET || !SHEET.obstacles) SHEET = SHEET_DEF;
     const load = u => PIXI.Assets.load(u).catch(() => null);
     const [items, obs, bg1, bg2, bg3, gr1, gr2, gr3] = await Promise.all(['assets/items.webp', 'assets/obstacles.webp', 'assets/bg1.webp', 'assets/bg2.webp', 'assets/bg3.webp', 'assets/ground1.webp', 'assets/ground2.webp', 'assets/ground3.webp'].map(u => u + AV).map(load));
     TEX.items = items || fallbackItems();
@@ -778,6 +788,10 @@ function initGraphics() {
     app.renderer.on('resize', layout);
     layout();
     app.ticker.add(tick);
+    try {
+      app.renderer.textureGC.maxIdle = 60 * 60 * 10;   // 10분 동안 안 써도 그래픽 메모리에서 내리지 않음
+      for (const t of [...TEX.bg, ...TEX.ground, ...TEX.groundFill]) app.renderer.texture.bind(t);
+    } catch (e) {}
   })();
   return texReady;
 }
@@ -835,7 +849,7 @@ function jelly(list, x, y, kind) {
   // 차례가 된 특별한 물건(물약·글자·아이템)을 젤리 자리에 대신 놓는다
   if (!kind) {
     if (due.potion && x >= due.potion) { due.potion = 0; return put(list, {k: 'i', t: 'potion', x, y: y - 8, r: 42}); }
-    if (due.letter && x >= due.letter && y < -100) { due.letter = 0; return put(list, {k: 'i', t: 'letter', n: letterN, x, y, r: 42}); }
+    if (due.letter && x >= due.letter && y < -100 && letterN < 5 && bonusT <= 0) { due.letter = 0; return put(list, {k: 'i', t: 'letter', n: letterN, x, y, r: 42}); }
     if (due.item && x >= due.item) { due.item = 0; return put(list, {k: 'i', t: ['magnet', 'boost', 'giant'][Math.floor(Math.random() * 3)], x, y: y - 8, r: 44}); }
   }
   return put(list, {k: 'j', t: kind || 'jelly', x, y, r: kind === 'bear' ? 40 : kind === 'coin' || kind === 'gold' ? 30 : 26, alt: (Math.floor(x / SP) & 1)});
@@ -978,8 +992,12 @@ function newPlayer() { return {x: 0, y: 0, vy: 0, onGround: true, jumps: 0, slid
 
 const FB_SD = {};
 let sdUnit = 1;                                   // 그림 칸 높이 / 320
+let loadedSd = '';
 async function loadChar(c) {
-  const tex = await PIXI.Assets.load(SD_URL(c.key)).catch(() => null);
+  const url = SD_URL(c.key);
+  if (loadedSd && loadedSd !== url) { const old = loadedSd; loadedSd = ''; PIXI.Assets.unload(old).catch(() => {}); }   // 전에 달린 캐릭터 그림판은 내림 (각 약 6MB)
+  const tex = await PIXI.Assets.load(url).catch(() => null);
+  if (tex) loadedSd = url;
   sdTex = tex || FB_SD[c.key] || (FB_SD[c.key] = fallbackSd(c.c1));
   // 그림 판: 4열×3행(달리기 6장) 또는 4열×2행(달리기 4장)
   const cw = sdTex.width / 4, rows = Math.max(2, Math.round(sdTex.height / (cw * 320 / 384))), chh = sdTex.height / rows; sdUnit = chh / 320;
@@ -1018,10 +1036,11 @@ async function startInner() {
   $('#hint').style.opacity = 1; setTimeout(() => { $('#hint').style.opacity = 0; }, 4200);
   // 컷인 그림·글자는 시작할 때 한 번만 (능력 때마다 다시 넣으면 살짝 끊김)
   $('#cutin').style.setProperty('--c1', CH.c1); $('#cutin').style.setProperty('--c2', CH.c2);
-  $('#cutImg').src = PT_URL(CH.key); $('#cutName').textContent = CH.name + ' · ' + CH.dessert; $('#cutAb').textContent = CH.abName;
+  $('#cutImg').src = PT_URL(CH.key); if ($('#cutImg').decode) $('#cutImg').decode().catch(() => {}); $('#cutName').textContent = CH.name + ' · ' + CH.dessert; $('#cutAb').textContent = CH.abName;
   state = 'play'; paused = false; app.start();
   banner('딸기 케이크 언덕 · 1단계');
   BGM.play('stage1', .5); BGM.prefetch(['stage2', 'stage3', 'bonus', 'result']);
+  setTimeout(() => { if (state === 'play' && S.ctx) BGM.getMeta().then(m => { if (m.bonus) BGM.getBuf((m.bonus.alias) || 'bonus'); }); }, 1800);
   save.plays++; persist();
   inputLock = performance.now() + 300;
 }
@@ -1031,7 +1050,7 @@ function resetWorld() {
   for (const e of extra) dropSprite(e.sp);
   grounds = []; ents = []; head = 0; extra = []; genX = 0; lastChunk = ''; repeat = 0; letterN = 0;
   due = {potion: 0, letter: 0, item: 0}; nextPotionX = 4000; nextLetterX = 2600; nextItemX = 7000;
-  P = newPlayer(); P.x = 0; settled = false; jumpBuf = 0;
+  P = newPlayer(); P.x = 0; settled = false; jumpBuf = 0; banked = 0; bestAtStart = save.best;
   stats.hits = stats.falls = 0;
   score = 0; coinsRun = 0; jellies = 0; hp = 100; distU = 0; speed = speedFor(0); shake = 0; overT = 0; endT = 0; camLift = 0;
   abT = 0; abOn = 0; magT = boostT = giantT = starT = coinT = flyT = bonusT = 0; shield = 0; rainT = 0; lastStage = 0;
@@ -1046,16 +1065,16 @@ function resetWorld() {
   L.player.texture = SD.run[0]; L.player.visible = true; P.runF = -1;
   while (genX < viewW * 3) genChunk();
 }
-// 판이 끝나거나 중간에 나가도 최고 기록과 모은 코인은 남긴다 (한 판에 한 번만)
-let settled = true;
-function settleRun() {
+// 판이 끝나거나 중간에 나가도 최고 기록과 모은 코인은 남긴다 (중간 저장은 새로 모은 만큼만 더함)
+let settled = true, banked = 0, bestAtStart = 0;
+function bankRun() {
   if (settled || !P) return;
-  settled = true;
   if (score > save.best) save.best = Math.floor(score);
   const dm = Math.floor(distU / 40); if (dm > save.bestDist) save.bestDist = dm;
-  save.coins = Math.min(9999999, save.coins + coinsRun);
+  save.coins = Math.min(9999999, save.coins + coinsRun - banked); banked = coinsRun;
   persist();
 }
+function settleRun() { if (settled || !P) return; bankRun(); settled = true; }
 function clearPowers() { magT = starT = coinT = boostT = giantT = flyT = bonusT = 0; }
 
 /* ---------- 조작 ---------- */
@@ -1158,7 +1177,7 @@ function physics(dt) {
   if (P.y > 230 && !endT) {
     P.vy = -1850; P.onGround = false; P.jumps = 2; P.rescue = true; P.slide = false;
     if (!(P.invT > 0 || isInvuln())) { damage(15, true); } else S.rescue();
-    P.invT = Math.max(P.invT, 1.1);
+    P.invT = Math.max(P.invT, 1.8);
     L.cloud.visible = true; L.cloud.alpha = 1; L.cloud.cloudT = .9;
     for (let i = 0; i < 10; i++) fx.spawn(TEX.spark, {x: P.x + (Math.random() - .5) * 120, y: P.y, vx: (Math.random() - .5) * 200, vy: -200 - Math.random() * 200, tint: 0xFFE6F6, s0: 1.4, s1: 0, life: .6});
   }
@@ -1229,6 +1248,7 @@ function collect(e) {
     case 'boost': boostT = Math.max(boostT, 3); S.item(); banner('질주!'); break;
     case 'giant': giantT = Math.max(giantT, 4); S.item(); banner('거대화!'); break;
     case 'letter': {
+      if (bonusT > 0) break;
       letterN = Math.min(5, letterN + 1); S.letter(); renderLetters(); burst(e.x, e.y, 0xFFFFFF, 10);
       if (letterN >= 5) { bonusT = 7; startFly(0); flyT = 0; S.bonus(); banner('보너스 타임!'); BGM.play('bonus', .3); }
       break;
@@ -1268,7 +1288,7 @@ function stepTimers(dt) {
   if (endT) { endT += dt; if (endT > 1.4) showResult(); return; }
   const flying = flyT > 0 || bonusT > 0;
   // 체력은 시간이 갈수록 빨리 줄어든다
-  hp -= dt * (1.3 + stageAt(P.x) * .25);
+  if (bonusT <= 0) hp -= dt * (1.3 + stageAt(P.x) * .25);
   if (P.invT > 0) P.invT -= dt;
   if (P.hurtT > 0) P.hurtT -= dt;
   if (P.land > 0) P.land -= dt;
@@ -1302,7 +1322,7 @@ function stepTimers(dt) {
   if (st !== lastStage) { lastStage = st; switchBg(st % 3); banner(['딸기 케이크 언덕', '초코 캐니언', '솜사탕 밤하늘'][st % 3] + ` · ${st + 1}단계`); S.lift = [0, 7, 0][st % 3]; if (bonusT <= 0) BGM.play(stageTrack(st), 1.5); }
   while (genX < P.x + viewW * 2.5) { scheduleDue(); genChunk(); }
   if (hp <= 0 && !endT) {
-    hp = 0; endT = .001; P.hurtT = 9; S.over(); banner('체력이 다 됐어요!'); BGM.stop(.8); S.stopMusic();
+    hp = 0; endT = .001; P.hurtT = 9; S.over(); banner('체력이 다 됐어요!'); BGM.want = ''; BGM.stop(.8); S.stopMusic();
     clearPowers();
   }
 }
@@ -1442,8 +1462,15 @@ function drawPlayer(dt, now) {
   else if (running) { sxk = 1 + .035 * sq; syk = 1 - .035 * sq; }   // 낮은 자세는 살짝 눌리고, 공중 자세는 살짝 늘어남
   sp.scale.set(sc * sxk, sc * syk);
   let y = P.y - bob * P.k;
-  if (P.jumps >= 2 && P.spin > 0 && !P.onGround) { P.spin = Math.max(0, P.spin - dt * 2.4); sp.rotation = (1 - P.spin) * Math.PI * 2; }
-  else sp.rotation = flying ? Math.sin(now / 300) * .06 : running ? .06 + .02 * sq : 0;   // 달릴 때는 앞으로 살짝 기울임
+  const spinning = P.jumps >= 2 && P.spin > 0 && !P.onGround;
+  if (spinning) {
+    P.spin = Math.max(0, P.spin - dt * 2.4); sp.rotation = (1 - P.spin) * Math.PI * 2;
+    if (sp.anchor.y !== .62) sp.anchor.set(.5, .62);
+    y -= (300 / 320 - .62) * 320 * sdUnit * sc * syk;       // 축을 옮긴 만큼 위치 보정 (발은 같은 자리)
+  } else {
+    if (sp.anchor.y !== 300 / 320) sp.anchor.set(.5, 300 / 320);
+    sp.rotation = flying ? Math.sin(now / 300) * .06 : running ? .06 + .02 * sq : 0;   // 달릴 때는 앞으로 살짝 기울임
+  }
   if (flying) y += Math.sin(now / 260) * 6;
   sp.position.set(P.x, y);
   sp.alpha = P.invT > 0 && !isInvuln() && P.hurtT <= 0 ? (Math.floor(now / 70) % 2 ? .35 : 1) : 1;
@@ -1512,7 +1539,7 @@ function banner(text) {
 function showResult() {
   if (state !== 'play') return;
   state = 'over'; overT = 0;
-  const earned = coinsRun, dm = Math.floor(distU / 40), isBest = score > save.best && score > 0;
+  const earned = coinsRun, dm = Math.floor(distU / 40), isBest = score > bestAtStart && score > 0;
   settleRun(); clearPowers();
   const myResult = ++resultSeq;
   setTimeout(() => { if (state === 'over' && myResult === resultSeq) BGM.play('result', 1.2); }, 400);
@@ -1557,11 +1584,13 @@ function renderTitle() {
 function pauseGame() {
   if (state !== 'play' || paused || endT) return;
   paused = true; jumpHeld = false; setSlide(false); $('#pause').hidden = false;
+  if (S.bgm && S.ctx) S.bgm.gain.setTargetAtTime(.18, S.ctx.currentTime, .1);
   setTimeout(() => { if (paused && app) app.stop(); }, 120);
 }
 function resumeGame() {
   if (!paused) return;
   paused = false; $('#pause').hidden = true; S.init();
+  if (S.bgm && S.ctx) S.bgm.gain.setTargetAtTime(.62, S.ctx.currentTime, .15);
   if (app) app.start();
   inputLock = performance.now() + 250;
 }
@@ -1569,6 +1598,7 @@ function resumeGame() {
 /* ---------- 캐릭터 고르기 ---------- */
 let selIdx = 0;
 function openSel() {
+  startSeq++;
   selIdx = Math.max(0, CHARS.findIndex(c => c.key === save.sel));
   $('#title').hidden = true; $('#result').hidden = true; $('#sel').hidden = false;
   const th = $('#thumbs'); th.innerHTML = '';
@@ -1634,6 +1664,7 @@ stageEl.addEventListener('pointerdown', e => {
 });
 function release(e) {
   const side = touches.get(e.pointerId); if (!side) return;
+  S.init();                                        // 전화 등으로 소리가 끊긴 뒤 다시 켜기 (손가락 뗄 때만 허락됨)
   touches.delete(e.pointerId);
   const still = [...touches.values()];
   if (side === 'j') jumpHeld = still.includes('j');
@@ -1675,7 +1706,8 @@ $('#selNext').addEventListener('click', e => { e.stopPropagation(); selIdx = (se
 $('#selGo').addEventListener('click', selGo);
 $('#btnRankUp').addEventListener('click', () => RankUI.up(false));
 $('#rankName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); RankUI.up(false); } });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseGame(); if (S.ctx) S.ctx.suspend().catch(() => {}); } else if (S.ctx && !paused) S.init(); });
+window.addEventListener('pagehide', bankRun);
+document.addEventListener('visibilitychange', () => { if (document.hidden) { bankRun(); pauseGame(); if (S.ctx) S.ctx.suspend().catch(() => {}); } else if (S.ctx && !paused) S.init(); });
 window.addEventListener('blur', () => { touches.clear(); jumpHeld = false; setSlide(false); padOn(); pauseGame(); });
 
 // 랭킹: 시트가 이 게임을 받을 준비가 됐을 때만 '랭킹에 올리기'를 보여 준다
@@ -1685,10 +1717,13 @@ function checkRank() {
 }
 if (RankNet.on) checkRank();
 
-document.addEventListener('pointerdown', function firstTouch() {
-  document.removeEventListener('pointerdown', firstTouch, true);
-  S.init(); if (state === 'title') BGM.play('title', 1.2);
-}, true);
+const UNLOCK = ['pointerup', 'touchend', 'click', 'keydown'];
+function unlockAudio() {
+  S.init();
+  if (state === 'title' && BGM.want !== 'title') BGM.play('title', 1.2);
+  if (S.ctx && S.ctx.state === 'running') UNLOCK.forEach(t => document.removeEventListener(t, unlockAudio, true));
+}
+UNLOCK.forEach(t => document.addEventListener(t, unlockAudio, true));
 // PC에서는 키보드 안내를 같이
 if (!TOUCH) { $('#padJump span').textContent = '점프 · Space'; $('#padSlide span').textContent = '슬라이드 · ↓'; $('#hint').innerHTML = '<b>Space</b>(또는 ↑) 점프 · 한 번 더 누르면 2단 점프<br><b>↓</b> 누르고 있으면 슬라이드 · 화면 왼쪽/오른쪽 클릭도 돼요'; }
 renderTitle();

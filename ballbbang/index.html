@@ -213,6 +213,10 @@ body.wide .side{display:grid;gap:12px}
 .chip{padding:7px 10px;border-radius:999px;background:#F7F2FA;box-shadow:inset 0 0 0 1px #E5D8EE;font:700 12px/1 var(--f-kr);color:var(--ink)}
 .chip.on{background:var(--pink);color:#fff;box-shadow:none}
 .chip.lock{opacity:.4}
+.fdex{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px}
+.fdex i{display:block;width:44px;height:44px;margin:0 auto;border-radius:50%}
+.fdex .no i{filter:grayscale(1) opacity(.35)}
+.fdex span{display:block;margin-top:3px;font:600 9.5px/1.2 var(--f-kr);color:var(--ink2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dex{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px}
 .dex i{display:block;aspect-ratio:64/42;border-radius:10px;background:#2A1A3A no-repeat;background-size:200% 200%}
 .dex .no i{filter:brightness(0) opacity(.35)}
@@ -406,6 +410,7 @@ body.wide .side{display:grid;gap:12px}
     <div class="ach-sec"><b>이번 주 랭킹</b><small id="wkInfo">월요일마다 새로 시작 · 1~3등은 다음 주에 '주간 ○등' 칭호</small><div id="wkList" class="wk"></div></div>
     <div class="ach-sec"><b>칭호</b><small>고른 칭호가 랭킹에 이름과 같이 나와요</small><div id="titleList" class="chips"></div></div>
     <div class="ach-sec"><b>업적 <em id="achCount"></em></b><div id="achList" class="mlist"></div></div>
+    <div class="ach-sec"><b>합체 도감 <em id="fuCount"></em></b><small>만든 합체 공은 색이 들어와요 · 전용 합체는 그 캐릭터로만</small><div id="fuGrid" class="fdex"></div></div>
     <div class="ach-sec"><b>보스 도감 <em id="dexCount"></em></b><div id="dexGrid" class="dex"></div></div>
     <div class="ach-sec"><b>기록 옮기기</b><small>폰을 바꾸거나 브라우저 기록을 지우기 전에 코드를 복사해 두세요. 카톡 '나에게 보내기'에 붙여 두면 편해요.</small>
       <div class="row"><button class="btn soft" id="btnExport" type="button">내 기록 코드 복사</button><button class="btn soft" id="btnImport" type="button">코드 불러오기</button></div>
@@ -2858,6 +2863,8 @@ function openAch() {
   const allTxt = `${six.length - left.length} / 6${left.length ? ' · 남은 캐릭터: ' + left.map(k => `${byKey(k).name}(${save.rec.cbest[k] ? '최고 ' + save.rec.cbest[k] : '아직'})`).join(' · ') : ''}`;
   const fuLeft = FUSIONS.filter(f => !(save.rec.fu || {})[f]).map(f => BALLS[f].name);
   ACH.forEach(a => { const cur = statOf(a.stat); al.appendChild(mrow(a.name + (a.title ? ' · 칭호' : ''), a.stat === 'allChar5' ? `${a.desc} · ${allTxt}` : a.stat === 'fuN' && fuLeft.length && fuLeft.length <= 4 ? `${a.desc} · ${fmt(Math.min(cur, a.n))} / ${fmt(a.n)} · 남은 것: ${fuLeft.join(' · ')}` : `${a.desc} · ${fmt(Math.min(cur, a.n))} / ${fmt(a.n)}`, a.stat === 'allChar5' && cur < 1 ? (6 - left.length) / 6 : cur / a.n, `+${fmt(a.coin)}`, save.ach.includes(a.id))); });
+  { const fg = $('#fuGrid'), got = save.rec.fu || {}; fg.innerHTML = ''; $('#fuCount').textContent = `${FUSIONS.filter(f => got[f]).length} / ${FUSIONS.length}`;   // 합체 도감 (2026-10-10)
+    FUSIONS.forEach(f => { const d = document.createElement('div'), ic = document.createElement('i'), sp = document.createElement('span'), sg = BALLS[f].sig; if (!got[f]) d.className = 'no'; ballIco(ic, f); sp.textContent = got[f] ? BALLS[f].name : sg ? `${byKey(sg).name} 전용` : '???'; d.append(ic, sp); fg.appendChild(d); }); }
   const dg = $('#dexGrid'); dg.innerHTML = ''; $('#dexCount').textContent = `${popc(save.dex)} / ${BOSS_NAMES.length}`;
   BOSS_NAMES.forEach((nm, i) => {
     const d = document.createElement('div'), got = save.dex & (1 << i), j = i & 3;

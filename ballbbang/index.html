@@ -2786,7 +2786,7 @@ function renderTitle() {
   const d = kstDate(), dc = dailyChar(d);
   $('#dailyFace').style.backgroundImage = `url(${PT_URL(dc.key)})`;
   const lead = rankTop && rankTop['bbd' + d] && rankTop['bbd' + d][0];
-  $('#dailyInfo').textContent = `${String(d).slice(4, 6)}월 ${String(d).slice(6)}일 · 오늘의 캐릭터 ${dc.name}${save.owned.includes(dc.key) ? ' ✨보통 판도 보너스' : ''}` +
+  $('#dailyInfo').textContent = `오늘의 캐릭터 ${dc.name}${save.owned.includes(dc.key) ? ' ✨보통 판도 보너스' : ''} · ${String(d).slice(4, 6)}월 ${String(d).slice(6)}일` +   // 작은 폰에서 잘려도 캐릭터 이름이 먼저 보이게
     (lead ? ` · 1위 ${lead.name} ${fmt(lead.score)}` : '') + (save.daily.d === String(d) && save.daily.best ? ` · 내 최고 ${fmt(save.daily.best)}` : '');
   soundLabels();
   $('#sideBest').textContent = fmt(save.best); $('#sideClears').textContent = save.clears; $('#sideTop').textContent = save.top || '-';
@@ -2810,7 +2810,7 @@ function renderStage() {
   $('#stName').textContent = `스테이지 ${st} · ${stageName(st)}`;
   const sw = worldOf(st);
   $('#stInfo').textContent = (sw.name ? `${sw.ico} ${sw.name} · ` : '') + (st > 1 ? `레벨 ${CP_LV(st)}까지 자동 성장해서 시작 · 점수는 여기서부터` : many ? '처음부터 차근차근 · 점수를 가장 많이 모을 수 있어요' : '쓰러질 때까지! 멀리 가면 다음엔 거기서 시작할 수 있어요');
-  $('#btnStart').firstElementChild.textContent = st > 1 ? `스테이지 ${st}부터 시작` : many ? '처음부터 시작' : '게임 시작';
+  $('#btnStart').firstElementChild.textContent = (save.sel === dailyChar(kstDate()).key ? '✨ ' : '') + (st > 1 ? `스테이지 ${st}부터 시작` : many ? '처음부터 시작' : '게임 시작');   // ✨ = 오늘의 캐릭터 보너스
   $('#stagePick').style.backgroundImage = `url(assets/${themeOf(st).bg}.webp${AV})`;
   BGM.prefetch([themeOf(st).bgm || 'battle']);
   if (save.st !== st) { save.st = st; persist(); }

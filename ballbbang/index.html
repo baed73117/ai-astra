@@ -402,7 +402,7 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="ach" hidden>
   <div class="card"><span class="tag">REWARDS</span><h2 class="c-title">업적 · 도감</h2>
     <div class="ach-sec"><b>오늘의 미션</b><small id="dmInfo"></small><div id="dmList" class="mlist"></div></div>
-    <div class="ach-sec"><b>캐릭터별 1등</b><small>판이 끝나면 그 캐릭터 랭킹에도 올라가요</small><div id="chList" class="wk"></div></div>
+    <div class="ach-sec"><b>캐릭터별 1등</b><small>랭킹 시즌 2 (10월 10일 새로 시작) · 판이 끝나면 그 캐릭터 랭킹에도 올라가요</small><div id="chList" class="wk"></div></div>
     <div class="ach-sec"><b>이번 주 랭킹</b><small id="wkInfo">월요일마다 새로 시작 · 1~3등은 다음 주에 '주간 ○등' 칭호</small><div id="wkList" class="wk"></div></div>
     <div class="ach-sec"><b>칭호</b><small>고른 칭호가 랭킹에 이름과 같이 나와요</small><div id="titleList" class="chips"></div></div>
     <div class="ach-sec"><b>업적 <em id="achCount"></em></b><div id="achList" class="mlist"></div></div>
@@ -2969,7 +2969,7 @@ const RankUI = {
     box.hidden = !RankNet.on || !(score > 0); if (box.hidden) return;
     Object.assign(this, {game, score: Math.floor(score), info, meta: meta || null});
     const btn = $('#btnRankUp'); $('#rankName').value = RankNet.name; btn.disabled = false; btn.textContent = '랭킹 올리기';
-    $('#rankMsg').textContent = RankNet.name ? '1·2·3등은 홈페이지에 이름이 나와요' : '카톡방 닉네임을 적고 올려 주세요 · 1·2·3등은 홈페이지에 나와요';
+    $('#rankMsg').textContent = RankNet.name ? '🏆 랭킹 시즌 2 (10월 10일 새로 시작) · 1·2·3등은 홈페이지에 이름이 나와요' : '카톡방 닉네임을 적고 올려 주세요 · 랭킹 시즌 2 · 1·2·3등은 홈페이지에 나와요';
     if (RankNet.name && this.score > RankNet.sent(game)) this.up(true);
   },
   async up(auto) {

@@ -422,7 +422,8 @@ body.wide .side{display:grid;gap:12px}
       <li class="nw"><i>⬆️</i><div><b>강화 상점 확장</b>단계가 늘고 기본 치명타 · 특기 위력 · 코인 획득 강화가 새로 생겼어요</div></li>
       <li class="nw"><i>✨</i><div><b>오늘의 캐릭터 보너스</b>오늘의 도전 캐릭터로 보통 판을 하면 코인 +30% · 숙련도 +50%</div></li>
       <li class="nw"><i>🏆</i><div><b>랭킹 새 시즌</b>볼빵 랭킹을 새로 시작해요 · 속도를 조작한 판은 올라가지 않아요</div></li>
-      <li><i>💪</i><div><b>캐릭터 상향</b>루비 · 리코 · 유키 · 소라 · 미라이 공과 특기가 더 세졌어요</div></li>
+      <li><i>💪</i><div><b>캐릭터 상향</b>루비 불이 옮겨붙어요 · 리코 낙뢰가 블록을 밀어내요 · 미라이 슈퍼스타 동안 블록이 느려져요 · 카린 강철 방패 · 유키 · 소라도 더 세졌어요</div></li>
+      <li><i>🛠️</i><div><b>고친 것</b>보호막 · 수호 강화가 바닥 공격을 못 막던 문제 · 유키 · 미라이 특기 안내 글</div></li>
       <li><i>🎃</i><div><b>할로윈 이벤트 10월 17일부터</b>호박 블록·사탕 모으기 · 한정 의상</div></li>
       <li><i>💾</i><div><b>저장하고 나가기 · 앱으로 설치</b>일시정지에서 저장 · 첫 화면 📲 버튼</div></li>
     </ul>
@@ -524,13 +525,13 @@ const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
 /* ---------- 캐릭터 · 공 · 강화 ---------- */
 const CHARS = [
-  {key: 'ruby', name: '루비', en: 'FIRE · RUBY', ball: 'fire', c1: '#FF4F5E', c2: '#FFA24F', price: 0, skill: '플레어 버스트', desc: '장난꾸러기 불꽃 소녀. 특기: 블록 10개에 불꽃 폭격 + 화상', line: '다 태워 버릴 거야~!'},
+  {key: 'ruby', name: '루비', en: 'FIRE · RUBY', ball: 'fire', c1: '#FF4F5E', c2: '#FFA24F', price: 0, skill: '플레어 버스트', desc: '장난꾸러기 불꽃 소녀. 특기: 바닥에 가까운 블록 12개와 보스에 불꽃 폭격 + 모든 블록에 화상 · 불타던 블록이 부서지면 옆으로 불이 옮겨붙어요', line: '다 태워 버릴 거야~!'},
   {key: 'yuki', name: '유키', en: 'ICE · YUKI', ball: 'ice', c1: '#7FB8FF', c2: '#C9A8FF', price: 250, skill: '다이아몬드 더스트', desc: '시크한 얼음 소녀. 특기: 6.5초 동안 블록이 얼어 멈추고 얼음 피해, 받는 피해 +40%', line: '…얼어붙어.'},
-  {key: 'riko', name: '리코', en: 'BOLT · RIKO', ball: 'bolt', c1: '#2A2A3A', c2: '#9BFF4F', price: 500, skill: '기가 볼트', desc: '에너지 폭발 게이머 소녀. 특기: 가장 아래 3줄에 번개 낙뢰', line: '찌릿찌릿 간다~!'},
+  {key: 'riko', name: '리코', en: 'BOLT · RIKO', ball: 'bolt', c1: '#2A2A3A', c2: '#9BFF4F', price: 500, skill: '기가 볼트', desc: '에너지 폭발 게이머 소녀. 특기: 가장 아래 3줄에 번개 낙뢰 + 충격으로 블록이 한 줄 밀려나요', line: '찌릿찌릿 간다~!'},
   {key: 'sora', name: '소라', en: 'WIND · SORA', ball: 'wind', c1: '#2FC8B8', c2: '#7FC8FF', price: 800, skill: '하늘 회오리', desc: '하늘을 나는 바람 소녀. 특기: 회오리로 모든 블록을 2줄 위로 날려 보내요', line: '바람 타고 간다~!'},
   {key: 'nene', name: '네네', en: 'POISON · NENE', ball: 'poison', c1: '#5A2E9A', c2: '#B57CFF', price: 0, unlock: {stat: 'bosses', n: 30, text: '보스 30마리를 잡으면 합류'}, skill: '독안개', desc: '졸린 눈의 독 마녀. 특기: 판 위 모든 블록에 진한 독을 뿌려요', line: '후후… 천천히 녹아내려.'},
-  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 12초 동안 피버 + 체력 회복 + 모든 공이 커지고 더 세져요', line: '무대 시작이야~ 반짝!'},
-  {key: 'karin', name: '카린', en: 'STEEL · KARIN', ball: 'iron', c1: '#4A5A80', c2: '#FF6F5E', price: 0, unlock: {stat: 'top', n: 15, text: '스테이지 15에 가면 합류'}, skill: '메테오 해머', desc: '씩씩한 강철 기사 소녀. 특기: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리쳐요', line: '정의의 철퇴~! 받아랏!'},
+  {key: 'mirai', name: '미라이', en: 'STAR · MIRAI', ball: 'star', c1: '#FF5FA8', c2: '#FFC24A', price: 0, unlock: {stat: 'top', n: 10, text: '스테이지 10에 가면 합류'}, skill: '슈퍼스타', desc: '반짝반짝 아이돌. 특기: 12초 동안 피버 + 체력 회복 + 모든 공이 커지고 세지며 블록이 천천히 내려와요', line: '무대 시작이야~ 반짝!'},
+  {key: 'karin', name: '카린', en: 'STEEL · KARIN', ball: 'iron', c1: '#4A5A80', c2: '#FF6F5E', price: 0, unlock: {stat: 'top', n: 15, text: '스테이지 15에 가면 합류'}, skill: '메테오 해머', desc: '씩씩한 강철 기사 소녀. 특기: 거대한 쇠공이 떨어져 보스(없으면 가장 단단한 블록)를 내리치고, 땅울림으로 가장 아래 3줄에도 피해 + 8초 동안 바닥 공격 3번을 막는 강철 방패', line: '정의의 철퇴~! 받아랏!'},
 ];
 const WIN_LINE = {karin: '강철은 꺾이지 않아! 승리다!', ruby: '봤지? 내 불꽃이 최고야~!', yuki: '…당연한 결과야. 고마워.', riko: '클리어! 하이스코어 갱신 가즈아~!', sora: '바람처럼 날아올랐지? 최고야!', nene: '후후… 독은 천천히 퍼지는 법이야.', mirai: '오늘의 센터는 나야~ 반짝!'};
 const GOOD_LINE = {karin: '조금만 더 버텼으면! 다시 돌격!', ruby: '아깝다! 다음엔 보스까지 태워 버리자!', yuki: '꽤 잘했어. 다음엔 끝까지 가자.', riko: '거의 다 왔는데! 한 판 더?', sora: '조금만 더 날면 됐는데! 다시 가자!', nene: '음… 다음엔 더 진하게 끓여 볼게.', mirai: '앵콜 무대 한 번 더 할래?'};
@@ -1351,7 +1352,7 @@ function newRun(opts) {
     feat: !daily && !opts.rush && ch.key === dailyChar(kstDate()).key,   // 오늘의 캐릭터 보너스 (판 시작 날짜 기준)
     hw: !daily && !opts.rush && hwState() === 'on', candy: 0,   // 할로윈 이벤트 판 (오늘의 도전은 공정하게 빼고)
     rerolls: 1 + shop.reroll, kinds: {[ch.ball]: 1, basic: 1}, extraBasic: 3 + shop.start + mb.balls, fusions: [], mPow: mb.pow,
-    upg: {}, skillT: 0, skillCd: 22 * mb.cd * (ch.key === 'karin' ? 1.1 : 1),   // 카린 메테오 해머는 대기 10% 길게 frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,
+    upg: {}, skillT: 0, skillCd: 22 * mb.cd * (ch.key === 'karin' ? 1.1 : 1), frozenT: 0, shieldT: 0, boss: null, won: false, ended: false,   // 카린 메테오 해머는 대기 10% 길게 (2026-10-10 고침: 이 주석이 뒤 값들을 가려서 보호막·수호가 작동 안 했음)
     tk: '', gt: 0, wall: 0, fast: false,   // 배속 막기: 시트 시간표 · 이 판에서 흐른 게임 시간 · 실제 시간 · 배속 표시
     hitCount: 0, pendingLv: 0, minK: 0, bossN: 0, maxCombo: 0, chestN: 0, dexRun: 0, leg: {}, pendingChest: 0, revived: false, starT: 0,
   };
@@ -1373,7 +1374,7 @@ const critChance = () => .05 + .08 * U('crit') + .03 * U('luck') + (run.critMeta
 const isFinal = () => !!(run.boss && run.boss.boss.final);
 const descendSpeed = () => {
   // 화면 길이가 달라도 바닥까지 걸리는 시간은 같게 (세로 길이에 비례)
-  const base = (17 + Math.min(run.t, SPD_T) * .025 + Math.max(0, run.t - SPD_T) * SPD_LATE) * (1 - .08 * U('slow')) * (hasRule('sea') ? .85 : 1) * (hasRule('sand') ? 1.15 : 1);
+  const base = (17 + Math.min(run.t, SPD_T) * .025 + Math.max(0, run.t - SPD_T) * SPD_LATE) * (1 - .08 * U('slow')) * (hasRule('sea') ? .85 : 1) * (hasRule('sand') ? 1.15 : 1) * (run.starT > 0 ? .6 : 1);   // 미라이 슈퍼스타 동안 천천히 (2026-10-10)
   if (run.frozenT > 0) return 0;
   if (isFinal()) return 5.5;
   if (run.calmT > 0) return base * .35;      // 보스를 잡은 뒤 잠깐 숨 돌리기
@@ -1790,6 +1791,7 @@ function killBlock(blk) {
   if ([10, 25].includes(run.combo)) S.milestone();
   if (run.combo % 50 === 0) { run.fever = 6; S.fever(); banner(`${run.combo} COMBO · FEVER!`, false); }
   if (!blk.boss) addScore(KILL_PTS * (blk.big ? 3 : 1) * (1 + Math.min(run.combo, 50) * .01));   // 보스 점수는 bossDown에서
+  if (run.char === 'ruby' && !blk.boss && blk.burnT > 0 && blk.burn > 0) { const bd = blk.burn * .45; for (const o of neighbors(blk, 60)) if (!o.dead && !o.boss) burn(o, bd, 3); }   // 루비: 불타던 블록이 부서지면 옆 블록에 불이 옮겨붙음 (2026-10-10)
   addXp(blk.boss ? (blk.boss.final ? 40 : 25) : (bt.xp || 1) * (blk.big ? 3 : 1) * xpTime());   // 뒤로 갈수록 블록이 단단해지니 경험치도 늘림 (상한 있음)
   if (bt.coin) run.coinBonus = (run.coinBonus || 0) + bt.coin;
   if (bt.candy && run.hw) hwCandy(bt.candy, x, y);
@@ -1915,6 +1917,7 @@ function stepWorld(dt) {
   }
   if (run.frozenT > 0) run.frozenT -= dt;
   if (run.shieldT > 0) run.shieldT -= dt;
+  if (run.kGuardT > 0) { run.kGuardT -= dt; if (run.kGuardT <= 0) run.kGuard = 0; }   // 카린 강철 방패
   if (run.calmT > 0) run.calmT -= dt;
   for (const r of rulesOf()) if (RULE_T[r]) {
     const rt = run.rt || (run.rt = {}); rt[r] = (rt[r] ?? RULE_T[r]) - dt;
@@ -1992,6 +1995,7 @@ function bossMinions(b) {
   }
 }
 function hurt(d, x, force) {
+  if (!force && run.kGuard > 0 && run.kGuardT > 0) { run.kGuard--; fx.spawn(TEX.ring, {x, y: DANGER_Y, tint: 0xBFD4FF, s0: .5, s1: 2.6, a0: 1, a1: 0, life: .35}); return; }   // 카린 강철 방패
   if (!force && (U('shield') || LG('guard')) && run.shieldT <= 0) { run.shieldT = LG('guard') ? 15 : 30; banner('보호막!', true); fx.spawn(TEX.ring, {x, y: DANGER_Y, tint: 0x9FF7FF, s0: .5, s1: 3, a0: 1, a1: 0, life: .4}); return; }
   run.hp -= d;
   shake = 12; hurtT = .5; flashRed();
@@ -2235,15 +2239,18 @@ function useSkill() {
   S.skill();
   const live = [...blocks].filter(b => !b.dead);
   if (ch.key === 'ruby') {
-    const pick = live.sort(() => Math.random() - .5).slice(0, 10);
+    const low = live.filter(b => !b.boss).sort((a, b) => blockRect(b).y - blockRect(a).y).slice(0, 12), bs = live.filter(b => b.boss);   // 2026-10-10: 아무 10개 → 바닥에 가까운 12개 + 보스 (봇: 루비만 후반 떼 블록에 밀림)
+    const pick = low.concat(bs);
+    { const bw = .2 * powRef() * skillPow(); live.forEach(b => { if (!b.boss) burn(b, bw, 4); }); }   // 판 위 모든 블록에 약한 화상 → 부서지면 불이 옮겨붙음
     pick.forEach((b, i) => later(i * .06, () => { if (b.dead) return; const R = blockRect(b); explodeFx(R.x + R.w / 2, R.y + R.h / 2, 0xFF7A3D); damage(b, 7.5 * powRef() * skillPow(), true, 'fire'); burn(b, .8 * powRef() * skillPow(), 4); }));   // 특기 위력은 캐릭터 힘(powRef)에 맞춰 커짐
   } else if (ch.key === 'yuki') {
-    run.frozenT = 6.5; const r = run;   // 2026-10-09 밸런스: 5 → 6.5초 setTimeout(() => { if (run === r && state === 'play') banner('모든 블록이 얼어붙었다!', true); }, 1250);   // 컷인이 지나간 뒤에
+    run.frozenT = 6.5; const r = run; setTimeout(() => { if (run === r && state === 'play') banner('모든 블록이 얼어붙었다!', true); }, 1250);   // 2026-10-09 밸런스: 5 → 6.5초 · 안내는 컷인이 지나간 뒤에 (2026-10-10 고침: 주석에 가려 안 나왔음)
     const yd = powRef() * skillPow();   // 2026-10-09 밸런스: 얼리면서 피해도 (보스는 두 배) — 유키가 보스를 오래 못 잡던 문제
     live.forEach((b, i) => { freeze(b, 6.5); later(.3 + i * .008, () => { if (!b.dead) damage(b, (b.boss ? 3 : 1.5) * yd, false, 'ice'); }); });
   } else if (ch.key === 'riko') {
     const rows = [...new Set(live.map(b => b.k))].sort((a, b) => a - b).slice(0, 3);
     live.filter(b => rows.includes(b.k)).forEach((b, i) => later(i * .025, () => { if (b.dead) return; const R = blockRect(b); zapLine(R.x + R.w / 2, R.y - 300, R.x + R.w / 2, R.y + R.h / 2, 0xF2FF6F); damage(b, 7.5 * powRef() * skillPow(), true, 'bolt'); }));
+    if (!run.boss) run.scroll -= CELL;   // 2026-10-10: 낙뢰 충격으로 한 줄 밀려남 (후반 떼 블록 버티기)
     S.zap();
   } else if (ch.key === 'sora') {
     if (!run.boss) run.scroll -= CELL * 2;   // 회오리: 모든 블록을 2줄 위로 날려 보냄 + 바람 피해 (보스가 있으면 밀지 않고 피해 2배 — 보스가 화면 밖으로 밀리지 않게)
@@ -2264,12 +2271,15 @@ function useSkill() {
         if (!tgt.dead) damage(tgt, (tgt.boss ? 34 : 22) * P, true, 'iron');   // 봇 기준으로 다른 캐릭터와 비슷하게 맞춤 (쇠 공 자체가 세서)
         explodeFx(x, y, 0xD8E4FF); fx.spawn(TEX.ring, {x, y, tint: 0xBFD4FF, s0: .5, s1: 4.2, a0: 1, a1: 0, life: .45, add: true});
         for (const b of [...blocks]) if (!b.dead && !b.boss) { const Q = blockRect(b), dx = Q.x + Q.w / 2 - x, dy = Q.y + Q.h / 2 - y; if (dx * dx + dy * dy < (CELL * 2.6) ** 2) damage(b, 5 * P, false, 'iron'); }
+        { const rows2 = [...new Set([...blocks].filter(b => !b.dead && !b.boss).map(b => b.k))].sort((a, b) => a - b).slice(0, 3);   // 땅울림: 가장 아래 3줄 (2026-10-10)
+          for (const b of [...blocks]) if (!b.dead && !b.boss && rows2.includes(b.k)) damage(b, 10 * P, false, 'iron'); }
+        run.kGuard = 3; run.kGuardT = 8;   // 강철 방패: 8초 동안 바닥 공격 3번 막음 (봇: 카린만 후반에 못 버팀)
         shake = Math.min(16, shake + 12); S.boom();
       });
     }
     setTimeout(() => banner('메테오 해머!', true), 1250);
   } else {
-    run.fever = Math.max(run.fever || 0, 12); run.starT = 12; run.hp = Math.min(run.hpMax, run.hp + run.hpMax * .25); S.fever();   /* 2026-10-10: 회복 15→25% (봇: 미라이만 버티는 힘이 모자람) */   // 2026-10-09 밸런스: 8 → 12초 + 체력 15% 회복 (미라이가 일찍 쓰러져서) setTimeout(() => banner('슈퍼스타! 공이 커지고 세져요', false), 1250);
+    run.fever = Math.max(run.fever || 0, 12); run.starT = 12; run.hp = Math.min(run.hpMax, run.hp + run.hpMax * .25); S.fever(); setTimeout(() => banner('슈퍼스타! 공이 커지고 세져요', false), 1250);   // 2026-10-09: 8 → 12초 + 회복 · 2026-10-10: 회복 15→25% (봇: 미라이만 버티는 힘이 모자람) · 안내가 주석에 가려 안 나오던 것 고침
   }
 }
 

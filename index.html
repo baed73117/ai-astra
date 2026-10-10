@@ -99,6 +99,11 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .game p{margin:0;color:var(--soft);font-size:14px;line-height:1.6}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .meta span{font-size:12px;font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);color:#D7DBF5}
+.meta .live{display:inline-flex;align-items:center;gap:6px;background:rgba(46,200,120,.14);color:#8FF5BC;box-shadow:inset 0 0 0 1px rgba(124,240,174,.35)}
+.meta .live[hidden]{display:none}
+.meta .live i{width:8px;height:8px;border-radius:50%;background:#3EE08A;animation:livepulse 1.6s infinite}
+@keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(62,224,138,.6)}70%{box-shadow:0 0 0 7px rgba(62,224,138,0)}100%{box-shadow:0 0 0 0 rgba(62,224,138,0)}}
+@media (prefers-reduced-motion: reduce){.meta .live i{animation:none}}
 .play{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between}
 .play b{font:800 italic 20px var(--f-num);letter-spacing:.14em}
 .play i{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 6px 18px var(--glow);transition:transform .2s}
@@ -208,7 +213,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
             <span class="genre">Brick Breaker</span>
             <h3>볼빵! 아스트라</h3>
             <p>애니 소녀 7명이 마법 공을 쏴서 내려오는 몬스터 블록을 부수는 벽돌깨기. 레벨업마다 공을 고르고 캐릭터마다 다른 전용 합체로 보스를 잡고, 시간제한 없이 몇 스테이지까지 갈 수 있나 도전! 한 캐릭터를 키우면 유카타 의상까지.</p>
-            <div class="meta"><span>무한 스테이지</span><span>캐릭터 7명</span><span>주간 랭킹</span><span>오늘의 도전</span><span>폰·PC</span></div>
+            <div class="meta"><span class="live" id="bbLive" hidden><i></i>지금 <b>0</b>명 플레이 중</span><span>무한 스테이지</span><span>캐릭터 7명</span><span>주간 랭킹</span><span>오늘의 도전</span><span>폰·PC</span></div>
             <ol class="podium" data-game="ballbbang" data-wait aria-label="볼빵! 아스트라 랭킹 1·2·3등" hidden></ol>
             <div class="play"><b>PLAY</b><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i></div>
           </div>
@@ -402,6 +407,20 @@ document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click
   try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
   catch (e) { prompt('아래 링크를 복사하세요', data.url); }
 }));
+})();
+</script>
+<script>
+// 볼빵: 지금 플레이 중인 사람 수 (채팅 서버 · 게임이 1분마다 보내는 신호를 셈 · 0명이면 숨김)
+(() => {
+  const CHAT_URL = 'https://script.google.com/macros/s/AKfycbyIosjZv-vArh74o4DhFsBs8YneiCsj_SfYwxEd6d_I90MI4BPfPh9rTkANT58a7Ah0rg/exec';
+  const el = document.getElementById('bbLive');
+  if (!el || !CHAT_URL) return;
+  const tick = async () => {
+    if (document.hidden) return;
+    try { const r = await fetch(CHAT_URL + '?n=1', {cache: 'no-store'}); const j = await r.json(); const n = j && j.ok ? j.online | 0 : 0; el.querySelector('b').textContent = n; el.hidden = n < 1; } catch (e) {}
+  };
+  tick(); setInterval(tick, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 })();
 </script>
 <script>

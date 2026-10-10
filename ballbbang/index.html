@@ -276,6 +276,15 @@ body.wide .side{display:grid;gap:12px}
 .chat-in input{flex:1;min-width:0;padding:11px 12px;border:0;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px #E5D8EE;font:600 15px var(--f-kr);color:var(--ink)}
 .chat-in .btn{flex:none;padding:0 16px}
 .chat-rule{margin:0;font:500 11px/1.4 var(--f-kr);color:var(--ink2)}
+@supports (-webkit-touch-callout:none){.chat-in input,.rank-row input,.codebox{font-size:16px}}   /* 아이폰: 16px보다 작으면 누를 때 화면이 확대됨 */
+.chat-opt{display:flex;align-items:center;justify-content:center;gap:7px;font:600 12px/1.2 var(--f-kr);color:var(--ink2)}
+.chat-opt input{width:17px;height:17px;margin:0;accent-color:var(--pink)}
+.cfeed{position:absolute;left:10px;bottom:calc(54px + var(--safe-b));z-index:4;width:min(37%,180px);display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
+.cfeed[hidden]{display:none}
+.cfeed p{margin:0;max-width:100%;padding:0 8px;border-block:4px solid transparent;border-radius:9px;background:rgba(14,8,28,.4);color:rgba(255,255,255,.93);font:600 11.5px/1.35 var(--f-kr);text-align:left;text-shadow:0 1px 2px rgba(0,0,0,.65);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-all;animation:cfeed 12.5s linear forwards}
+.cfeed p b{font-weight:800;margin-right:5px}
+.cfeed p.me{background:rgba(255,95,162,.32)}
+@keyframes cfeed{0%{opacity:0;transform:translateY(6px)}3%{opacity:1;transform:none}90%{opacity:.95}100%{opacity:0}}
 .coinpill i{flex:none;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6C8,#FFC94D 55%,#D9952A)}
 .t-foot{position:absolute;left:0;right:0;bottom:0;padding:0 20px calc(20px + var(--safe-b));display:grid;gap:10px;max-width:520px;margin:0 auto}
 .t-best{display:flex;justify-content:space-between;font:700 13px/1 var(--f-kr);opacity:.9}
@@ -376,6 +385,7 @@ body.wide .side{display:grid;gap:12px}
     <button class="skill" id="btnSkill" type="button" aria-label="특기 쓰기"><div class="cd" id="skillCd"></div><span>SKILL</span></button>
   </div>
   <button class="auto on" id="btnAuto" type="button" hidden>AUTO</button>
+  <div class="cfeed" id="cfeed" hidden></div>
   <div class="hint" id="hint" hidden><b>끌어서 조준!</b> 손을 떼도 그 방향으로 계속 쏴요<br>빛나는 <b>구슬</b>을 맞히면 아이템을 얻어요</div>
   <div class="cutin" id="cutin"><div class="band"></div><img class="a" id="cutA" alt=""><img class="b" id="cutB" alt=""><div class="tx"><small id="cutSmall">SKILL</small><b id="cutText"></b></div></div>
   <div class="banner" id="banner"><span></span></div>
@@ -521,6 +531,7 @@ body.wide .side{display:grid;gap:12px}
     <div class="chat-in" id="chatNameRow" hidden><input id="chatName" maxlength="10" placeholder="닉네임 (랭킹과 같아요)" autocomplete="nickname"></div>
     <div class="chat-in"><input id="chatText" maxlength="60" placeholder="메시지 (60자까지)" autocomplete="off" enterkeyhint="send"><button class="btn main" id="chatSend" type="button">보내기</button></div>
     <p class="chat-rule">모두가 함께 보는 채팅이에요 · 욕설 · 링크 · 연락처는 보낼 수 없어요</p>
+    <label class="chat-opt"><input type="checkbox" id="chatFeed"> 게임 화면에 채팅 보이기</label>
     <button class="btn soft" id="chatClose" type="button">닫기</button>
   </div>
 </div>
@@ -2535,6 +2546,7 @@ async function startInner(opts) {
   aim = {x: .25, y: -1}; const n = Math.hypot(aim.x, aim.y); aim.x /= n; aim.y /= n;
   ['#title', '#result', '#pause', '#chars', '#shop', '#lvup', '#ach', '#news'].forEach(q => { $(q).hidden = true; });
   $('#hud').hidden = false; $('#foot').hidden = false; $('#lv').hidden = false; $('#btnAuto').hidden = false;
+  try { Chat.runStart(); } catch (e) {}
   $('#bossbar').hidden = !run.boss;
   layout();                                   // 표시판이 보인 뒤 높이를 재서 판 위치를 맞춤
   const ch = byKey(run.char);
@@ -2734,7 +2746,7 @@ function restoreVolume() { if (S.music) S.music.gain.value = .32 * volM(); if (S
 function showResult(won) {
   state = 'over'; paused = false; overT = 0;
   const finalScore = run.final, coins = run.coinsGot, isBest = run.isBest;
-  ['#hud', '#foot', '#lv', '#btnAuto', '#bossbar', '#hint', '#lvup', '#pause'].forEach(q => { $(q).hidden = true; });
+  ['#hud', '#foot', '#lv', '#btnAuto', '#bossbar', '#hint', '#lvup', '#pause', '#cfeed'].forEach(q => { $(q).hidden = true; });
   const chR = byKey(run.char);
   $('#rPt').style.backgroundImage = `url(${PT_URL(chR.key)})`;
   $('#rLine').textContent = run.bestStage ? WIN_LINE[chR.key] : run.stage >= 4 ? GOOD_LINE[chR.key] : LOSE_LINE[chR.key];
@@ -2781,7 +2793,7 @@ function resumeGame() {
 }
 function goTitle() {
   state = 'title'; paused = false; clearInterval(autosave);
-  ['#result', '#pause', '#chars', '#shop', '#lvup', '#hud', '#foot', '#lv', '#btnAuto', '#bossbar', '#hint'].forEach(q => { $(q).hidden = true; });
+  ['#result', '#pause', '#chars', '#shop', '#lvup', '#hud', '#foot', '#lv', '#btnAuto', '#bossbar', '#hint', '#cfeed'].forEach(q => { $(q).hidden = true; });
   $('#title').hidden = false; lockEl($('#title .t-foot'), 400);
   S.stopMusic(); restoreVolume(); BGM.play('title');
   renderTitle();
@@ -3076,8 +3088,8 @@ $('#stage').addEventListener('pointermove', e => {
 const upAim = e => { if (e.pointerId === aimPtr) { aiming = false; aimPtr = null; lastTouch = performance.now(); } };
 $('#stage').addEventListener('pointerup', upAim); $('#stage').addEventListener('pointercancel', upAim);
 document.addEventListener('keydown', e => {
-  if (e.target && e.target.tagName === 'INPUT') return;
-  if (Chat.open) { if (e.key === 'Escape') Chat.close(); return; }
+  if (Chat.open) { if (e.key === 'Escape') Chat.close(); return; }   // 채팅 입력 중에도 Esc로 닫힘
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
   if (e.key === 'Escape' && !e.repeat) { if (state === 'play') { if (paused) resumeGame(); else pauseGame(); } return; }
   if (state === 'levelup' && ['1', '2', '3'].includes(e.key)) { choose(Number(e.key) - 1); return; }
   if (state !== 'play' || paused) return;
@@ -3228,7 +3240,7 @@ UNLOCK.forEach(t => document.addEventListener(t, unlockAudio, true));
 // 1분마다 살짝 신호(?hb) → 접속자 수·마지막 메시지 번호 · 채팅 창이 열려 있을 때만 4초마다 메시지(?msgs) · 화면이 꺼져 있으면 안 보냄
 const Chat = {
   on: !!CHAT_URL && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname),
-  online: 0, last: 0, open: false, pollT: 0, hbT: 0, busy: false, from: '',
+  online: 0, last: 0, open: false, pollT: 0, hbT: 0, busy: false, from: '', feedLast: 0, quiet: 0, lastHb: 0, feedBusy: false,
   seen() { try { return Number(localStorage.getItem('astra-universe-chat-seen')) || 0; } catch (e) { return 0; } },
   setSeen(v) { try { localStorage.setItem('astra-universe-chat-seen', String(v)); } catch (e) {} },
   async get(q) {
@@ -3242,11 +3254,51 @@ const Chat = {
   start() {
     if (!this.on) return;
     ['#btnChat', '#btnChatP', '#hudChat'].forEach(q => { $(q).hidden = false; });
-    this.hb(); clearInterval(this.hbT); this.hbT = setInterval(() => this.hb(), 60000);
+    this.hb(); clearInterval(this.hbT); this.hbT = setInterval(() => this.tick(), 5000);
   },
   async hb() {
     if (!this.on || document.hidden || this.open) return;
-    try { const j = await this.get('hb=1'); if (j && j.ok) { this.online = j.online | 0; this.last = j.last | 0; this.paint(); this.notice(j.nt); } } catch (e) {}
+    this.lastHb = Date.now();
+    try {
+      const j = await this.get('hb=1');
+      if (!j || !j.ok) return;
+      this.online = j.online | 0; this.last = j.last | 0; this.notice(j.nt);
+      if (this.live() && this.last > this.feedLast) { this.quiet = 0; await this.feedPull(); } else this.quiet++;
+      this.paint();
+    } catch (e) {}
+  },
+  // 게임 화면 왼쪽 아래 반투명 채팅 — 게임 중엔 5초마다 신호(조용하면 15초) · 새 메시지가 있을 때만 메시지를 받아 옴 · 그 밖엔 1분마다
+  feedOn() { try { return localStorage.getItem('astra-universe-chat-feed') !== '0'; } catch (e) { return true; } },
+  live() { return this.on && state === 'play' && !paused && this.feedOn(); },
+  tick() {
+    if (!this.on || document.hidden || this.open) return;
+    const gap = this.live() ? (this.quiet >= 12 ? 15000 : 5000) : 60000;
+    if (Date.now() - this.lastHb >= gap - 1000) this.hb();
+  },
+  runStart() {
+    const f = $('#cfeed'); f.innerHTML = ''; f.hidden = !(this.on && this.feedOn());
+    this.feedLast = this.seen(); this.quiet = 0;   // 안 읽은 메시지는 판이 시작되면 보여 줌 (30분 안 · 최근 3개)
+  },
+  async feedPull() {
+    if (this.feedBusy) return;
+    this.feedBusy = true;
+    try {
+      const j = await this.get('msgs=1');
+      if (!j || !j.ok) return;
+      const now = Date.now(), from = this.feedLast;
+      this.online = j.online | 0; this.last = j.last | 0; this.feedLast = Math.max(this.feedLast, this.last);
+      if (!this.live()) return;
+      (j.msgs || []).filter(m => m.i > from && !m.s && now - (m.t || now) < 1800e3).slice(-3).forEach(m => this.feedAdd(m));   // 공지는 화면 알림으로 따로
+      this.setSeen(this.last);
+    } catch (e) {} finally { this.feedBusy = false; }
+  },
+  feedAdd(m) {
+    const box = $('#cfeed'), p = document.createElement('p'), b = document.createElement('b');
+    if (RankNet.name && m.n === RankNet.name) p.className = 'me';
+    b.textContent = m.n; b.style.color = `hsl(${[...m.n].reduce((a, c) => a + c.charCodeAt(0), 0) * 47 % 360} 85% 74%)`;
+    p.append(b, document.createTextNode(m.m)); box.appendChild(p);
+    while (box.children.length > 3) box.firstChild.remove();
+    setTimeout(() => p.remove(), 12500);
   },
   unread() { return Math.max(0, this.last - this.seen()); },
   // 패치 공지: 처음 보는 공지면 화면 알림으로 한 번 (게임마다 · 하루 안 공지만 옴)
@@ -3269,7 +3321,7 @@ const Chat = {
     if (!this.on) return;
     if (state === 'play' && !paused) pauseGame();   // 게임 중에 열면 일시정지
     this.open = true; $('#chat').hidden = false;
-    $('#chatNameRow').hidden = !!RankNet.name; $('#chatName').value = RankNet.name || '';
+    $('#chatNameRow').hidden = !!RankNet.name; $('#chatName').value = RankNet.name || ''; $('#chatFeed').checked = this.feedOn();
     this.pull(); clearInterval(this.pollT); this.pollT = setInterval(() => this.pull(), 4000);
   },
   close() { this.open = false; clearInterval(this.pollT); $('#chat').hidden = true; this.paint(); },
@@ -3278,7 +3330,7 @@ const Chat = {
     try {
       const j = await this.get('msgs=1');
       if (!j || !j.ok || !this.open) return;
-      this.online = j.online | 0; this.last = j.last | 0; this.setSeen(this.last);
+      this.online = j.online | 0; this.last = j.last | 0; this.setSeen(this.last); this.feedLast = Math.max(this.feedLast, this.last);
       this.render(j.msgs || []); this.paint();
     } catch (e) { if (!$('#chatList').querySelector('.cm')) $('#chatList').innerHTML = '<p class="chat-empty">채팅을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요</p>'; }
   },
@@ -3316,6 +3368,7 @@ $('#btnChat').addEventListener('click', () => { S.init(); Chat.show(); });
 $('#btnChatP').addEventListener('click', () => Chat.show());
 $('#hudChat').addEventListener('click', e => { e.stopPropagation(); Chat.show(); });
 $('#chatClose').addEventListener('click', () => Chat.close());
+$('#chatFeed').addEventListener('change', e => { const on = e.target.checked; try { localStorage.setItem('astra-universe-chat-feed', on ? '1' : '0'); } catch (err) {} $('#cfeed').hidden = !on || $('#hud').hidden; if (!on) $('#cfeed').innerHTML = ''; });
 $('#chatSend').addEventListener('click', () => Chat.send());
 $('#chatText').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); Chat.send(); } });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { Chat.hb(); if (Chat.open) Chat.pull(); } });

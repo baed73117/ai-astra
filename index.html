@@ -22,8 +22,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Michroma&family=Saira+Condensed:ital,wght@1,800&display=swap">
 <style>
-/* AI아스트라: 깊은 밤하늘(남색) 위에 별빛 그라데이션(보라·분홍·하늘)을 쓰는 한 가지 어두운 세계.
-   제목은 Noto Sans KR 900, 영문 작은 라벨은 Michroma, 숫자는 Saira Condensed 이탤릭. */
 :root{
   --bg:#070815;
   --panel:rgba(16,18,40,.72);
@@ -47,8 +45,6 @@ a{color:inherit;text-decoration:none}
 .aurora{position:fixed;inset:-20%;z-index:0;pointer-events:none;background:radial-gradient(40% 30% at 20% 15%,rgba(139,108,255,.28),transparent 70%),radial-gradient(35% 28% at 85% 30%,rgba(255,95,184,.18),transparent 70%),radial-gradient(45% 35% at 50% 100%,rgba(94,231,255,.12),transparent 70%)}
 .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 20px}
 .tech{font-family:var(--f-tech);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--soft)}
-
-/* 헤더 */
 header{position:sticky;top:0;z-index:10;backdrop-filter:none;background:linear-gradient(180deg,rgba(7,8,21,.92),rgba(7,8,21,.6) 70%,transparent)}
 .bar{display:flex;align-items:center;gap:12px;height:64px;padding-top:env(safe-area-inset-top,0px)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;letter-spacing:-.02em}
@@ -57,8 +53,6 @@ header{position:sticky;top:0;z-index:10;backdrop-filter:none;background:linear-g
 nav{margin-left:auto;display:flex;gap:6px}
 nav a{padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700;color:var(--soft);transition:color .2s,background .2s}
 nav a:hover,nav a:focus-visible{color:#fff;background:rgba(255,255,255,.07)}
-
-/* 히어로 */
 .hero{min-height:min(88vh,760px);display:grid;align-content:center;justify-items:center;text-align:center;padding:40px 0 60px}
 .hero h1{position:relative;margin:14px 0 0;font:900 clamp(64px,15vw,150px)/.95 var(--f-kr);letter-spacing:-.06em;background:linear-gradient(180deg,#fff 30%,#D9CCFF 62%,#FF9AD5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(139,108,255,.45))}
 .hero h1 .spark{position:absolute;width:.32em;height:.32em;right:-.18em;top:-.12em;color:#fff;filter:drop-shadow(0 0 10px var(--pink)) drop-shadow(0 0 20px var(--cyan));animation:twinkle 2.6s ease-in-out infinite}
@@ -77,14 +71,10 @@ nav a:hover,nav a:focus-visible{color:#fff;background:rgba(255,255,255,.07)}
 .scroll{margin-top:40px;width:26px;height:42px;border:2px solid rgba(255,255,255,.3);border-radius:14px;position:relative}
 .scroll::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.6s ease-in-out infinite}
 @keyframes wheel{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(14px)}}
-
-/* 섹션 제목 */
 section{padding:40px 0 70px;scroll-margin-top:64px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:26px}
 .head h2{margin:6px 0 0;font:900 clamp(28px,6vw,40px)/1.15 var(--f-kr);letter-spacing:-.03em}
 .head p{margin:0;color:var(--soft);font-size:14px;max-width:340px;line-height:1.6}
-
-/* 게임 카드 */
 .games{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;perspective:1200px}
 .game{--glow:rgba(139,108,255,.5);position:relative;display:flex;flex-direction:column;border-radius:20px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transform-style:preserve-3d;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;will-change:transform}
 .game:hover,.game:focus-visible{box-shadow:0 24px 60px var(--glow),0 0 0 1px rgba(255,255,255,.18)}
@@ -120,8 +110,6 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .game.wide .body{flex:1;padding:22px 22px 22px}
 .game.wide h3{font-size:30px}
 .badge{position:absolute;top:12px;right:12px;z-index:2;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:rgba(7,8,21,.75);color:var(--gold);border:1px solid rgba(255,216,107,.4)}
-
-/* 아스트라 신규 영상 */
 .video{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:center;padding:22px;border-radius:22px;background:var(--panel);border:1px solid var(--line)}
 .thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#111}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
@@ -133,7 +121,6 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .thumb .new{position:absolute;top:12px;left:12px;font:800 italic 13px var(--f-num);letter-spacing:.14em;padding:4px 10px;border-radius:8px;background:#FF3B5C;color:#fff}
 .video h3{margin:6px 0 10px;font:900 clamp(20px,4.6vw,26px)/1.35 var(--f-kr);letter-spacing:-.02em;text-wrap:balance}
 .video p{margin:0 0 18px;color:var(--soft);line-height:1.7;font-size:15px}
-/* 공유 · 바닥글 */
 .share{margin-top:10px;text-align:center;padding:40px 20px;border-radius:24px;background:linear-gradient(135deg,rgba(139,108,255,.18),rgba(255,95,184,.14));border:1px solid var(--line)}
 .share h2{margin:0;font:900 clamp(24px,5.5vw,34px)/1.25 var(--f-kr)}
 .share p{color:var(--soft);margin:10px 0 22px}
@@ -141,17 +128,13 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 20px calc(40px
 footer b{color:#fff}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:50;background:#fff;color:#070815;padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;transition:opacity .25s,transform .25s;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-
-/* 스크롤하면 나타나기 */
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
 .reveal.in{opacity:1;transform:none}
 .games .reveal:nth-child(2){transition-delay:.08s}.games .reveal:nth-child(3){transition-delay:.16s}.games .reveal:nth-child(4){transition-delay:.24s}.games .reveal:nth-child(5){transition-delay:.32s}
-
 @media (max-width:900px){.video{grid-template-columns:1fr}}
 @media (max-width:620px){.games{grid-template-columns:1fr}.game.wide{flex-direction:column}.game.wide .art{aspect-ratio:1200/630;min-height:0}.game.wide h3{font-size:24px}.head{display:block}.head p{margin-top:8px}nav a.hide-s{display:none}.logo small{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-/* 게임별 1·2·3등 */
 .podium{list-style:none;margin:4px 0 0;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);display:grid;gap:7px}
 .podium .ph{display:flex;justify-content:space-between;font:400 10px var(--f-tech);letter-spacing:.2em;color:var(--soft)}
 .podium li:not(.ph){display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14px}
@@ -317,145 +300,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 </footer>
 <div class="toast" id="toast" role="status"></div>
 
-<script>
-// 볼빵 할로윈 이벤트 기간(한국 시간 10/17~11/2)에는 카드 표시를 바꿈 (게임의 HW 날짜와 같이 바꾸기)
-(function () { var d = new Date(Date.now() + 9 * 3600e3), n = d.getUTCFullYear() * 1e4 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate(), b = document.getElementById('bbBadge');
-  if (b && n >= 20261017 && n <= 20261102) { b.textContent = '🎃 할로윈 이벤트'; b.style.fontStyle = 'normal'; b.style.letterSpacing = '0'; } })();
-</script>
-<script>
-(() => {
-'use strict';
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const touch = matchMedia('(pointer: coarse)').matches;
-
-/* 별하늘: 반짝이는 별 + 가끔 별똥별. 화면이 안 보이면 멈춘다 */
-const cv = document.getElementById('sky'), g = cv.getContext('2d');
-let W = 0, H = 0, stars = [], shoot = null, last = 0, nextShoot = 2500;
-function size() {
-  const dpr = Math.min(1.5, window.devicePixelRatio || 1);
-  W = innerWidth; H = innerHeight;
-  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-  g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const n = Math.round(Math.min(touch ? 90 : 160, W * H / 9000));
-  stars = Array.from({length: n}, () => ({x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .3, p: Math.random() * 6.28, s: .6 + Math.random() * 1.6, d: .02 + Math.random() * .06}));
-}
-function draw(t) {
-  const dt = Math.min(50, t - last); last = t;
-  g.clearRect(0, 0, W, H);
-  const sy = scrollY * .04;
-  for (const s of stars) {
-    s.y -= s.d * dt * .05; if (s.y < -4) { s.y = H + 4; s.x = Math.random() * W; }
-    const a = reduce ? .7 : .35 + .65 * (.5 + .5 * Math.sin(s.p + t * .001 * s.s));
-    g.globalAlpha = a; g.fillStyle = '#fff';
-    g.beginPath(); g.arc(s.x, (s.y - sy + H) % H, s.r, 0, 6.283); g.fill();
-  }
-  if (!reduce) {
-    nextShoot -= dt;
-    if (!shoot && nextShoot <= 0) { shoot = {x: Math.random() * W * .7 + W * .2, y: Math.random() * H * .35, l: 0}; nextShoot = 3500 + Math.random() * 5000; }
-    if (shoot) {
-      shoot.l += dt; const k = shoot.l / 900, x = shoot.x - k * 360, y = shoot.y + k * 160;
-      const gr = g.createLinearGradient(x, y, x + 120, y - 54); gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
-      g.globalAlpha = Math.max(0, 1 - k); g.strokeStyle = gr; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 120, y - 54); g.stroke();
-      if (k >= 1) shoot = null;
-    }
-  }
-  g.globalAlpha = 1;
-  if (!reduce && !document.hidden) requestAnimationFrame(draw);
-}
-size();
-addEventListener('resize', () => { size(); if (reduce) draw(performance.now()); }, {passive: true});
-document.addEventListener('visibilitychange', () => { if (!document.hidden && !reduce) { last = performance.now(); requestAnimationFrame(draw); } });
-requestAnimationFrame(t => { last = t; draw(t); });
-
-/* 스크롤하면 나타나기 + 숫자 올라가기 */
-const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
-  if (!e.isIntersecting) return;
-  e.target.classList.add('in'); io.unobserve(e.target);
-  e.target.querySelectorAll('[data-count]').forEach(countUp);
-}), {threshold: .15}) : null;
-document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
-if (!io) document.querySelectorAll('[data-count]').forEach(countUp);
-// 안전장치: 어떤 브라우저에서 나타나기 신호가 안 와도 화면 위쪽 내용은 2.5초 뒤 보이게
-setTimeout(() => document.querySelectorAll('.reveal:not(.in)').forEach(el => { if (el.getBoundingClientRect().top < innerHeight) { el.classList.add('in'); el.querySelectorAll('[data-count]').forEach(countUp); } }), 2500);
-function countUp(el) {
-  const to = +el.dataset.count, suf = el.dataset.suffix || '', t0 = performance.now(), dur = reduce ? 0 : 900;
-  const step = t => { const k = dur ? Math.min(1, (t - t0) / dur) : 1; el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))) + suf; if (k < 1) requestAnimationFrame(step); };
-  requestAnimationFrame(step);
-}
-
-/* 카드 입체 기울이기 (마우스는 따라가고, 터치는 누를 때만) */
-if (!reduce) document.querySelectorAll('[data-tilt]').forEach(card => {
-  let raf = 0, rx = 0, ry = 0;
-  const apply = () => { raf = 0; card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(${rx || ry ? -4 : 0}px)`; };
-  const move = e => {
-    const r = card.getBoundingClientRect();
-    ry = ((e.clientX - r.left) / r.width - .5) * 10; rx = -((e.clientY - r.top) / r.height - .5) * 8;
-    if (!raf) raf = requestAnimationFrame(apply);
-  };
-  const reset = () => { rx = ry = 0; if (!raf) raf = requestAnimationFrame(apply); };
-  if (!touch) { card.addEventListener('pointermove', move); card.addEventListener('pointerleave', reset); }
-  else { card.addEventListener('pointerdown', move, {passive: true}); card.addEventListener('pointerup', reset); card.addEventListener('pointercancel', reset); }
-});
-
-/* 공유: 폰은 공유 창, PC 는 링크 복사 */
-const toast = document.getElementById('toast');
-let tt = 0;
-const say = m => { toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('on'), 2200); };
-document.querySelectorAll('[data-share]').forEach(b => b.addEventListener('click', async () => {
-  const data = {title: 'AI아스트라 공유방', text: 'AI로 만든 무료 게임 6종! 같이 해 보자 👇', url: 'https://baed73117.github.io/ai-astra/'};
-  try { if (navigator.share) { await navigator.share(data); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
-  try { await navigator.clipboard.writeText(`${data.text}\n${data.url}`); say('링크를 복사했어요! 카톡에 붙여 넣어 보세요.'); }
-  catch (e) { prompt('아래 링크를 복사하세요', data.url); }
-}));
-})();
-</script>
-<script>
-// 볼빵: 지금 플레이 중인 사람 수 (채팅 서버 · 게임이 1분마다 보내는 신호를 셈 · 0명이면 숨김)
-(() => {
-  const CHAT_URL = 'https://script.google.com/macros/s/AKfycbyIosjZv-vArh74o4DhFsBs8YneiCsj_SfYwxEd6d_I90MI4BPfPh9rTkANT58a7Ah0rg/exec';
-  const el = document.getElementById('bbLive');
-  if (!el || !CHAT_URL) return;
-  const tick = async () => {
-    if (document.hidden) return;
-    try { const r = await fetch(CHAT_URL + '?n=1', {cache: 'no-store'}); const j = await r.json(); const n = j && j.ok ? j.online | 0 : 0; el.querySelector('b').textContent = n; el.hidden = n < 1; } catch (e) {}
-  };
-  tick(); setInterval(tick, 60000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
-})();
-</script>
-<script>
-// 게임별 1·2·3등 (구글 시트). 주소가 비어 있으면 '준비 중', 못 불러오면 칸을 숨긴다
-(async () => {
-  const RANK_URL = 'https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec';
-  const boxes = [...document.querySelectorAll('.podium')];
-  const HEAD = '<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';
-  const stairM = n => { const m = (Number(n) || 0) * 0.5; return (m >= 100 ? Math.round(m) : m.toFixed(1)) + 'm'; }; // 무한계단 한 칸 = 0.5m
-  if (!RANK_URL) { boxes.forEach(b => { b.innerHTML = HEAD + '<li class="empty">🏆 랭킹 준비 중이에요 · 곧 열려요!</li>'; b.hidden = false; }); return; }
-  boxes.forEach(b => { if (b.hasAttribute('data-wait')) return; b.innerHTML = HEAD + '<li class="empty">랭킹 불러오는 중…</li>'; b.hidden = false; });
-  let top = null;
-  const ac = typeof AbortController === 'function' ? new AbortController() : null;
-  if (ac) setTimeout(() => ac.abort(), 15000);
-  try { const r = await fetch(RANK_URL, Object.assign({cache: 'no-store'}, ac ? {signal: ac.signal} : {})); const j = await r.json(); if (j && j.ok && j.top) top = j.top; } catch (e) {}
-  boxes.forEach(b => {
-    if (!top) { b.hidden = true; return; }
-    if (!Object.prototype.hasOwnProperty.call(top, b.dataset.game)) { b.hidden = true; return; }
-    b.hidden = false;
-    const list = top[b.dataset.game].slice(0, 3);
-    b.innerHTML = HEAD;
-    if (!list.length) { b.insertAdjacentHTML('beforeend', '<li class="empty">아직 1등이 없어요 · 첫 1등에 도전!</li>'); return; }
-    list.forEach((r, i) => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="md">${['🥇', '🥈', '🥉'][i]}</span><span class="nm"></span><span class="sc"></span>`;
-      const nm = li.querySelector('.nm'), sc = li.querySelector('.sc');
-      nm.textContent = r.name;
-      const info = b.dataset.game === 'stairs' ? '대장님과 ' + stairM(r.score) : r.info;
-      if (info) { const s = document.createElement('small'); s.textContent = info; nm.appendChild(s); }
-      sc.textContent = (Number(r.score) || 0).toLocaleString('ko-KR');
-      if (b.dataset.game === 'stairs') { const u = document.createElement('small'); u.textContent = '계단'; sc.appendChild(u); }
-      b.appendChild(li);
-    });
-  });
-})();
-</script>
+<script>if(!/^(baed73117\.github\.io|localhost|127\.0\.0\.1)$/.test(location.hostname))throw document.documentElement.innerHTML='<body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#140C24;color:#fff;font:600 16px/1.6 sans-serif;text-align:center;padding:24px">AI아스트라 공식 주소에서만 할 수 있어요<br><a style="color:#FF8AC8" href="https://baed73117.github.io/ai-astra/">baed73117.github.io/ai-astra</a></body>',new Error("AI아스트라 공식 주소가 아님");!function(){var t=new Date(Date.now()+324e5),e=1e4*t.getUTCFullYear()+100*(t.getUTCMonth()+1)+t.getUTCDate(),a=document.getElementById("bbBadge");a&&e>=20261010&&e<=20261102&&(a.textContent="🎃 할로윈 이벤트",a.style.fontStyle="normal",a.style.letterSpacing="0")}();</script>
+<script>(()=>{"use strict";const t=matchMedia("(prefers-reduced-motion: reduce)").matches,e=matchMedia("(pointer: coarse)").matches,n=document.getElementById("sky"),a=n.getContext("2d");let r=0,o=0,i=[],d=null,s=0,c=2500;function l(){const t=Math.min(1.5,window.devicePixelRatio||1);r=innerWidth,o=innerHeight,n.width=Math.round(r*t),n.height=Math.round(o*t),a.setTransform(t,0,0,t,0,0);const d=Math.round(Math.min(e?90:160,r*o/9e3));i=Array.from({length:d},(()=>({x:Math.random()*r,y:Math.random()*o,r:1.3*Math.random()+.3,p:6.28*Math.random(),s:.6+1.6*Math.random(),d:.02+.06*Math.random()})))}function h(e){const n=Math.min(50,e-s);s=e,a.clearRect(0,0,r,o);const l=.04*scrollY;for(const d of i){d.y-=d.d*n*.05,d.y<-4&&(d.y=o+4,d.x=Math.random()*r);const i=t?.7:.35+.65*(.5+.5*Math.sin(d.p+.001*e*d.s));a.globalAlpha=i,a.fillStyle="#fff",a.beginPath(),a.arc(d.x,(d.y-l+o)%o,d.r,0,6.283),a.fill()}if(!t&&(c-=n,!d&&c<=0&&(d={x:Math.random()*r*.7+.2*r,y:Math.random()*o*.35,l:0},c=3500+5e3*Math.random()),d)){d.l+=n;const t=d.l/900,e=d.x-360*t,r=d.y+160*t,o=a.createLinearGradient(e,r,e+120,r-54);o.addColorStop(0,"rgba(255,255,255,.9)"),o.addColorStop(1,"rgba(255,255,255,0)"),a.globalAlpha=Math.max(0,1-t),a.strokeStyle=o,a.lineWidth=2,a.beginPath(),a.moveTo(e,r),a.lineTo(e+120,r-54),a.stroke(),t>=1&&(d=null)}a.globalAlpha=1,t||document.hidden||requestAnimationFrame(h)}l(),addEventListener("resize",(()=>{l(),t&&h(performance.now())}),{passive:!0}),document.addEventListener("visibilitychange",(()=>{document.hidden||t||(s=performance.now(),requestAnimationFrame(h))})),requestAnimationFrame((t=>{s=t,h(t)}));const m="IntersectionObserver"in window?new IntersectionObserver((t=>t.forEach((t=>{t.isIntersecting&&(t.target.classList.add("in"),m.unobserve(t.target),t.target.querySelectorAll("[data-count]").forEach(u))}))),{threshold:.15}):null;function u(e){const n=+e.dataset.count,a=e.dataset.suffix||"",r=performance.now(),o=t?0:900,i=t=>{const d=o?Math.min(1,(t-r)/o):1;e.textContent=Math.round(n*(1-Math.pow(1-d,3)))+a,d<1&&requestAnimationFrame(i)};requestAnimationFrame(i)}document.querySelectorAll(".reveal").forEach((t=>m?m.observe(t):t.classList.add("in"))),m||document.querySelectorAll("[data-count]").forEach(u),setTimeout((()=>document.querySelectorAll(".reveal:not(.in)").forEach((t=>{t.getBoundingClientRect().top<innerHeight&&(t.classList.add("in"),t.querySelectorAll("[data-count]").forEach(u))}))),2500),t||document.querySelectorAll("[data-tilt]").forEach((t=>{let n=0,a=0,r=0;const o=()=>{n=0,t.style.transform=`rotateX(${a}deg) rotateY(${r}deg) translateY(${a||r?-4:0}px)`},i=e=>{const i=t.getBoundingClientRect();r=10*((e.clientX-i.left)/i.width-.5),a=8*-((e.clientY-i.top)/i.height-.5),n||(n=requestAnimationFrame(o))},d=()=>{a=r=0,n||(n=requestAnimationFrame(o))};e?(t.addEventListener("pointerdown",i,{passive:!0}),t.addEventListener("pointerup",d),t.addEventListener("pointercancel",d)):(t.addEventListener("pointermove",i),t.addEventListener("pointerleave",d))}));const f=document.getElementById("toast");let g=0;document.querySelectorAll("[data-share]").forEach((t=>t.addEventListener("click",(async()=>{const t={title:"AI아스트라 공유방",text:"AI로 만든 무료 게임 6종! 같이 해 보자 👇",url:"https://baed73117.github.io/ai-astra/"};try{if(navigator.share)return void await navigator.share(t)}catch(t){if(t&&"AbortError"===t.name)return}try{await navigator.clipboard.writeText(`${t.text}\n${t.url}`),f.textContent="링크를 복사했어요! 카톡에 붙여 넣어 보세요.",f.classList.add("on"),clearTimeout(g),g=setTimeout((()=>f.classList.remove("on")),2200)}catch(e){prompt("아래 링크를 복사하세요",t.url)}}))))})();</script>
+<script>(()=>{const e=document.getElementById("bbLive");if(!e)return;const t=async()=>{if(!document.hidden)try{const t=await fetch("https://script.google.com/macros/s/AKfycbyIosjZv-vArh74o4DhFsBs8YneiCsj_SfYwxEd6d_I90MI4BPfPh9rTkANT58a7Ah0rg/exec?n=1",{cache:"no-store"}),n=await t.json(),c=n&&n.ok?0|n.online:0;e.querySelector("b").textContent=c,e.hidden=c<1}catch(e){}};t(),setInterval(t,6e4),document.addEventListener("visibilitychange",(()=>{document.hidden||t()}))})();</script>
+<script>(async()=>{const t=[...document.querySelectorAll(".podium")],e='<li class="ph"><span>TOP 3</span><span>RANKING</span></li>';t.forEach((t=>{t.hasAttribute("data-wait")||(t.innerHTML=e+'<li class="empty">랭킹 불러오는 중…</li>',t.hidden=!1)}));let n=null;const a="function"==typeof AbortController?new AbortController:null;a&&setTimeout((()=>a.abort()),15e3);try{const t=await fetch("https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec",Object.assign({cache:"no-store"},a?{signal:a.signal}:{})),e=await t.json();e&&e.ok&&e.top&&(n=e.top)}catch(t){}t.forEach((t=>{if(!n)return void(t.hidden=!0);if(!Object.prototype.hasOwnProperty.call(n,t.dataset.game))return void(t.hidden=!0);t.hidden=!1;const a=n[t.dataset.game].slice(0,3);t.innerHTML=e,a.length?a.forEach(((e,n)=>{const a=document.createElement("li");a.innerHTML=`<span class="md">${["🥇","🥈","🥉"][n]}</span><span class="nm"></span><span class="sc"></span>`;const s=a.querySelector(".nm"),o=a.querySelector(".sc");s.textContent=e.name;const c="stairs"===t.dataset.game?"대장님과 "+(t=>{const e=.5*(Number(t)||0);return(e>=100?Math.round(e):e.toFixed(1))+"m"})(e.score):e.info;if(c){const t=document.createElement("small");t.textContent=c,s.appendChild(t)}if(o.textContent=(Number(e.score)||0).toLocaleString("ko-KR"),"stairs"===t.dataset.game){const t=document.createElement("small");t.textContent="계단",o.appendChild(t)}t.appendChild(a)})):t.insertAdjacentHTML("beforeend",'<li class="empty">아직 1등이 없어요 · 첫 1등에 도전!</li>')}))})();</script>
 </body>
 </html>

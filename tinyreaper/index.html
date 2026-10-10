@@ -118,6 +118,8 @@ const CFG = {
   GD_T: 180, GD_TIX: 3, GD_HP: 0.6, GD_GOLD: 6,
   // 황금 도깨비(사신키우기 보물오리처럼): 챕터 2부터 일반 사냥터에 아주 가끔 · 도망다님 · TR_T초 뒤 사라짐 · 체력 ×TR_HP · 잡으면 골드 ×TR_GOLD + 혼불·영혼석
   // 장신구 (4차): 저승 반지 = Lv RING_LV에 열림 · 레벨마다 모든 피해 +RING_STEP · 비용 정수 1+⌊lv/10⌋ + 골드 RING_G0×RING_GG^lv / 혼백 노리개 = Lv NORI_LV · 골드 +NORI_GOLD·경험치 +NORI_EXP · 영혼석 NORI_S0+⌊lv/3⌋
+  // 코스튬 (5차): 핼러윈 저승사자 — HW_UNTIL(KST)까지 접속하면 선물 · 가지고 있으면 공격력·마력·체력 +COS_OWN (입지 않아도)
+  HW_UNTIL: '20261107', COS_OWN: 0.05,
   RING_LV: 50, RING_MAX: 100, RING_STEP: 0.03, RING_G0: 3000, RING_GG: 1.11, NORI_LV: 30, NORI_MAX: 100, NORI_GOLD: 0.02, NORI_EXP: 0.01, NORI_S0: 3,
   // 날개 4종: 박쥐(탑 10층) · 혼불(탑 20층) · 학(주간 대왕 15번 도전) · 봉황(탑 40층) — 장착하면 공격력·마력·체력 +WING_EQ, 가진 것마다 공격력·마력 +WING_OWN
   WING_EQ: [0.10, 0.20, 0.35, 0.60], WING_OWN: [0.03, 0.05, 0.08, 0.12], WING_TW: [10, 20, 0, 40], WING_WK: 15, WING_SCALE: 1.3,
@@ -237,7 +239,7 @@ function defaultSave() {
     pas: { a: 0, m: 0, h: 0, c: 0 },                                                                 // 스킬 포인트 패시브
     sc: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], scOwn: 1, scEq: 0, pity: 0,   // 낫 32종 개수 · 한 번이라도 가진 종류(비트) · 장착한 번호 · 천장(영웅 이상 없이 소환한 횟수)
     daily: { d: '', c: { kill: 0, boss: 0, tr: 0, sk: 0, sm: 0, sec: 0 }, got: 0 },               // 일일 과제: 날짜(KST) · 오늘 센 것 · 받은 칸(비트, 15번 = 모두 완료)
-    wk: { w: '', best: 0, tix: 3 }, tw: 0, gd: { tix: 3 }, gp: 0, acc: { ring: 0, nori: 0 }, wing: { own: 0, eq: -1 },      // 장신구 레벨 · 날개(가진 것 비트 · 장착 번호)                                  // … · 황금 곳간 오늘 남은 도전 · 성장 보상 받은 개수                                                          // 주간 대왕: 이번 주(월요일 KST) · 이번 주 최고 점수 · 오늘 남은 도전 / 명부의 탑: 깬 가장 높은 층
+    wk: { w: '', best: 0, tix: 3 }, tw: 0, gd: { tix: 3 }, gp: 0, acc: { ring: 0, nori: 0 }, wing: { own: 0, eq: -1 }, cos: { own: 0, on: '' },      // 장신구 레벨 · 날개(가진 것 비트 · 장착 번호)                                  // … · 황금 곳간 오늘 남은 도전 · 성장 보상 받은 개수                                                          // 주간 대왕: 이번 주(월요일 KST) · 이번 주 최고 점수 · 오늘 남은 도전 / 명부의 탑: 깬 가장 높은 층
     pen: { a: -1, m: -1, h: -1, g: -1 }, ess: 0, ward: 0, luck: 0, petLv: 0,                        // 펜던트 강화 단계(-1 = 아직 안 만듦) · 보스의 정수 · 수호 부적 · 행운 초롱 · 동무 레벨
     q: 0, task: { kill: 0, lv: 0, tr: 0, sm: 0, ch: 0, boss: 0, pen: 0, pet: 0 }, cnt: { sm: 0, mg: 0, boss: 0, wk: 0 },   // 초보 퀘스트 번호 · 저승 과제 받은 단계 · 누적 횟수(소환·합성·보스)
     skills: { owned: [1], lv: { 1: 1 }, slots: [1, 0, 0, 0, 0, 0] },                             // 기술: 가진 번호 · 번호별 레벨 · 슬롯 6칸(0=빈칸, 사신키우기 2×3)
@@ -295,7 +297,7 @@ function cleanSave(s) {
   const int0 = v => { const n = Math.floor(Number(v)); return Number.isFinite(n) && n > 0 ? n : 0; };
   { const z = Number(s.set.zoom); s.set.zoom = Number.isFinite(z) ? clamp(z, C.ZOOM_MIN, C.ZOOM_MAX) : C.ZOOM_DEF; }
   { const W = isObj(s.wk) ? s.wk : (s.wk = {}); if (typeof W.w !== 'string' || !/^\d{8}$/.test(W.w)) W.w = ''; W.best = Number.isFinite(Number(W.best)) && W.best > 0 ? Math.floor(W.best) : 0; W.tix = clamp(Math.floor(Number(W.tix)), 0, C.WK_TIX) || 0; if (!(W.tix >= 0)) W.tix = 0; }
-  s.tw = int0(s.tw); { const A = isObj(s.acc) ? s.acc : (s.acc = {}); A.ring = clamp(int0(A.ring), 0, C.RING_MAX); A.nori = clamp(int0(A.nori), 0, C.NORI_MAX); const Wg = isObj(s.wing) ? s.wing : (s.wing = {}); Wg.own = (Number(Wg.own) | 0) & 15; const e = Math.floor(Number(Wg.eq)); Wg.eq = e >= 0 && e < 4 && (Wg.own & (1 << e)) ? e : -1; } s.gp = clamp(int0(s.gp), 0, GP_LV.length); { const G = isObj(s.gd) ? s.gd : (s.gd = {}); const t = Math.floor(Number(G.tix)); G.tix = Number.isFinite(t) ? clamp(t, 0, C.GD_TIX) : C.GD_TIX; }
+  s.tw = int0(s.tw); { const A = isObj(s.acc) ? s.acc : (s.acc = {}); A.ring = clamp(int0(A.ring), 0, C.RING_MAX); A.nori = clamp(int0(A.nori), 0, C.NORI_MAX); const Cs = isObj(s.cos) ? s.cos : (s.cos = {}); Cs.own = (Number(Cs.own) | 0) & 1; Cs.on = Cs.on === 'hw' && (Cs.own & 1) ? 'hw' : ''; const Wg = isObj(s.wing) ? s.wing : (s.wing = {}); Wg.own = (Number(Wg.own) | 0) & 15; const e = Math.floor(Number(Wg.eq)); Wg.eq = e >= 0 && e < 4 && (Wg.own & (1 << e)) ? e : -1; } s.gp = clamp(int0(s.gp), 0, GP_LV.length); { const G = isObj(s.gd) ? s.gd : (s.gd = {}); const t = Math.floor(Number(G.tix)); G.tix = Number.isFinite(t) ? clamp(t, 0, C.GD_TIX) : C.GD_TIX; }
   { const D = isObj(s.daily) ? s.daily : (s.daily = {}); if (typeof D.d !== 'string' || !/^\d{8}$/.test(D.d)) D.d = ''; if (!isObj(D.c)) D.c = {}; for (const k of DAILY_KEYS) D.c[k] = int0(D.c[k]); D.got = (Number(D.got) | 0) & 0xffff; }
   s.lv = Math.max(1, int0(s.lv)); s.sp = int0(s.sp); s.cleared = int0(s.cleared); s.pet = s.pet ? 1 : 0;
   if (!(s.exp >= 0) || !isFinite(s.exp)) s.exp = 0;
@@ -552,7 +554,7 @@ function gpClaim(all) { let n = 0; const sum = {}; while (gpCan()) { const rw = 
 const Daily = { key: '' };            // 오늘(KST yyyymmdd) — 1초마다 갱신 (몬스터 잡을 때마다 날짜를 계산하지 않게)
 function dailyRoll() { const t = Daily.key, D = S.daily; if (!t || D.d === t) return; const first = !D.d; D.d = t; for (const k of DAILY_KEYS) D.c[k] = 0; D.got = 0; if (!first) { S.wk.tix = C.WK_TIX; S.gd.tix = C.GD_TIX; } }      // 새 날 = 주간 대왕 도전 3번 다시
 function wkKey() { const d = new Date(attNow() + 9 * 3600e3), dow = (d.getUTCDay() + 6) % 7, m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - dow)); return String(m.getUTCFullYear() * 10000 + (m.getUTCMonth() + 1) * 100 + m.getUTCDate()); }     // 이번 주 월요일(KST) — 서버 monday_ 와 같은 계산
-function dailyTick() { Daily.key = Att.today(); dailyRoll(); const w = wkKey(); if (S.wk.w !== w) { S.wk.w = w; S.wk.best = 0; } }
+function dailyTick() { Daily.key = Att.today(); dailyRoll(); const w = wkKey(); if (S.wk.w !== w) { S.wk.w = w; S.wk.best = 0; } if (!(S.cos.own & 1) && gameBuilt) cosCheck(); }
 function dailyAdd(k, n) { if (Daily.key && S.daily.d !== Daily.key) dailyRoll(); S.daily.c[k] += n || 1; }
 function dailyState(i) { const [k, nm, goal, rw] = DAILY[i], now = S.daily.c[k] || 0, got = !!(S.daily.got & (1 << i)); return { k, nm, now, goal, got, can: !got && now >= goal, rw }; }
 function dailyAllState() { let done = 0; for (let i = 0; i < DAILY.length; i++) if (S.daily.got & (1 << i)) done++; const got = !!(S.daily.got & DAILY_ALL_BIT); return { done, goal: DAILY.length, got, can: !got && done >= DAILY.length, rw: C.DAILY_ALL }; }
@@ -572,7 +574,8 @@ function ringUp() { const l = S.acc.ring; if (S.lv < C.RING_LV || l >= C.RING_MA
 function noriUp() { const l = S.acc.nori; if (S.lv < C.NORI_LV || l >= C.NORI_MAX) return false; const c = noriCost(l); if (S.soul < c) return false; S.soul -= c; S.acc.nori++; recalc(); save(true); return true; }
 const wingOwnEff = () => { let v = 0; for (let i = 0; i < 4; i++) if (S.wing.own & (1 << i)) v += C.WING_OWN[i]; return v; };
 const wingEqEff = () => S.wing.eq >= 0 ? C.WING_EQ[S.wing.eq] : 0;
-const accAtkMul = () => (1 + C.RING_STEP * S.acc.ring) * (1 + wingEqEff() + wingOwnEff());
+const cosOwnEff = () => (S.cos.own & 1) ? C.COS_OWN : 0;
+const accAtkMul = () => (1 + C.RING_STEP * S.acc.ring) * (1 + wingEqEff() + wingOwnEff()) * (1 + cosOwnEff());
 const WING_NAME = ['박쥐 날개', '혼불 날개', '학 날개', '봉황 날개'];
 const wingHow = i => C.WING_TW[i] ? '명부의 탑 ' + C.WING_TW[i] + '층 돌파' : '주간 대왕 ' + C.WING_WK + '번 도전';
 function wingCheck() {          // 조건을 채운 날개를 얻음 (처음 얻으면 바로 장착) → 새로 얻은 번호들
@@ -621,7 +624,7 @@ function recalc() {          // 공격력·마력 = 수련 × 레벨 × 패시�
   ST.mag = val('mag', t.mag) * lvA * (1 + PA.m[0] * pa.m) * ST.scMul * (1 + penEff('m')) * pA * aM;
   ST.aspd = C.ASPD_BASE; ST.crit = Math.min(C.CRIT_TOTAL_CAP, val('crit', t.crit) + PA.c[0] * pa.c); ST.cd = val('cd', t.cd); ST.jt = val('jt', t.jt); ST.jd = val('jd', t.jd);
   ST.goldMul = (1 + penEff('g')) * (1 + C.PET_GOLD * pb) * (1 + C.NORI_GOLD * S.acc.nori); ST.expMul = (1 + C.PET_EXP * pb) * (1 + C.NORI_EXP * S.acc.nori);
-  const old = ST.maxHp; ST.maxHp = val('hp', t.hp) * lvH * (1 + PA.h[0] * pa.h) * (1 + penEff('h')) * (1 + wE); ST.maxMp = val('mp', t.mp) * (1 + C.MP_LV * (S.lv - 1));
+  const old = ST.maxHp; ST.maxHp = val('hp', t.hp) * lvH * (1 + PA.h[0] * pa.h) * (1 + penEff('h')) * (1 + wE) * (1 + cosOwnEff()); ST.maxMp = val('mp', t.mp) * (1 + C.MP_LV * (S.lv - 1));
   ST.dps = (ST.atk * ST.aspd + ST.mag * C.SKILL_MAG) * (1 + ST.crit * (ST.cd - 1)) * (1 + ST.jt * (ST.jd - 1));
   ST.power = Math.floor(ST.dps * Math.sqrt(ST.maxHp));
   if (hero && ST.maxHp > old && !hero.dead) hero.hp = Math.min(ST.maxHp, hero.hp + (ST.maxHp - old));
@@ -1391,7 +1394,8 @@ function adoptHero(sex, sh) {       // 고른 주인공 그림을 쓰기 시작�
   if (old && old !== sh) freeSheet(old); if (oldSil) oldSil.tex.destroy(true);
 }
 let heroQ = Promise.resolve(), zoneQ = Promise.resolve();       // 불러오기는 한 번에 하나씩 줄 세움 (빠르게 바꿔도 꼬이지 않게)
-function wantHero(sex) { heroQ = heroQ.then(async () => { if (AT.heroSex === sex) return; const sh = await safeSheet('hero_' + sex); adoptHero(sex, sh); }).catch(() => { }); return heroQ; }
+const heroKey = () => S.hero + (S.cos && S.cos.on ? '_' + S.cos.on : '');      // 주인공 그림 이름: 성별 + 코스튬
+function wantHero(sex) { heroQ = heroQ.then(async () => { if (AT.heroSex === sex) return; let sh = await safeSheet('hero_' + sex); if (!sh && sex.length > 1) { const base = sex[0]; if (AT.heroSex === base) return; sex = base; sh = await safeSheet('hero_' + base); } adoptHero(sex, sh); }).catch(() => { }); return heroQ; }
 function wantZone(z) { zoneQ = zoneQ.then(() => doZone(z)).catch(() => { }); return zoneQ; }       // 하나가 실패해도 줄이 끊기지 않게
 async function doZone(z) {
   if (AT.zoneNo === z && AT.mon && AT.zn) return;          // 이미 그 구역 그림이 다 있으면 끝 (못 받은 게 있으면 다시 받음)
@@ -1766,8 +1770,8 @@ function sceneFrame(dt) {
 async function enterGame() {
   if (!TT.c) sceneBuild();
   sceneShow('load'); TT.ldText.text = '불러오는 중…'; freeTitle();
-  LD.done = 0; LD.total = 5 + (AT.heroSex === S.hero ? 0 : 1);
-  const [, , , sync] = await Promise.all([loadCommon(), AT.heroSex === S.hero ? 0 : wantHero(S.hero), wantZone(zoneOf(S.mi)), clockSync()]);     // 서버 시계는 그림과 함께 받음 (실패·3초 시간 초과여도 그냥 넘어감)
+  LD.done = 0; LD.total = 5 + (AT.heroSex === heroKey() ? 0 : 1);
+  const [, , , sync] = await Promise.all([loadCommon(), AT.heroSex === heroKey() ? 0 : wantHero(heroKey()), wantZone(zoneOf(S.mi)), clockSync()]);     // 서버 시계는 그림과 함께 받음 (실패·3초 시간 초과여도 그냥 넘어감)
   if (!gameBuilt) buildGame();
   sceneShow('none'); phase = 'game'; lookApply(); dailyTick(); wingCheck(); if (S.wing.eq >= 0) wantWings(); document.body.classList.add('play');
   if (Live.start()) offlineBoot(offlineClockFrom(sync));
@@ -2022,6 +2026,7 @@ V.heroDie = lost => { setBanner('쓰러졌어요…', 0xff8a9a); bannerHold = tr
 V.revive = () => { bannerHold = false; setBanner('다시 일어났어요!', 0x9fffc0); fxAdd('fx_heal', hero.x, hero.y - 40, 0.9, 1, 1.3, 1, 0, 0xffffff, 1, 2, true); sfx('revive'); };
 V.banner = (s, col) => setBanner(s, col);
 function wantWings() { if (AT.wings || AT.wingBusy) return; AT.wingBusy = true; safeSheet('wings').then(sh => { AT.wingSh = sh; AT.wings = sh && sh.info; AT.wingBusy = false; if (gameBuilt) { accUi.sig = ''; eqRefresh(true); } }).catch(() => { AT.wingBusy = false; }); }
+V.cosGet = () => { setBanner('핼러윈 코스튬 선물!', 0xffa64a); note('10월 한정 \'핼러윈 저승사자\' 코스튬을 입혀 드렸어요 · 가지고만 있어도 공격력·마력·체력 +' + Math.round(C.COS_OWN * 100) + '% (설정에서 바꾸기)', 0xffc98a); sfx('reward'); heroV.joyT = 1.2; };
 V.wingGet = i => { wantWings(); setBanner(WING_NAME[i] + ' 획득!', 0xffe27a); note(WING_NAME[i] + ': 장착하면 공격력·마력·체력 +' + Math.round(C.WING_EQ[i] * 100) + '% (장비 → 장신구)', 0xffe27a); sfx('rare'); heroV.joyT = 1.2; };
 V.modeStart = k => { bannerHold = false; if (k === 'gd') { setBanner('황금 곳간!', 0xffe27a); note('3분 동안 잡을수록 골드가 쏟아져요', 0xffe6a0); sfx('reward'); } else if (k === 'wk') { setBanner('주간 대왕 도전!', 0xffd27a); note('60초 동안 넣은 피해가 점수예요 · 붉은 바닥을 피하면 공격 +10%', 0xffe6a0); sfx('bossWarn'); } else { setBanner('명부의 탑 ' + R.floor + '층', 0xffd27a); if (R.floor % C.TW_BOSS_EVERY === 0) note('이 층엔 보스가 있어요', 0xff9aa8); } if (gameBuilt) uiRefresh(true); };
 V.gdGold = (m, g) => { if (Math.random() < 0.35) fxAdd('fx_gold', m.x, m.y - 50, 0.5, 0.6, 0.9, 1, 0, 0xffffff, 1, 0); };
@@ -2625,7 +2630,7 @@ function buildMoreTab(panelH) {
   });
   // --- 설정 (줄이 많아서 칸 높이를 자동으로 줄임: 채팅이 있으면 7줄, 없으면 6줄)
   const S0 = ui.moreSet, st = mkText('설정', 32, 0xffffff); st.position.set(28, 14); S0.addChild(st);
-  moreBack(S0); const nRows = Chat.on ? 7 : 6, rowH = clamp(Math.floor((panelH - 76) / nRows), 52, 76); setUi.rowH = rowH;
+  moreBack(S0); const nRows = Chat.on ? 8 : 7, rowH = clamp(Math.floor((panelH - 76) / nRows), 52, 76); setUi.rowH = rowH;
   const row = (i, label, sub) => { const y = 68 + i * rowH, g = new PIXI.Graphics(); rr(g, 24, y, 672, rowH - 8, 14, 0x1c1646, 1, 0x2f2568, 2); S0.addChild(g); const sb = sub && rowH >= 68, l = mkText(label, 26, 0xffffff, { strokeThickness: 3 }); l.position.set(42, y + (sb ? 6 : (rowH - 8) / 2 - 17)); S0.addChild(l); if (sb) { const s = mkText(sub, 18, COL.dim, { strokeThickness: 2 }); s.position.set(42, y + rowH - 8 - 30); S0.addChild(s); } return y; };
   const mk = (x, y, w, fn) => { const b = pill(w, rowH - 20, () => { sfx('button'); fn(); }, 24); b.c.position.set(x, y + 6); S0.addChild(b.c); return b; };
   setUi.hero = []; setUi.hero.push(mk(C.WW - 24 - 12 - 150 * 2 - 10, row(0, '주인공', '능력치는 같고 그림만 달라요'), 150, () => setHeroSex('m')), mk(C.WW - 24 - 12 - 150, 68, 150, () => setHeroSex('f')));
@@ -2634,7 +2639,8 @@ function buildMoreTab(panelH) {
   setUi.perf = mk(C.WW - 24 - 12 - 150, row(3, '저전력 모드 (30fps)', '방치할 때 배터리를 아껴요 · 화면이 30프레임으로'), 150, () => { S.set.perf = S.set.perf ? 0 : 1; save(true); setRefresh(); note(S.set.perf ? '저전력 모드: 화면을 30프레임으로 줄여요' : '저전력 모드를 껐어요', 0x9fffc0); });
   const y4 = row(4, '기술 버튼 위치'); setUi.side = [mk(C.WW - 24 - 12 - 150 * 2 - 10, y4, 150, () => setSkillSide('L')), mk(C.WW - 24 - 12 - 150, y4, 150, () => setSkillSide('R'))];
   const y5 = row(5, '낫·불꽃 색'); setUi.look = LOOKS.map((lk, i) => mk(C.WW - 24 - 12 - 4 * 96 - 3 * 8 + i * 104, y5, 96, () => onLook(i)));
-  setUi.chat = null; if (Chat.on) setUi.chat = mk(C.WW - 24 - 12 - 150, row(6, '채팅 화면에 보이기'), 150, () => { S.set.chat = !S.set.chat; Chat.feedDirty = true; save(true); setRefresh(); });
+  const y6 = row(6, '코스튬', '보유 효과 +5% · 10월 한정'); setUi.cos = [mk(C.WW - 24 - 12 - 150 * 2 - 10, y6, 150, () => setCos('')), mk(C.WW - 24 - 12 - 150, y6, 150, () => setCos('hw'))];
+  setUi.chat = null; if (Chat.on) setUi.chat = mk(C.WW - 24 - 12 - 150, row(7, '채팅 화면에 보이기'), 150, () => { S.set.chat = !S.set.chat; Chat.feedDirty = true; save(true); setRefresh(); });
   setUi.diag = mkText('', 16, 0xff9a9a, { strokeThickness: 3, wordWrap: true, wordWrapWidth: 650 }); setUi.diag.position.set(32, 76 + nRows * rowH + 4); S0.addChild(setUi.diag);      // 그림·음악 불러오기 문제(있을 때만)
   // --- 기록 옮기기
   const X0 = ui.moreXfer, xt = mkText('기록 옮기기', 32, 0xffffff); xt.position.set(28, 14); X0.addChild(xt); moreBack(X0);
@@ -2685,6 +2691,7 @@ function setRefresh() {
   on(setUi.sfx, S.set.sfx, '켬', '끔'); on(setUi.bgm, S.set.bgm, '켬', '끔'); on(setUi.perf, S.set.perf, '켬', '끔');
   setUi.side[0].draw('왼쪽', S.set.skillSide === 'L' ? COL.ok : 0x2a2548, 0xffffff); setUi.side[1].draw('오른쪽', S.set.skillSide !== 'L' ? COL.ok : 0x2a2548, 0xffffff);
   setUi.look.forEach((b, i) => { const own = i === 0 || S.look.own[i - 1], sel = S.look.col === i; b.draw(own ? LOOKS[i].n.split(' ')[0] : '잠김', sel ? COL.ok : own ? 0x2a2548 : 0x15112e, own ? 0xffffff : 0x6a6290); });
+  if (setUi.cos) { const own = !!(S.cos.own & 1); setUi.cos[0].draw('기본', !S.cos.on ? COL.ok : 0x2a2548, 0xffffff); setUi.cos[1].draw(own ? '핼러윈' : '잠김', S.cos.on === 'hw' ? COL.ok : own ? 0x2a2548 : 0x15112e, own ? 0xffffff : 0x6a6290); }
   if (setUi.chat) on(setUi.chat, S.set.chat, '켬', '끔');
   if (setUi.diag) setTx(setUi.diag, Diag.list.length ? '불러오기 문제 (이 화면을 찍어 PD에게): ' + Diag.list.join(' · ') : '');
 }
@@ -2800,7 +2807,7 @@ function buildGrowUi(panelH) {
   const P = ui.moreGrow; growUi.rows.length = 0;
   const t = mkText('성장 보상', 32, 0xffffff); t.position.set(28, 14); P.addChild(t); moreBack(P);
   growUi.all = pill(170, 50, () => onGrow(true), 22); growUi.all.c.position.set(C.WW - 24 - 130 - 8 - 170, 8); P.addChild(growUi.all.c);
-  const n = 6, top = 72, rh = clamp(Math.floor((panelH - top - 40 - C.EXP_H) / n), 56, 104), rH = rh - 8;
+  const n = 6, top = 72, rh = clamp(Math.floor((panelH - top - 60 - C.EXP_H) / n), 56, 104), rH = rh - 8;
   for (let i = 0; i < n; i++) {
     const c = new PIXI.Container(); c.position.set(24, top + i * rh); P.addChild(c); const bg = new PIXI.Graphics(); c.addChild(bg);
     const a = mkText('', 24, 0xffe27a, { strokeThickness: 4 }); a.position.set(16, rH / 2 - 30); c.addChild(a);
@@ -2872,7 +2879,15 @@ function onBand() {
 function guideGo() { const t = Guide.TAB[Guide.id]; if (t >= 0) { if (t === 2) skUi.view = Guide.id === 7 ? 'pas' : 'act'; if (t === 1) scUi.sub = Guide.id === 9 ? 'pen' : Guide.id === 10 ? 'pet' : 'sc'; ui.open = true; setTab(t); tabsRedraw(); } }
 function setHeroSex(sex) {         // 설정에서 주인공 바꾸기: 새 그림 불러오고 이전 것은 해제 (능력치는 그대로)
   if (S.hero === sex) return; S.hero = sex; save(true); setRefresh(); note((sex === 'm' ? '소년' : '소녀') + ' 저승사자로 바꿨어요', 0x9fffc0);
-  wantHero(sex); if (!gameBuilt) return;
+  wantHero(heroKey()); if (!gameBuilt) return;
+}
+function setCos(c) {              // 코스튬 입기/벗기 (외형만 · 보유 효과는 그대로)
+  if (c && !(S.cos.own & 1)) { note('핼러윈 코스튬은 ' + C.HW_UNTIL.slice(4, 6) + '월 ' + (+C.HW_UNTIL.slice(6)) + '일까지 접속하면 받아요', 0xb9a8ff); return; }
+  S.cos.on = c ? 'hw' : ''; save(true); setRefresh(); wantHero(heroKey()); note(c ? '핼러윈 저승사자로 갈아입었어요!' : '기본 옷으로 갈아입었어요', 0x9fffc0);
+}
+function cosCheck(force) {        // 핼러윈 선물 (기간 안에 처음 접속하면 받고 바로 입혀 줌) · 시험(?debug)은 &hw 를 붙이거나 직접 부를 때만
+  if ((S.cos.own & 1) || !Daily.key || Daily.key > C.HW_UNTIL || (!force && DEBUG && !QS.has('hw'))) return false;
+  S.cos.own |= 1; S.cos.on = 'hw'; recalc(); save(true); wantHero(heroKey()); if (V.on) V.cosGet(); return true;
 }
 function setSkillSide(s) { S.set.skillSide = s; save(true); placeBB(); setRefresh(); }
 const skBottom = () => H - C.EXP_H - 34 - C.SK_BTN_R;          // 기술 아래 줄의 가운데 높이
@@ -3824,6 +3839,7 @@ function installDebug() {
     daily: { state: dailyState, all: dailyAllState, claim: dailyClaim, any: dailyAny, add: dailyAdd, tick: dailyTick, list: DAILY, setKey(k) { Daily.key = k; dailyRoll(); }, get key() { return Daily.key; }, render: () => dailyRender(true) },
     sum: { lv: scSumLv, next: scSumNext, get pity() { return S.pity; } },
     gp: { can: gpCan, claim: gpClaim, rw: gpRw, LV: GP_LV, render: () => growRender(true) },
+    cos: { check: () => cosCheck(true), set: setCos, key: heroKey, own: cosOwnEff },
     acc: { ringUp, noriUp, ringCost, noriCost, wingCheck, wingEquip, mul: accAtkMul, get wingsArt() { return !!AT.wings; }, get wingVis() { return !!(heroV && heroV.wing.visible); }, render: () => accRefresh(true), want: wantWings, get wingBottom() { const o = accUi.wings[3]; return o ? Math.round(L.panel.y + o.g.parent.y + o.h) : 0; }, get vis() { return !!(accUi.c && accUi.c.visible); } },
     tr: { make: trMake, get on() { return R.trOn; }, find: () => mons.find(m => m.alive && m.tr) || null }, inst: Inst,
     mode: { can: modeCan, start: modeStart, quit: modeQuit, week: wkKey, get st() { return { mode: R.mode, over: R.modeOver, t: R.modeT, score: R.score, floor: R.floor, tot: R.twTot, kill: R.twKill, sp: R.twSp, mi: R.mi, back: R.back, tix: S.wk.tix, gtix: S.gd.tix, gold: R.gdGold, best: S.wk.best, w: S.wk.w, tw: S.tw, res: R.wkRes, hud: !!(hud.mode && hud.mode.c.visible) }; }, render: modeBtnRender, get btnGeo() { return mapUi.mode ? mapUi.mode.map(o => ({ x: o.b.x + o.w / 2, y: L.panel.y + o.b.y + o.h / 2, sub: o.sub.text })) : []; } },

@@ -259,6 +259,23 @@ body.wide .side{display:grid;gap:12px}
 .inst-lead{margin:0;font:500 13px/1.5 var(--f-kr);color:var(--ink2);text-align:center}
 .inst-warn{padding:10px 12px;border-radius:12px;background:#FFF4DA;box-shadow:inset 0 0 0 1.5px #FFC24A;font:500 12.5px/1.5 var(--f-kr);color:#5A3A00;text-align:left}
 .inst-warn b{color:#3A2400}
+.chatpill{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;background:rgba(14,8,28,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);color:#fff;font:800 13px/1 var(--f-kr)}
+.chatpill em,.hudchat em{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#FF4F7A;color:#fff;font:800 11px/18px var(--f-en);font-style:normal;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.hudchat{position:relative;flex:none;pointer-events:auto;margin-left:auto;display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:9px;background:rgba(14,8,28,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);color:#fff;font:800 11.5px/1 var(--f-kr)}
+.chatcard{gap:10px}
+.chat-on{font:700 12px/1.2 var(--f-kr);color:#2E9E5B}
+.chat-list{display:grid;align-content:start;gap:7px;height:min(46vh,380px);overflow-y:auto;padding:10px;border-radius:14px;background:#F7F2FA;box-shadow:inset 0 0 0 1px #EEE4F4;text-align:left;-webkit-overflow-scrolling:touch}
+.chat-list .cm{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:6px;font:500 13px/1.35 var(--f-kr);color:var(--ink);word-break:break-all}
+.chat-list .cm b{font-weight:800}
+.chat-list .cm small{font:600 10px/1 var(--f-en);color:var(--ink2)}
+.chat-list .cm.notice{grid-template-columns:auto 1fr auto;background:linear-gradient(120deg,#FFF6D6,#FFE0F0);box-shadow:inset 0 0 0 1.5px var(--gold);border-radius:8px;padding:5px 7px}
+.chat-list .cm.notice b{color:#B5781A !important}
+.chat-list .cm.me{background:rgba(255,95,162,.1);border-radius:8px;padding:2px 4px}
+.chat-empty{margin:auto;font:600 12px/1.4 var(--f-kr);color:var(--ink2);text-align:center}
+.chat-in{display:flex;gap:8px}
+.chat-in input{flex:1;min-width:0;padding:11px 12px;border:0;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px #E5D8EE;font:600 15px var(--f-kr);color:var(--ink)}
+.chat-in .btn{flex:none;padding:0 16px}
+.chat-rule{margin:0;font:500 11px/1.4 var(--f-kr);color:var(--ink2)}
 .coinpill i{flex:none;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6C8,#FFC94D 55%,#D9952A)}
 .t-foot{position:absolute;left:0;right:0;bottom:0;padding:0 20px calc(20px + var(--safe-b));display:grid;gap:10px;max-width:520px;margin:0 auto}
 .t-best{display:flex;justify-content:space-between;font:700 13px/1 var(--f-kr);opacity:.9}
@@ -352,7 +369,7 @@ body.wide .side{display:grid;gap:12px}
       <div class="right"><div class="score"><small>SCORE</small><b id="score">0</b><em id="hwC" hidden>🍬 0</em></div><button class="pause" id="btnPause" type="button" aria-label="일시정지"><svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4.2" height="15" rx="1.6"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.6"/></svg></button></div>
     </div>
     <div class="xp"><b id="xpFill"></b></div>
-    <div class="hud-row2" id="hudRow2"><div class="balls" id="ballsBar"></div><span class="lv" id="lv">Lv.1</span></div>
+    <div class="hud-row2" id="hudRow2"><div class="balls" id="ballsBar"></div><span class="lv" id="lv">Lv.1</span><button class="hudchat" id="hudChat" type="button" hidden aria-label="채팅 열기"><span id="hudOnline">🟢 0</span><em id="hudUnread" hidden>0</em></button></div>
     <div class="bossbar" id="bossbar" hidden><span id="bossName">보스</span><i><b id="bossFill"></b></i></div>
   </div>
   <div class="foot" id="foot" hidden>
@@ -373,7 +390,7 @@ body.wide .side{display:grid;gap:12px}
   <div class="t-bg"></div><div class="t-fade"></div>
   <header class="t-head">
     <div><span class="brand-en">BALL BBANG! ASTRA</span><h1 class="logo">볼빵! 아스트라</h1><span class="brand-sub">공을 쏴서 몬스터 블록을 부숴요!</span><button class="evpill" id="btnHw" type="button" hidden>🎃 할로윈 이벤트</button></div>
-    <div class="t-right"><span class="coinpill"><i></i><b id="tCoins">0</b></span><button class="appchip" id="btnInstall" type="button" hidden>📲 앱 설치</button></div>
+    <div class="t-right"><span class="coinpill"><i></i><b id="tCoins">0</b></span><button class="chatpill" id="btnChat" type="button" hidden><span id="chatPillTxt">💬 채팅</span><em id="chatBadge" hidden>0</em></button><button class="appchip" id="btnInstall" type="button" hidden>📲 앱 설치</button></div>
   </header>
   <div class="t-foot">
     <div class="t-best"><span>최고 점수 <b id="tBest">0</b></span><span>최고 스테이지 <b id="tClears">0</b></span></div>
@@ -490,10 +507,21 @@ body.wide .side{display:grid;gap:12px}
 <div class="overlay" id="pause" hidden>
   <div class="card"><span class="tag">PAUSE</span><h2 class="c-title">잠깐 쉬어요</h2>
     <button class="btn main xl" id="btnResume" type="button">계속하기</button>
+    <button class="btn soft" id="btnChatP" type="button" hidden>💬 전체 채팅</button>
     <div class="row"><button class="btn soft" id="btnAutoP" type="button">자동 발사 켜짐</button><button class="btn soft" id="btnSound2" type="button"><span class="lbl">소리 켜짐</span></button></div>
     <button class="btn gold" id="btnSaveQuit" type="button">💾 저장하고 나가기</button>
     <button class="btn soft" id="btnQuit" type="button">그만하고 결과 보기</button>
     <p style="margin:0;font:500 12px var(--f-kr);color:var(--ink2)">저장하고 나가면 다음에 첫 화면 '이어 하기'로 그 자리부터 계속해요</p>
+  </div>
+</div>
+<div class="overlay" id="chat" hidden>
+  <div class="card chatcard"><span class="tag">CHAT</span><h2 class="c-title">💬 전체 채팅</h2>
+    <small class="chat-on" id="chatOn">🟢 지금 접속 중 0명</small>
+    <div class="chat-list" id="chatList"><p class="chat-empty">불러오는 중…</p></div>
+    <div class="chat-in" id="chatNameRow" hidden><input id="chatName" maxlength="10" placeholder="닉네임 (랭킹과 같아요)" autocomplete="nickname"></div>
+    <div class="chat-in"><input id="chatText" maxlength="60" placeholder="메시지 (60자까지)" autocomplete="off" enterkeyhint="send"><button class="btn main" id="chatSend" type="button">보내기</button></div>
+    <p class="chat-rule">모두가 함께 보는 채팅이에요 · 욕설 · 링크 · 연락처는 보낼 수 없어요</p>
+    <button class="btn soft" id="chatClose" type="button">닫기</button>
   </div>
 </div>
 <!-- 결과 -->
@@ -2959,6 +2987,7 @@ async function brag() {
 }
 
 /* ---------- 랭킹 (구글 시트) ---------- */
+const CHAT_URL = 'https://script.google.com/macros/s/AKfycbyIosjZv-vArh74o4DhFsBs8YneiCsj_SfYwxEd6d_I90MI4BPfPh9rTkANT58a7Ah0rg/exec';   // 전체 채팅 · 접속자 수 웹 앱 (ranking/채팅-코드.gs · 주소는 ranking/채팅웹앱주소.txt) — 비우면 채팅이 안 보임
 const RANK_URL = 'https://script.google.com/macros/s/AKfycbxZd7p2170PY_5dziBDyKevWCDt5Eth3L0gTGQB_ufVPdT5ksF66qwDr6rlBceJvfFO0w/exec';
 const RankNet = {
   on: !!RANK_URL && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname),
@@ -3048,6 +3077,7 @@ const upAim = e => { if (e.pointerId === aimPtr) { aiming = false; aimPtr = null
 $('#stage').addEventListener('pointerup', upAim); $('#stage').addEventListener('pointercancel', upAim);
 document.addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
+  if (Chat.open) { if (e.key === 'Escape') Chat.close(); return; }
   if (e.key === 'Escape' && !e.repeat) { if (state === 'play') { if (paused) resumeGame(); else pauseGame(); } return; }
   if (state === 'levelup' && ['1', '2', '3'].includes(e.key)) { choose(Number(e.key) - 1); return; }
   if (state !== 'play' || paused) return;
@@ -3194,8 +3224,104 @@ UNLOCK.forEach(t => document.addEventListener(t, unlockAudio, true));
 // 공 그림이 없으면 색 동그라미로
 (() => { const im = new Image(); im.onerror = () => { ballsImgOk = false; }; im.src = 'assets/balls.webp' + AV; })();
 
+// ---------- 전체 채팅 · 접속자 수 (2026-10-10) ----------
+// 1분마다 살짝 신호(?hb) → 접속자 수·마지막 메시지 번호 · 채팅 창이 열려 있을 때만 4초마다 메시지(?msgs) · 화면이 꺼져 있으면 안 보냄
+const Chat = {
+  on: !!CHAT_URL && /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname),
+  online: 0, last: 0, open: false, pollT: 0, hbT: 0, busy: false, from: '',
+  seen() { try { return Number(localStorage.getItem('astra-universe-chat-seen')) || 0; } catch (e) { return 0; } },
+  setSeen(v) { try { localStorage.setItem('astra-universe-chat-seen', String(v)); } catch (e) {} },
+  async get(q) {
+    const ac = typeof AbortController === 'function' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 12000);
+    try { const r = await fetch(CHAT_URL + '?' + q + '&id=' + RankNet.id(), Object.assign({cache: 'no-store'}, ac ? {signal: ac.signal} : {})); return await r.json(); } finally { if (t) clearTimeout(t); }
+  },
+  async post(body) {
+    const ac = typeof AbortController === 'function' ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 15000);
+    try { const r = await fetch(CHAT_URL, Object.assign({method: 'POST', body: JSON.stringify(body)}, ac ? {signal: ac.signal} : {})); return await r.json(); } finally { if (t) clearTimeout(t); }
+  },
+  start() {
+    if (!this.on) return;
+    ['#btnChat', '#btnChatP', '#hudChat'].forEach(q => { $(q).hidden = false; });
+    this.hb(); clearInterval(this.hbT); this.hbT = setInterval(() => this.hb(), 60000);
+  },
+  async hb() {
+    if (!this.on || document.hidden || this.open) return;
+    try { const j = await this.get('hb=1'); if (j && j.ok) { this.online = j.online | 0; this.last = j.last | 0; this.paint(); this.notice(j.nt); } } catch (e) {}
+  },
+  unread() { return Math.max(0, this.last - this.seen()); },
+  // 패치 공지: 처음 보는 공지면 화면 알림으로 한 번 (게임마다 · 하루 안 공지만 옴)
+  notice(nt) {
+    if (!nt || !nt.i) return;
+    let seen = 0; try { seen = Number(localStorage.getItem('astra-universe-chat-notice')) || 0; } catch (e) {}
+    if (nt.i <= seen) return;
+    try { localStorage.setItem('astra-universe-chat-notice', String(nt.i)); } catch (e) {}
+    toast('📢 ' + nt.m);
+  },
+  paint() {
+    const u = this.unread(), us = u > 9 ? '9+' : String(u);
+    $('#chatPillTxt').textContent = `💬 채팅 · 🟢 ${this.online}명`;
+    $('#hudOnline').textContent = `🟢 ${this.online}`;
+    for (const q of ['#chatBadge', '#hudUnread']) { $(q).hidden = !u; $(q).textContent = us; }
+    $('#btnChatP').textContent = `💬 전체 채팅 · 🟢 ${this.online}명 접속 중${u ? ` · 새 메시지 ${us}` : ''}`;
+    $('#chatOn').textContent = `🟢 지금 접속 중 ${this.online}명`;
+  },
+  show() {
+    if (!this.on) return;
+    if (state === 'play' && !paused) pauseGame();   // 게임 중에 열면 일시정지
+    this.open = true; $('#chat').hidden = false;
+    $('#chatNameRow').hidden = !!RankNet.name; $('#chatName').value = RankNet.name || '';
+    this.pull(); clearInterval(this.pollT); this.pollT = setInterval(() => this.pull(), 4000);
+  },
+  close() { this.open = false; clearInterval(this.pollT); $('#chat').hidden = true; this.paint(); },
+  async pull() {
+    if (!this.open || document.hidden) return;
+    try {
+      const j = await this.get('msgs=1');
+      if (!j || !j.ok || !this.open) return;
+      this.online = j.online | 0; this.last = j.last | 0; this.setSeen(this.last);
+      this.render(j.msgs || []); this.paint();
+    } catch (e) { if (!$('#chatList').querySelector('.cm')) $('#chatList').innerHTML = '<p class="chat-empty">채팅을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요</p>'; }
+  },
+  render(list) {
+    const box = $('#chatList'), atEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 40, me = RankNet.name;
+    box.innerHTML = '';
+    if (!list.length) { box.innerHTML = '<p class="chat-empty">아직 메시지가 없어요. 첫 인사를 남겨 보세요!</p>'; return; }
+    for (const m of list) {
+      const d = document.createElement('div'), b = document.createElement('b'), sp = document.createElement('span'), sm = document.createElement('small');
+      d.className = 'cm' + (m.s ? ' notice' : me && m.n === me ? ' me' : '');
+      b.textContent = m.n; sp.textContent = m.m;
+      const t = new Date(m.t || Date.now()); sm.textContent = `${t.getHours()}:${String(t.getMinutes()).padStart(2, '0')}`;
+      b.style.color = `hsl(${[...m.n].reduce((a, c) => a + c.charCodeAt(0), 0) * 47 % 360} 55% 42%)`;
+      d.append(b, sp, sm); box.appendChild(d);
+    }
+    if (atEnd || this.from !== 'kept') box.scrollTop = box.scrollHeight;
+    this.from = 'kept';
+  },
+  async send() {
+    if (this.busy) return;
+    const text = $('#chatText').value.trim();
+    let name = RankNet.name;
+    if (!name) { name = $('#chatName').value.trim(); if (!name) { toast('닉네임을 먼저 적어 주세요'); $('#chatName').focus(); return; } }
+    if (!text) return;
+    this.busy = true; $('#chatSend').disabled = true;
+    try {
+      const j = await this.post({kind: 'msg', id: RankNet.id(), name, text});
+      if (j && j.ok) { if (!RankNet.name) { RankNet.name = name; $('#chatNameRow').hidden = true; } $('#chatText').value = ''; this.from = ''; this.pull(); }
+      else toast(({slow: '조금 천천히 보내 주세요 (3초에 한 번)', many: '잠시 쉬었다가 보내 주세요', bad: '욕설 · 나쁜 말은 보낼 수 없어요', link: '링크는 보낼 수 없어요', phone: '연락처는 보낼 수 없어요', ban: '지금은 채팅을 쓸 수 없어요', invalid: '닉네임과 메시지를 적어 주세요'})[j && j.why] || '보내지 못했어요. 잠시 뒤 다시 해 주세요');
+    } catch (e) { toast('보내지 못했어요. 인터넷을 확인해 주세요'); }
+    finally { this.busy = false; $('#chatSend').disabled = false; }
+  },
+};
+$('#btnChat').addEventListener('click', () => { S.init(); Chat.show(); });
+$('#btnChatP').addEventListener('click', () => Chat.show());
+$('#hudChat').addEventListener('click', e => { e.stopPropagation(); Chat.show(); });
+$('#chatClose').addEventListener('click', () => Chat.close());
+$('#chatSend').addEventListener('click', () => Chat.send());
+$('#chatText').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); Chat.send(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { Chat.hb(); if (Chat.open) Chat.pull(); } });
 layoutFrame();
 renderTitle();
+Chat.start();
 BGM.prefetch(['title']);   // 전투 곡은 첫 화면에서 고른 시작 스테이지 곡으로 (renderStage)
 initGraphics().catch(() => {});
 })();

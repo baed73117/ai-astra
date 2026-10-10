@@ -994,7 +994,7 @@ function autoWant(id, t) {          // 자동 모드에서 알아서 쓸 때의 
     case 4: return d > C.HERO_REACH && d <= sk.dist;
     case 5: return true;
     case 6: return d <= sk.radius * 0.8;
-    case 7: return d <= 260 && (R.boss || hero.hp < ST.maxHp * 0.7);
+    case 7: return d <= 260;          // 어둠 장막: 사신키우기 자동처럼 적이 가까우면 쿨타임마다 (예전엔 보스·체력 70% 아래만 → 플레이어가 '자동으로 안 써져요' 문의, 2026-10-11)
     case 8: return R.boss || aliveCount() >= 3;
   }
   return false;

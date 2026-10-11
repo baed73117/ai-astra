@@ -122,6 +122,8 @@ const CFG = {
   HW_UNTIL: '20261107', COS_OWN: 0.05,
   RING_LV: 50, RING_MAX: 100, RING_STEP: 0.03, RING_G0: 3000, RING_GG: 1.11, NORI_LV: 30, NORI_MAX: 100, NORI_GOLD: 0.02, NORI_EXP: 0.01, NORI_S0: 3,
   // 날개 4종: 박쥐(탑 10층) · 혼불(탑 20층) · 학(주간 대왕 15번 도전) · 봉황(탑 40층) — 장착하면 공격력·마력·체력 +WING_EQ, 가진 것마다 공격력·마력 +WING_OWN
+  // 한계 돌파(6차): 반지·노리개 상한 100 → 돌파마다 +BRK_ADD(최대 BRK_MAX) · 돌파 재료 = 정수 BRK_ESS×(돌파 수+1) + 영혼석 BRK_SOUL×(돌파 수+1) / 날개 강화 0~WING_UP_MAX · 혼불 WING_UP_F×(강화+1) · 장착 효과 ×(1 + WING_UP_K×강화)
+  BRK_ADD: 50, BRK_MAX: 300, BRK_ESS: 20, BRK_SOUL: 200, WING_UP_MAX: 10, WING_UP_F: 60, WING_UP_K: 0.1,
   WING_EQ: [0.10, 0.20, 0.35, 0.60], WING_OWN: [0.03, 0.05, 0.08, 0.12], WING_TW: [10, 20, 0, 40], WING_WK: 15, WING_SCALE: 1.3,
   TR_P: 0.0025, TR_T: 25, TR_HP: 4, TR_SPEED: 190, TR_GOLD: 40, TR_RW: { f: 3, s: 3 }, TR_FROM: 1,
   TW_T: 180, TW_S0: 5, TW_SG: 4, TW_N0: 10, TW_NG: 0.4, TW_NMAX: 30, TW_BOSS_EVERY: 5, TW_RW: { f: 5 }, TW_RW5: { f: 20, s: 5 }, TW_RW10: { f: 30, s: 10, e: 2 }, MODE_UNLOCK: 1,
@@ -239,7 +241,7 @@ function defaultSave() {
     pas: { a: 0, m: 0, h: 0, c: 0 },                                                                 // 스킬 포인트 패시브
     sc: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], scOwn: 1, scEq: 0, pity: 0,   // 낫 32종 개수 · 한 번이라도 가진 종류(비트) · 장착한 번호 · 천장(영웅 이상 없이 소환한 횟수)
     daily: { d: '', c: { kill: 0, boss: 0, tr: 0, sk: 0, sm: 0, sec: 0 }, got: 0 },               // 일일 과제: 날짜(KST) · 오늘 센 것 · 받은 칸(비트, 15번 = 모두 완료)
-    wk: { w: '', best: 0, tix: 3 }, tw: 0, gd: { tix: 3 }, gp: 0, acc: { ring: 0, nori: 0 }, wing: { own: 0, eq: -1 }, cos: { own: 0, on: '' },      // 장신구 레벨 · 날개(가진 것 비트 · 장착 번호)                                  // … · 황금 곳간 오늘 남은 도전 · 성장 보상 받은 개수                                                          // 주간 대왕: 이번 주(월요일 KST) · 이번 주 최고 점수 · 오늘 남은 도전 / 명부의 탑: 깬 가장 높은 층
+    wk: { w: '', best: 0, tix: 3 }, tw: 0, gd: { tix: 3 }, gp: 0, acc: { ring: 0, nori: 0, ringB: 0, noriB: 0 }, wing: { own: 0, eq: -1, up: [0, 0, 0, 0] }, cos: { own: 0, on: '' },      // 장신구 레벨 · 날개(가진 것 비트 · 장착 번호)                                  // … · 황금 곳간 오늘 남은 도전 · 성장 보상 받은 개수                                                          // 주간 대왕: 이번 주(월요일 KST) · 이번 주 최고 점수 · 오늘 남은 도전 / 명부의 탑: 깬 가장 높은 층
     pen: { a: -1, m: -1, h: -1, g: -1 }, ess: 0, ward: 0, luck: 0, petLv: 0,                        // 펜던트 강화 단계(-1 = 아직 안 만듦) · 보스의 정수 · 수호 부적 · 행운 초롱 · 동무 레벨
     q: 0, task: { kill: 0, lv: 0, tr: 0, sm: 0, ch: 0, boss: 0, pen: 0, pet: 0 }, cnt: { sm: 0, mg: 0, boss: 0, wk: 0 },   // 초보 퀘스트 번호 · 저승 과제 받은 단계 · 누적 횟수(소환·합성·보스)
     skills: { owned: [1], lv: { 1: 1 }, slots: [1, 0, 0, 0, 0, 0] },                             // 기술: 가진 번호 · 번호별 레벨 · 슬롯 6칸(0=빈칸, 사신키우기 2×3)
@@ -297,7 +299,7 @@ function cleanSave(s) {
   const int0 = v => { const n = Math.floor(Number(v)); return Number.isFinite(n) && n > 0 ? n : 0; };
   { const z = Number(s.set.zoom); s.set.zoom = Number.isFinite(z) ? clamp(z, C.ZOOM_MIN, C.ZOOM_MAX) : C.ZOOM_DEF; }
   { const W = isObj(s.wk) ? s.wk : (s.wk = {}); if (typeof W.w !== 'string' || !/^\d{8}$/.test(W.w)) W.w = ''; W.best = Number.isFinite(Number(W.best)) && W.best > 0 ? Math.floor(W.best) : 0; W.tix = clamp(Math.floor(Number(W.tix)), 0, C.WK_TIX) || 0; if (!(W.tix >= 0)) W.tix = 0; }
-  s.tw = int0(s.tw); { const A = isObj(s.acc) ? s.acc : (s.acc = {}); A.ring = clamp(int0(A.ring), 0, C.RING_MAX); A.nori = clamp(int0(A.nori), 0, C.NORI_MAX); const Cs = isObj(s.cos) ? s.cos : (s.cos = {}); Cs.own = (Number(Cs.own) | 0) & 1; Cs.on = Cs.on === 'hw' && (Cs.own & 1) ? 'hw' : ''; const Wg = isObj(s.wing) ? s.wing : (s.wing = {}); Wg.own = (Number(Wg.own) | 0) & 15; const e = Math.floor(Number(Wg.eq)); Wg.eq = e >= 0 && e < 4 && (Wg.own & (1 << e)) ? e : -1; } s.gp = clamp(int0(s.gp), 0, GP_LV.length); { const G = isObj(s.gd) ? s.gd : (s.gd = {}); const t = Math.floor(Number(G.tix)); G.tix = Number.isFinite(t) ? clamp(t, 0, C.GD_TIX) : C.GD_TIX; }
+  s.tw = int0(s.tw); { const A = isObj(s.acc) ? s.acc : (s.acc = {}); A.ringB = clamp(int0(A.ringB), 0, (C.BRK_MAX - C.RING_MAX) / C.BRK_ADD); A.noriB = clamp(int0(A.noriB), 0, (C.BRK_MAX - C.NORI_MAX) / C.BRK_ADD); A.ring = clamp(int0(A.ring), 0, C.RING_MAX + A.ringB * C.BRK_ADD); A.nori = clamp(int0(A.nori), 0, C.NORI_MAX + A.noriB * C.BRK_ADD); const Cs = isObj(s.cos) ? s.cos : (s.cos = {}); Cs.own = (Number(Cs.own) | 0) & 1; Cs.on = Cs.on === 'hw' && (Cs.own & 1) ? 'hw' : ''; const Wg = isObj(s.wing) ? s.wing : (s.wing = {}); Wg.own = (Number(Wg.own) | 0) & 15; { const u = Array.isArray(Wg.up) ? Wg.up : []; Wg.up = [0, 1, 2, 3].map(i => clamp(int0(u[i]), 0, C.WING_UP_MAX)); } const e = Math.floor(Number(Wg.eq)); Wg.eq = e >= 0 && e < 4 && (Wg.own & (1 << e)) ? e : -1; } s.gp = clamp(int0(s.gp), 0, GP_LV.length); { const G = isObj(s.gd) ? s.gd : (s.gd = {}); const t = Math.floor(Number(G.tix)); G.tix = Number.isFinite(t) ? clamp(t, 0, C.GD_TIX) : C.GD_TIX; }
   { const D = isObj(s.daily) ? s.daily : (s.daily = {}); if (typeof D.d !== 'string' || !/^\d{8}$/.test(D.d)) D.d = ''; if (!isObj(D.c)) D.c = {}; for (const k of DAILY_KEYS) D.c[k] = int0(D.c[k]); D.got = (Number(D.got) | 0) & 0xffff; }
   s.lv = Math.max(1, int0(s.lv)); s.sp = int0(s.sp); s.cleared = int0(s.cleared); s.pet = s.pet ? 1 : 0;
   if (!(s.exp >= 0) || !isFinite(s.exp)) s.exp = 0;
@@ -570,10 +572,19 @@ function petUp() { if (!S.pet || S.petLv >= C.PET_MAX) return false; const c = p
 /* ---- 장신구 (4차 패치): 저승 반지 · 혼백 노리개 · 날개 ---- */
 const ringCost = l => ({ ess: 1 + Math.floor(l / 10), gold: Math.floor(C.RING_G0 * Math.pow(C.RING_GG, l)) });
 const noriCost = l => C.NORI_S0 + Math.floor(l / 3);
-function ringUp() { const l = S.acc.ring; if (S.lv < C.RING_LV || l >= C.RING_MAX) return false; const c = ringCost(l); if (S.ess < c.ess || S.gold < c.gold) return false; S.ess -= c.ess; S.gold -= c.gold; S.acc.ring++; recalc(); save(true); return true; }
-function noriUp() { const l = S.acc.nori; if (S.lv < C.NORI_LV || l >= C.NORI_MAX) return false; const c = noriCost(l); if (S.soul < c) return false; S.soul -= c; S.acc.nori++; recalc(); save(true); return true; }
+const ringCap = () => C.RING_MAX + S.acc.ringB * C.BRK_ADD, noriCap = () => C.NORI_MAX + S.acc.noriB * C.BRK_ADD;
+const brkCost = n => ({ ess: C.BRK_ESS * (n + 1), soul: C.BRK_SOUL * (n + 1) });          // n = 지금까지 돌파한 수
+function accBreak(k) {        // 한계 돌파: 상한에 닿았을 때 정수·영혼석으로 상한 +50
+  const b = k === 'ring' ? S.acc.ringB : S.acc.noriB, l = k === 'ring' ? S.acc.ring : S.acc.nori, cap = k === 'ring' ? ringCap() : noriCap();
+  if (l < cap || cap >= C.BRK_MAX) return false; const c = brkCost(b); if (S.ess < c.ess || S.soul < c.soul) return false;
+  S.ess -= c.ess; S.soul -= c.soul; if (k === 'ring') S.acc.ringB++; else S.acc.noriB++; save(true); return true;
+}
+const wingUpCost = i => C.WING_UP_F * (S.wing.up[i] + 1);
+function wingUp(i) { if (!(S.wing.own & (1 << i)) || S.wing.up[i] >= C.WING_UP_MAX) return false; const c = wingUpCost(i); if (S.flame < c) return false; S.flame -= c; S.wing.up[i]++; recalc(); save(true); return true; }
+function ringUp() { const l = S.acc.ring; if (S.lv < C.RING_LV || l >= ringCap()) return false; const c = ringCost(l); if (S.ess < c.ess || S.gold < c.gold) return false; S.ess -= c.ess; S.gold -= c.gold; S.acc.ring++; recalc(); save(true); return true; }
+function noriUp() { const l = S.acc.nori; if (S.lv < C.NORI_LV || l >= noriCap()) return false; const c = noriCost(l); if (S.soul < c) return false; S.soul -= c; S.acc.nori++; recalc(); save(true); return true; }
 const wingOwnEff = () => { let v = 0; for (let i = 0; i < 4; i++) if (S.wing.own & (1 << i)) v += C.WING_OWN[i]; return v; };
-const wingEqEff = () => S.wing.eq >= 0 ? C.WING_EQ[S.wing.eq] : 0;
+const wingEqEff = () => S.wing.eq >= 0 ? C.WING_EQ[S.wing.eq] * (1 + C.WING_UP_K * S.wing.up[S.wing.eq]) : 0;
 const cosOwnEff = () => (S.cos.own & 1) ? C.COS_OWN : 0;
 const accAtkMul = () => (1 + C.RING_STEP * S.acc.ring) * (1 + wingEqEff() + wingOwnEff()) * (1 + cosOwnEff());
 const WING_NAME = ['박쥐 날개', '혼불 날개', '학 날개', '봉황 날개'];
@@ -1172,7 +1183,7 @@ function botGrow() {             // 봇: 패시브(공격력 → 체력 → 마�
   for (const k of PEN_K) if (S.pen[k] < 0 && S.ess >= C.PEN_MAKE) penMake(k);
   for (let g = 0; g < 20; g++) { let bk = null, bl = 99; for (const k of PEN_K) if (S.pen[k] >= 0 && S.pen[k] < C.PEN_MAX && S.pen[k] < bl) { bl = S.pen[k]; bk = k; } if (!bk || !penUp(bk)) break; }
   while (petUp()) { }
-  for (let g = 0; g < 50 && ringUp(); g++) { } for (let g = 0; g < 50 && noriUp(); g++) { }
+  for (let g = 0; g < 50 && ringUp(); g++) { } for (let g = 0; g < 50 && noriUp(); g++) { } accBreak('ring'); accBreak('nori'); if (S.wing.eq >= 0) wingUp(S.wing.eq);
 }
 function simulate(sec, opt) {    // 그리기 없이 계산만 빠르게 (시험·밸런스 봇용)
   opt = opt || {}; const bot = opt.bot !== false, wasOn = V.on, wasNo = noSave;
@@ -2457,33 +2468,39 @@ function buildAccView(panelH) {          // 반지 · 노리개 두 줄 + 날개
     const e = mkText('', 19, 0xffffff, { strokeThickness: 3 }); e.position.set(rH + 12, rH / 2 - 8); c.addChild(e);
     const q = mkText('', 17, COL.dim, { strokeThickness: 2 }); q.position.set(rH + 12, rH - 28); c.addChild(q);
     const bh = Math.min(54, rH - 30), b = pill(150, bh, () => onAccUp(k), 22); b.c.position.set(672 - 150 - 12, (rH - bh) / 2); c.addChild(b.c);
-    accUi.rows.push({ k, a, e, q, b, nm });
+    const bk = pill(110, bh, () => onAccBreak(k), 19); bk.c.position.set(672 - 150 - 12 - 110 - 8, (rH - bh) / 2); bk.c.visible = false; c.addChild(bk.c);      // 상한에 닿으면 [돌파]
+    accUi.rows.push({ k, a, e, q, b, bk, nm });
   });
   const wy = top + 2 * rh + 6, t = mkText('날개', 26, 0xffffff, { strokeThickness: 4 }); t.position.set(28, wy); P.addChild(t);
   accUi.wt = mkText('', 18, COL.dim, { strokeThickness: 2 }); accUi.wt.position.set(100, wy + 6); P.addChild(accUi.wt);
   const cy = wy + 40, cw = 162, ch = clamp(panelH - cy - C.EXP_H - 12, 150, 250);
   for (let i = 0; i < 4; i++) {
     const b = button(cw, ch, () => onWing(i)); b.position.set(24 + i * (cw + 8), cy); P.addChild(b);
-    const g = new PIXI.Graphics(); b.addChild(g); const im = new PIXI.Sprite(); im.anchor.set(0.5); im.position.set(cw / 2, ch * 0.36); b.addChild(im);
-    const nm = mkText(WING_NAME[i], 20, 0xffffff, { strokeThickness: 3 }); nm.anchor.set(0.5, 0); nm.position.set(cw / 2, ch * 0.62); b.addChild(nm);
-    const st = mkText('', 16, COL.dim, { strokeThickness: 2 }); st.anchor.set(0.5, 0); st.position.set(cw / 2, ch * 0.62 + 26); b.addChild(st);
-    accUi.wings.push({ g, im, nm, st, w: cw, h: ch, imK: '' });
+    const g = new PIXI.Graphics(); b.addChild(g); const im = new PIXI.Sprite(); im.anchor.set(0.5); im.position.set(cw / 2, ch * 0.3); b.addChild(im);
+    const nm = mkText(WING_NAME[i], 20, 0xffffff, { strokeThickness: 3 }); nm.anchor.set(0.5, 0); nm.position.set(cw / 2, ch * 0.56); b.addChild(nm);
+    const st = mkText('', 16, COL.dim, { strokeThickness: 2 }); st.anchor.set(0.5, 0); st.position.set(cw / 2, ch * 0.56 + 24); b.addChild(st);
+    const up = pill(cw - 20, 34, () => onWingUp(i), 17); up.c.position.set(10, ch - 42); up.c.visible = false; P.addChild(up.c); up.c.position.set(24 + i * (cw + 8) + 10, cy + ch - 42);      // 가진 날개: [강화 · 혼불 N]
+    accUi.wings.push({ g, im, nm, st, up, w: cw, h: ch, imK: '' });
   }
 }
 function accRefresh(force) {
-  const A = S.acc, sig = [A.ring, A.nori, S.lv >= C.RING_LV, S.lv >= C.NORI_LV, S.wing.own, S.wing.eq, !!AT.wings, Math.floor(S.ess), Math.floor(S.soul), S.gold >= ringCost(A.ring).gold].join('|');
+  const A = S.acc, sig = [A.ring, A.nori, A.ringB, A.noriB, S.lv >= C.RING_LV, S.lv >= C.NORI_LV, S.wing.own, S.wing.eq, S.wing.up.join(), !!AT.wings, Math.floor(S.ess), Math.floor(S.soul), Math.floor(S.flame), S.gold >= ringCost(A.ring).gold].join('|');
   if (sig === accUi.sig && !force) return; accUi.sig = sig;
   for (const r of accUi.rows) {
     if (r.k === 'ring') {
-      const l = A.ring, open = S.lv >= C.RING_LV, max = l >= C.RING_MAX, c = ringCost(l), can = open && !max && S.ess >= c.ess && S.gold >= c.gold;
-      setTx(r.a, r.nm + (open ? ' Lv ' + l + '/' + C.RING_MAX : '')); setTx(r.e, '모든 피해 +' + Math.round(C.RING_STEP * l * 100) + '%' + (max ? '' : '  → +' + Math.round(C.RING_STEP * (l + 1) * 100) + '%'));
-      setTx(r.q, !open ? '레벨 ' + C.RING_LV + '에 열려요' : max ? '최고 레벨!' : '보스의 정수 ' + c.ess + ' · 골드 ' + fmt(c.gold));
+      const cap = ringCap(), l = A.ring, open = S.lv >= C.RING_LV, max = l >= cap, c = ringCost(l), can = open && !max && S.ess >= c.ess && S.gold >= c.gold;
+      setTx(r.a, r.nm + (open ? ' Lv ' + l + '/' + cap + (A.ringB ? ' (돌파 ' + A.ringB + ')' : '') : '')); setTx(r.e, '모든 피해 +' + Math.round(C.RING_STEP * l * 100) + '%' + (max ? '' : '  → +' + Math.round(C.RING_STEP * (l + 1) * 100) + '%'));
+      const bc = brkCost(A.ringB), bcan = max && cap < C.BRK_MAX && S.ess >= bc.ess && S.soul >= bc.soul;
+      setTx(r.q, !open ? '레벨 ' + C.RING_LV + '에 열려요' : max ? (cap >= C.BRK_MAX ? '최고 레벨!' : '돌파: 정수 ' + bc.ess + ' · 영혼석 ' + bc.soul + ' → 상한 +' + C.BRK_ADD) : '보스의 정수 ' + c.ess + ' · 골드 ' + fmt(c.gold));
       r.b.draw(!open ? '잠김' : max ? '최고' : '강화', can ? COL.ok : COL.off, can ? 0xffffff : 0x8a82b0);
+      r.bk.c.visible = max && cap < C.BRK_MAX; if (r.bk.c.visible) r.bk.draw('한계 돌파', bcan ? 0xb8324e : COL.off, bcan ? 0xffffff : 0x8a82b0);
     } else {
-      const l = A.nori, open = S.lv >= C.NORI_LV, max = l >= C.NORI_MAX, c = noriCost(l), can = open && !max && S.soul >= c;
-      setTx(r.a, r.nm + (open ? ' Lv ' + l + '/' + C.NORI_MAX : '')); setTx(r.e, '골드 +' + Math.round(C.NORI_GOLD * l * 100) + '% · 경험치 +' + Math.round(C.NORI_EXP * l * 100) + '%');
-      setTx(r.q, !open ? '레벨 ' + C.NORI_LV + '에 열려요' : max ? '최고 레벨!' : '영혼석 ' + c);
+      const cap = noriCap(), l = A.nori, open = S.lv >= C.NORI_LV, max = l >= cap, c = noriCost(l), can = open && !max && S.soul >= c;
+      setTx(r.a, r.nm + (open ? ' Lv ' + l + '/' + cap + (A.noriB ? ' (돌파 ' + A.noriB + ')' : '') : '')); setTx(r.e, '골드 +' + Math.round(C.NORI_GOLD * l * 100) + '% · 경험치 +' + Math.round(C.NORI_EXP * l * 100) + '%');
+      const bc = brkCost(A.noriB), bcan = max && cap < C.BRK_MAX && S.ess >= bc.ess && S.soul >= bc.soul;
+      setTx(r.q, !open ? '레벨 ' + C.NORI_LV + '에 열려요' : max ? (cap >= C.BRK_MAX ? '최고 레벨!' : '돌파: 정수 ' + bc.ess + ' · 영혼석 ' + bc.soul + ' → 상한 +' + C.BRK_ADD) : '영혼석 ' + c);
       r.b.draw(!open ? '잠김' : max ? '최고' : '강화', can ? COL.ok : COL.off, can ? 0xffffff : 0x8a82b0);
+      r.bk.c.visible = max && cap < C.BRK_MAX; if (r.bk.c.visible) r.bk.draw('한계 돌파', bcan ? 0xb8324e : COL.off, bcan ? 0xffffff : 0x8a82b0);
     }
     fitW(r.e, 380); fitW(r.q, 380);
   }
@@ -2491,9 +2508,11 @@ function accRefresh(force) {
   for (let i = 0; i < 4; i++) {
     const o = accUi.wings[i], own = !!(S.wing.own & (1 << i)), eq = S.wing.eq === i, info = AT.wings && AT.wings['w' + i];
     o.g.clear(); rr(o.g, 0, 0, o.w, o.h, 16, eq ? 0x2a1f66 : own ? 0x1c1646 : 0x100c28, 1, eq ? 0xffe27a : own ? COL.violet : 0x2a2250, eq ? 4 : 2);
-    if (info && o.imK !== 'w' + i) { o.imK = 'w' + i; o.im.texture = info.tex; o.im.scale.set(Math.min((o.w - 16) / info.w, (o.h * 0.52) / info.h)); }
+    if (info && o.imK !== 'w' + i) { o.imK = 'w' + i; o.im.texture = info.tex; o.im.scale.set(Math.min((o.w - 16) / info.w, (o.h * 0.46) / info.h)); }
     o.im.visible = !!info; o.im.alpha = own ? 1 : 0.25; o.im.tint = own ? 0xffffff : 0x6a6290;
-    setTx(o.st, own ? (eq ? '장착 중 · +' : '장착하기 · +') + Math.round(C.WING_EQ[i] * 100) + '%' : wingHow(i)); o.st.style.fill = eq ? 0xffe27a : own ? 0x9fffc0 : COL.dim; fitW(o.st, o.w - 10);
+    const u = S.wing.up[i], pct = Math.round(C.WING_EQ[i] * (1 + C.WING_UP_K * u) * 100);
+    setTx(o.st, own ? (eq ? '장착 중 · +' : '장착하기 · +') + pct + '%' + (u ? ' (+' + u + ')' : '') : wingHow(i)); o.st.style.fill = eq ? 0xffe27a : own ? 0x9fffc0 : COL.dim; fitW(o.st, o.w - 10);
+    o.up.c.visible = own; if (own) { const mx = u >= C.WING_UP_MAX, c = wingUpCost(i), can = !mx && S.flame >= c; o.up.draw(mx ? '최고 강화' : '강화 · 혼불 ' + c, can ? COL.ok : COL.off, can ? 0xffffff : 0x8a82b0); }
   }
 }
 function onAccUp(k) {
@@ -2501,6 +2520,8 @@ function onAccUp(k) {
   if (!ok) { const l = k === 'ring' ? C.RING_LV : C.NORI_LV; note(S.lv < l ? '레벨 ' + l + '에 열려요' : k === 'ring' ? '보스의 정수나 골드가 모자라요' : '영혼석이 모자라요', 0xb9a8ff); return; }
   sfx('enhOk'); accRefresh(true); uiRefresh(true);
 }
+function onAccBreak(k) { if (!accBreak(k)) { note('한계 돌파: 보스의 정수와 영혼석이 모자라요', 0xb9a8ff); return; } sfx('enhOk'); V.levelUp(); note((k === 'ring' ? '저승 반지' : '혼백 노리개') + ' 한계 돌파! 상한 +' + C.BRK_ADD, 0xffe27a); accRefresh(true); uiRefresh(true); }
+function onWingUp(i) { if (!wingUp(i)) { note(S.wing.up[i] >= C.WING_UP_MAX ? '이미 최고 강화예요' : '혼불이 모자라요', 0xb9a8ff); return; } sfx('enhOk'); note(WING_NAME[i] + ' 강화 +' + S.wing.up[i] + ' (장착 효과 ×' + (1 + C.WING_UP_K * S.wing.up[i]).toFixed(1) + ')', 0xffe27a); accRefresh(true); uiRefresh(true); }
 function onWing(i) { if (!(S.wing.own & (1 << i))) { note(WING_NAME[i] + ': ' + wingHow(i) + ' 하면 얻어요', 0xb9a8ff); return; } wingEquip(i); wantWings(); sfx('equip'); note(S.wing.eq === i ? WING_NAME[i] + ' 장착!' : '날개를 벗었어요', 0x9fffc0); accRefresh(true); uiRefresh(true); }
 function eqSubShow() {
   const v = scUi.sub || 'sc'; scUi.scC.visible = v === 'sc'; penUi.c.visible = v === 'pen'; petUi.c.visible = v === 'pet'; accUi.c.visible = v === 'acc'; if (v === 'acc') wantWings();
@@ -2610,10 +2631,10 @@ function onScMerge() {
 const rankUi = { rows: [], tabs: [], me: null, msg: null, up: null, rh: 30, sig: '' }, attUi = { cards: [], btn: null, info: null, sig: '' };
 function moreBack(c) { const b = pill(130, 50, () => showMoreSub('menu'), 24); b.c.position.set(C.WW - 24 - 130, 8); b.draw('← 뒤로', 0x3a3466, 0xffffff); c.addChild(b.c); return b; }
 function buildMoreTab(panelH) {
-  const P = ui.more; ui.moreMenu = new PIXI.Container(); ui.moreSet = new PIXI.Container(); ui.moreXfer = new PIXI.Container(); ui.moreRank = new PIXI.Container(); ui.moreAtt = new PIXI.Container(); ui.moreShop = new PIXI.Container(); ui.moreTask = new PIXI.Container(); ui.moreDaily = new PIXI.Container(); ui.moreGrow = new PIXI.Container(); P.addChild(ui.moreMenu, ui.moreSet, ui.moreXfer, ui.moreRank, ui.moreAtt, ui.moreTask, ui.moreDaily, ui.moreGrow);
+  const P = ui.more; ui.moreMenu = new PIXI.Container(); ui.moreSet = new PIXI.Container(); ui.moreXfer = new PIXI.Container(); ui.moreRank = new PIXI.Container(); ui.moreAtt = new PIXI.Container(); ui.moreShop = new PIXI.Container(); ui.moreTask = new PIXI.Container(); ui.moreDaily = new PIXI.Container(); ui.moreGrow = new PIXI.Container(); ui.moreHall = new PIXI.Container(); P.addChild(ui.moreMenu, ui.moreSet, ui.moreXfer, ui.moreRank, ui.moreAtt, ui.moreTask, ui.moreDaily, ui.moreGrow, ui.moreHall);
   const t = mkText('더보기', 32, 0xffffff); t.position.set(28, 14); ui.moreMenu.addChild(t);
   const items = [['설정', 'ui_set', () => showMoreSub('set')], ['기록 옮기기', 'ui_move', () => showMoreSub('xfer')]];
-  if (RankNet.on) items.push(['랭킹', 'ui_rank', () => openRank()]);
+  if (RankNet.on) items.push(['랭킹', 'ui_rank', () => openRank()], ['명예의 전당', 'orn_star', () => openHall()]);
   if (Chat.on) items.push(['채팅', 'ui_chat', () => Chat.show()]);
   items.push(['출석', 'ui_attend', () => showMoreSub('att')], ['일일 과제', 'orn_star', () => showMoreSub('daily')], ['저승 과제', 'cur_key', () => showMoreSub('task')], ['성장 보상', 'orn_heart', () => showMoreSub('grow')], ['상점', 'ui_shop', () => showMoreSub('shop')]);
   if (!Inst.standalone()) items.push(['앱 설치', 'orn_bow', () => Inst.open()]);
@@ -2647,7 +2668,7 @@ function buildMoreTab(panelH) {
   const b1 = pill(600, 76, () => openXfer('out'), 28); b1.c.position.set(60, 84); b1.draw('기록 옮기기 코드 만들기', COL.ok, 0xffffff); X0.addChild(b1.c);
   const b2 = pill(600, 76, () => openXfer('in'), 28); b2.c.position.set(60, 176); b2.draw('코드로 기록 불러오기', 0x3f6a9a, 0xffffff); X0.addChild(b2.c);
   const n = mkText('폰을 바꾸거나 브라우저 기록을 지우기 전에 코드를 만들어 복사해 두세요. 카톡 \'나에게 보내기\'에 붙여 두면 편해요.', 22, COL.dim, { strokeThickness: 2, wordWrap: true, wordWrapWidth: 620 }); n.position.set(50, 272); X0.addChild(n);
-  buildRankUi(panelH); buildAttUi(panelH); buildTaskUi(panelH); buildDailyUi(panelH); buildGrowUi(panelH);
+  buildRankUi(panelH); buildAttUi(panelH); buildTaskUi(panelH); buildDailyUi(panelH); buildGrowUi(panelH); if (RankNet.on) buildHallUi(panelH);
   { // --- 상점: 체력·MP 물약(골드, 값은 지금 사냥터 몬스터 골드에 맞춰 오름) · 수호 부적·행운 초롱(영혼석)
     const S1 = ui.moreShop; P.addChild(S1); const t2 = mkText('상점', 32, 0xffffff); t2.position.set(28, 14); S1.addChild(t2); moreBack(S1); shopUi.rows = [];
     const rh = clamp(Math.floor((panelH - 72 - 64 - C.EXP_H) / 4), 100, 140), rH = rh - 10;
@@ -2684,7 +2705,7 @@ function onShopBuy(k, n) {
   const gold = k === 'hp' || k === 'mp';
   if (gold ? buyPot(k, n) : buyItem(k, n)) { sfx('equip'); shopRender(); uiRefresh(true); } else note(gold ? '골드가 모자라요' : '영혼석이 모자라요', 0xff9a6a);
 }
-function showMoreSub(s) { ui.moreSub = s; ui.moreMenu.visible = s === 'menu'; ui.moreSet.visible = s === 'set'; ui.moreXfer.visible = s === 'xfer'; ui.moreRank.visible = s === 'rank'; ui.moreAtt.visible = s === 'att'; if (ui.moreShop) ui.moreShop.visible = s === 'shop'; if (s === 'shop') shopRender(); if (s === 'set') setRefresh(); if (s === 'rank') rankRender(true); if (s === 'att') attRender(true); if (ui.moreTask) ui.moreTask.visible = s === 'task'; if (s === 'task') taskRender(true); if (ui.moreDaily) ui.moreDaily.visible = s === 'daily'; if (s === 'daily') { dailyTick(); dailyRender(true); } if (ui.moreGrow) ui.moreGrow.visible = s === 'grow'; if (s === 'grow') growRender(true); }
+function showMoreSub(s) { ui.moreSub = s; ui.moreMenu.visible = s === 'menu'; ui.moreSet.visible = s === 'set'; ui.moreXfer.visible = s === 'xfer'; ui.moreRank.visible = s === 'rank'; ui.moreAtt.visible = s === 'att'; if (ui.moreShop) ui.moreShop.visible = s === 'shop'; if (s === 'shop') shopRender(); if (s === 'set') setRefresh(); if (s === 'rank') rankRender(true); if (s === 'hall') hallRender(true); if (s === 'att') attRender(true); if (ui.moreTask) ui.moreTask.visible = s === 'task'; if (s === 'task') taskRender(true); if (ui.moreDaily) ui.moreDaily.visible = s === 'daily'; if (s === 'daily') { dailyTick(); dailyRender(true); } if (ui.moreGrow) ui.moreGrow.visible = s === 'grow'; if (s === 'grow') growRender(true); if (ui.moreHall) ui.moreHall.visible = s === 'hall'; if (s === 'hall') hallRender(true); }
 function setRefresh() {
   const on = (b, v, a, bt) => b.draw(v ? a : bt, v ? 0x3f7a4a : 0x4a4466, 0xffffff);
   setUi.hero[0].draw('소년', S.hero === 'm' ? COL.ok : 0x2a2548, 0xffffff); setUi.hero[1].draw('소녀', S.hero === 'f' ? COL.ok : 0x2a2548, 0xffffff);
@@ -2700,6 +2721,37 @@ function onLook(i) {
   lookSet(i); setRefresh(); note(LOOKS[i].n + ' 색으로 바꿨어요', 0x9fffc0);
 }
 /* ---- 랭킹 화면 (더보기 → 랭킹): 위 두 탭(최고 레벨 · 전투력) · 10등까지 · 내 순위 · 올리기 ---- */
+const hallUi = { rows: [], sig: '' };
+function openHall() { if (!RankNet.on) return; showMoreSub('hall'); Rank.fetchTop(true); }
+function buildHallUi(panelH) {       // 세 묶음(레벨 · 전투력 · 이번 주 대왕) × 1·2·3위 + 내 자리
+  const P = ui.moreHall; hallUi.rows.length = 0;
+  const t = mkText('명예의 전당', 32, 0xffffff); t.position.set(28, 14); P.addChild(t); moreBack(P);
+  const top = 70, gh = clamp(Math.floor((panelH - top - 10 - C.EXP_H) / 3), 120, 190), rh = Math.floor((gh - 34) / 3);
+  [['trlevel', '최고 레벨', 0xb9a8ff], ['trpower', '전투력', 0xff9aa8], ['trwk', '이번 주 주간 대왕', 0xffd27a]].forEach(([g, nm, col], k) => {
+    const c = new PIXI.Container(); c.position.set(24, top + k * gh); P.addChild(c);
+    const bg = new PIXI.Graphics(); rr(bg, 0, 0, 672, gh - 8, 16, 0x1c1646, 1, 0x2f2568, 2); c.addChild(bg);
+    const h = mkText(nm, 22, col, { strokeThickness: 4 }); h.position.set(16, 6); c.addChild(h);
+    const my = mkText('', 16, COL.dim, { strokeThickness: 2 }); my.anchor.set(1, 0); my.position.set(656, 10); c.addChild(my);
+    const rows = [];
+    for (let i = 0; i < 3; i++) {
+      const y = 34 + i * rh, md = mkText(['👑', '🥈', '🥉'][i], rh < 32 ? 16 : 20, 0xffffff, { strokeThickness: 0 }); md.anchor.set(0.5); md.position.set(32, y + rh / 2); c.addChild(md);
+      const n = mkText('', rh < 32 ? 17 : 20, 0xffffff, { strokeThickness: 3 }); n.anchor.set(0, 0.5); n.position.set(56, y + rh / 2); c.addChild(n);
+      const sc = mkText('', rh < 32 ? 17 : 20, 0xffe27a, { strokeThickness: 3 }); sc.anchor.set(1, 0.5); sc.position.set(656, y + rh / 2); c.addChild(sc);
+      rows.push({ n, sc });
+    }
+    hallUi.rows.push({ g, rows, my });
+  });
+}
+function hallRender(force) {
+  if (!ui.moreHall || (!ui.moreHall.visible && !force)) return; const sig = (Rank.top ? 1 : 0) + '|' + Rank.topDirty + '|' + JSON.stringify(Rank.my) + '|' + S.wk.w;
+  if (!force && sig === hallUi.sig) return; hallUi.sig = sig;
+  const me = RankNet.name;
+  for (const grp of hallUi.rows) {
+    const g = grp.g === 'trwk' ? 'trwk' + S.wk.w : grp.g, list = Rank.top && Array.isArray(Rank.top[g]) ? Rank.top[g] : [];
+    grp.rows.forEach((o, i) => { const it = list[i], mine = !!it && !!me && String(it.name).replace(/^​/, '') === me; setTx(o.n, it ? String(it.name).replace(/^​/, '') : (Rank.top ? '아직 없어요 · 첫 1등에 도전!' : '불러오는 중…')); fitW(o.n, 380); o.n.style.fill = mine ? 0xffe27a : it ? 0xffffff : COL.dim; setTx(o.sc, it ? fmt(it.score) : ''); });
+    const my = Rank.my[g]; setTx(grp.my, my ? '내 순위 ' + my.rank + '등' : ''); fitW(grp.my, 200);
+  }
+}
 function openRank() {
   if (!RankNet.on) return;
   if (!RankNet.name) { NameDlg.open(() => openRank()); return; }
@@ -3469,7 +3521,7 @@ const Rank = {
   },
   async fetchTop(force) {
     if (!RankNet.on) return; const now = performance.now(); if (!force && now - this.topT < 20000) return; this.topT = now;
-    try { const j = await RankNet.top(); if (j && j.ok && j.top) { this.top = j.top; this.topDirty = true; } } catch (e) { }
+    try { const j = await RankNet.top(); if (j && j.ok && j.top) { this.top = j.top; this.topDirty = true; if (ui.moreHall && ui.moreHall.visible) hallRender(true); } } catch (e) { }
   },
   status() {            // 랭킹 화면 아래 안내 글
     if (S.rkx === 'speed') return '게임 시계가 비정상으로 빨라져서 이 저장은 랭킹에서 제외됐어요';
@@ -3840,6 +3892,8 @@ function installDebug() {
     sum: { lv: scSumLv, next: scSumNext, get pity() { return S.pity; } },
     gp: { can: gpCan, claim: gpClaim, rw: gpRw, LV: GP_LV, render: () => growRender(true) },
     cos: { check: () => cosCheck(true), set: setCos, key: heroKey, own: cosOwnEff },
+    hall: { open: openHall, render: () => hallRender(true), get rows() { return hallUi.rows.map(g => ({ g: g.g, names: g.rows.map(o => o.n.text), my: g.my.text })); } },
+    brk: { ring: () => accBreak('ring'), nori: () => accBreak('nori'), ringCap, noriCap, cost: brkCost, wingUp, wingUpCost },
     acc: { ringUp, noriUp, ringCost, noriCost, wingCheck, wingEquip, mul: accAtkMul, get wingsArt() { return !!AT.wings; }, get wingVis() { return !!(heroV && heroV.wing.visible); }, render: () => accRefresh(true), want: wantWings, get wingBottom() { const o = accUi.wings[3]; return o ? Math.round(L.panel.y + o.g.parent.y + o.h) : 0; }, get vis() { return !!(accUi.c && accUi.c.visible); } },
     tr: { make: trMake, get on() { return R.trOn; }, find: () => mons.find(m => m.alive && m.tr) || null }, inst: Inst,
     mode: { can: modeCan, start: modeStart, quit: modeQuit, week: wkKey, get st() { return { mode: R.mode, over: R.modeOver, t: R.modeT, score: R.score, floor: R.floor, tot: R.twTot, kill: R.twKill, sp: R.twSp, mi: R.mi, back: R.back, tix: S.wk.tix, gtix: S.gd.tix, gold: R.gdGold, best: S.wk.best, w: S.wk.w, tw: S.tw, res: R.wkRes, hud: !!(hud.mode && hud.mode.c.visible) }; }, render: modeBtnRender, get btnGeo() { return mapUi.mode ? mapUi.mode.map(o => ({ x: o.b.x + o.w / 2, y: L.panel.y + o.b.y + o.h / 2, sub: o.sub.text })) : []; } },

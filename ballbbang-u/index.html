@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>볼빵! 아스트라</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#140C24">
+<meta name="robots" content="noindex">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#140C24;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;-webkit-user-select:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;background:#140C24;outline:none}
+#ld{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 35%,#4B2C7A,#1A1030 70%);color:#fff;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;z-index:5;transition:opacity .4s}
+#ld .w{width:min(78vw,320px);text-align:center}
+#ld b{display:block;font:900 34px/1.1 "Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.02em;color:#fff;text-shadow:0 3px 0 #F0478C,0 10px 20px rgba(255,79,154,.45)}
+#ld small{display:block;margin:10px 0 18px;font-size:13px;opacity:.85}
+#ld i{display:block;height:10px;border-radius:999px;background:rgba(0,0,0,.45);box-shadow:0 0 0 1.5px rgba(255,255,255,.7);overflow:hidden}
+#ld i span{display:block;height:100%;width:0;background:linear-gradient(90deg,#7CF3FF,#5E9BFF 60%,#FF7AB8);transition:width .2s}
+#ld em{display:block;margin-top:12px;font-style:normal;font-size:12px;opacity:.7}
+#err{display:none;margin-top:14px;font-size:13px;line-height:1.5;color:#FFD0DC}
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="-1"></canvas>
+<div id="ld"><div class="w"><b>볼빵! 아스트라</b><small>불러오는 중이에요…</small><i><span id="bar"></span></i><em id="pct">0%</em><div id="err"></div></div></div>
+<script>window.BB_AV = '?v=f6c76a5f';</script>
+<script>
+(function () {
+  var touch = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  var dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
+  var c = document.getElementById('c');
+  var config = {
+    dataUrl: "Build/build_test.data.unityweb",
+    frameworkUrl: "Build/build_test.framework.js.unityweb",
+    codeUrl: "Build/build_test.wasm.unityweb",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "AI Astra",
+    productName: "볼빵! 아스트라",
+    productVersion: "1.0",
+    devicePixelRatio: dpr,
+    matchWebGLToCanvasSize: true
+  };
+  var bar = document.getElementById('bar'), pct = document.getElementById('pct');
+  var s = document.createElement('script');
+  s.src = "Build/build_test.loader.js";
+  s.onload = function () {
+    createUnityInstance(c, config, function (p) { var v = Math.round(p * 100); bar.style.width = v + '%'; pct.textContent = v + '%'; })
+      .then(function (inst) { window.unityInstance = inst; var ld = document.getElementById('ld'); ld.style.opacity = 0; setTimeout(function () { ld.remove(); }, 450); c.focus(); })
+      .catch(function (e) { var er = document.getElementById('err'); er.style.display = 'block'; er.textContent = '이 브라우저에서는 게임을 켤 수 없어요. 크롬이나 사파리 최신 버전으로 열어 주세요. (' + e + ')'; });
+  };
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>

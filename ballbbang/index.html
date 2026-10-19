@@ -46,9 +46,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:#140C24;overscroll-beh
   var dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
   var c = document.getElementById('c');
   var config = {
-    dataUrl: "Build/build_prod.data.unityweb?b=51e0fc5c",
-    frameworkUrl: "Build/build_prod.framework.js.unityweb?b=51e0fc5c",
-    codeUrl: "Build/build_prod.wasm.unityweb?b=51e0fc5c",
+    dataUrl: "Build/build_prod.data.unityweb?b=cf9674e4",
+    frameworkUrl: "Build/build_prod.framework.js.unityweb?b=cf9674e4",
+    codeUrl: "Build/build_prod.wasm.unityweb?b=cf9674e4",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "AI Astra",
     productName: "볼빵! 아스트라",
@@ -58,7 +58,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#140C24;overscroll-beh
   };
   var bar = document.getElementById('bar'), pct = document.getElementById('pct');
   var s = document.createElement('script');
-  s.src = "Build/build_prod.loader.js?b=51e0fc5c";
+  s.src = "Build/build_prod.loader.js?b=cf9674e4";
   s.onload = function () {
     createUnityInstance(c, config, function (p) { var v = Math.round(p * 100); bar.style.width = v + '%'; pct.textContent = v + '%'; })
       .then(function (inst) { window.unityInstance = inst; var ld = document.getElementById('ld'); ld.style.opacity = 0; setTimeout(function () { ld.remove(); }, 450); c.focus(); })

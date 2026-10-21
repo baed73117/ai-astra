@@ -152,6 +152,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 .podium .sc small,.rpod .sc small{font:700 11px var(--f-kr);color:var(--soft);margin-left:2px}
 .podium li.empty,.rpod li.empty{display:block;color:var(--soft);font-size:13px}
 .podium[hidden],.rpod[hidden]{display:none}
+/* PC 카드 압축 (2026-10-21 대표: 스크롤 줄여 한눈에 여러 게임) — 폰(620px 아래)은 그대로 */
+@media (min-width:621px){.game .body{padding:14px 18px 14px;gap:6px}.game h3{font-size:21px}.game p{font-size:13px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.meta span{font-size:11px;padding:3px 8px}.game .play{padding-top:6px}.game .play i{width:34px;height:34px}.game.wide .art{flex:0 0 36%}.game.wide h3{font-size:22px}.podium,.rpod{padding:7px 10px;gap:4px 10px;grid-template-columns:repeat(3,minmax(0,1fr))}.podium .ph,.rpod .ph,.podium .empty,.rpod .empty{grid-column:1/-1}.podium li:not(.ph),.rpod li:not(.ph){font-size:13px;gap:6px;min-width:0}.podium li:not(.ph) .nm,.rpod li:not(.ph) .nm{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.podium li:not(.ph) .nm small,.rpod li:not(.ph) .nm small{display:block;overflow:hidden;text-overflow:ellipsis}}
+@media (min-width:1000px){.games{grid-template-columns:repeat(4,1fr);gap:18px}.game:not(.wide) .body{padding:12px 14px 12px;gap:5px}.game:not(.wide) h3{font-size:18px}.game:not(.wide) p{font-size:12.5px;-webkit-line-clamp:3}.game:not(.wide) .meta span{font-size:10.5px;padding:3px 7px}.game:not(.wide) .podium,.game:not(.wide) .rpod{grid-template-columns:1fr;gap:3px;padding:6px 9px}.game:not(.wide) .podium li:not(.ph),.game:not(.wide) .rpod li:not(.ph){font-size:12px}}
 </style>
 </head>
 <body>

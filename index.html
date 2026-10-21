@@ -152,15 +152,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 .podium .sc small,.rpod .sc small{font:700 11px var(--f-kr);color:var(--soft);margin-left:2px}
 .podium li.empty,.rpod li.empty{display:block;color:var(--soft);font-size:13px}
 .podium[hidden],.rpod[hidden]{display:none}
-/* 수노 자동 녹음기 다운로드 카드 (2026-10-22 대표 요청) — 영상 칸과 게임 칸 사이, 작게 */
-#tool{padding:0 0 18px}
-.tool{display:flex;align-items:center;gap:18px;padding:16px 20px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
-.tool .ico{flex:none;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:linear-gradient(135deg,rgba(139,108,255,.35),rgba(255,95,184,.3));border:1px solid var(--line)}
-.tool .tx{flex:1;min-width:0}
-.tool h3{margin:4px 0 4px;font:900 17px/1.3 var(--f-kr);letter-spacing:-.02em}
-.tool p{margin:0;color:var(--soft);font-size:13px;line-height:1.55}
-.tool .btn{flex:none;padding:12px 18px;font-size:14px;white-space:nowrap}
-@media (max-width:620px){.tool{flex-wrap:wrap;gap:12px;padding:14px}.tool .ico{width:44px;height:44px;font-size:22px;border-radius:12px}.tool .tx{flex:1 1 60%}.tool .btn{flex:1 1 100%;justify-content:center}}
 /* 카드 압축 (2026-10-21 대표: 스크롤 줄여 한눈에 여러 게임) — PC 4개씩 · 폰 2개씩 */
 @media (min-width:621px){.game .body{padding:14px 18px 14px;gap:6px}.game h3{font-size:21px}.game p{font-size:13px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.meta span{font-size:11px;padding:3px 8px}.game .play{padding-top:6px}.game .play i{width:34px;height:34px}.game.wide .art{flex:0 0 36%}.game.wide h3{font-size:22px}.podium,.rpod{padding:7px 10px;gap:4px 10px;grid-template-columns:repeat(3,minmax(0,1fr))}.podium .ph,.rpod .ph,.podium .empty,.rpod .empty{grid-column:1/-1}.podium li:not(.ph),.rpod li:not(.ph){font-size:13px;gap:6px;min-width:0}.podium li:not(.ph) .nm,.rpod li:not(.ph) .nm{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.podium li:not(.ph) .nm small,.rpod li:not(.ph) .nm small{display:block;overflow:hidden;text-overflow:ellipsis}}
 @media (min-width:1000px){.games{grid-template-columns:repeat(4,1fr);gap:18px}.game.wide{grid-column:auto;flex-direction:column}.game.wide .art{flex:none;aspect-ratio:1200/630;min-height:0}.game .body,.game.wide .body{padding:12px 14px 12px;gap:5px}.game h3,.game.wide h3{font-size:18px}.game p{font-size:12.5px;-webkit-line-clamp:3}.meta span{font-size:10.5px;padding:3px 7px}.podium,.rpod{grid-template-columns:1fr;gap:3px;padding:6px 9px}.podium li:not(.ph),.rpod li:not(.ph){font-size:12px}.podium li:not(.ph) .sc,.rpod li:not(.ph) .sc{font-size:17px}}
@@ -221,20 +212,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
           <p>파혼당한 날, 랜턴 대감과 혼인하게 된 소녀의 전생 이야기. AI로 만든 4K 인외 로맨스 판타지 단편 영상이에요.</p>
           <a class="btn main" href="https://youtube.com/@aiastra0" target="_blank" rel="noopener">AI 아스트라 채널 보러 가기</a>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tool">
-    <div class="wrap">
-      <div class="tool reveal">
-        <div class="ico" aria-hidden="true">🎙️</div>
-        <div class="tx">
-          <span class="tech">TOOL · 크롬 확장 프로그램</span>
-          <h3>수노 자동 녹음기 — Tab Audio Recorder v1.1.0</h3>
-          <p>suno.com 탭에서 재생만 누르면 곡마다 알아서 WAV·MP3로 저장돼요. 압축 풀기 → chrome://extensions → 개발자 모드 → '압축해제된 확장 프로그램을 로드' (설명서 포함)</p>
-        </div>
-        <a class="btn main" href="tools/TabAudioRecorder_v1.1.0.zip" download>ZIP 다운로드 · 99KB</a>
       </div>
     </div>
   </section>

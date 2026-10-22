@@ -76,6 +76,19 @@ section{padding:40px 0 70px;scroll-margin-top:64px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:26px}
 .head h2{margin:6px 0 0;font:900 clamp(28px,6vw,40px)/1.15 var(--f-kr);letter-spacing:-.03em}
 .head p{margin:0;color:var(--soft);font-size:14px;max-width:340px;line-height:1.6}
+.eva-bn{position:relative;display:block;height:clamp(190px,25vw,270px);margin-bottom:30px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#111;box-shadow:0 18px 50px rgba(255,95,184,.16);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.eva-bn:hover,.eva-bn:focus-visible{transform:translateY(-3px);box-shadow:0 24px 60px rgba(255,95,184,.32),0 0 0 1px rgba(255,255,255,.18)}
+.eva-bn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% 22%;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.eva-bn:hover img{transform:scale(1.04)}
+.eva-bn::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(7,8,21,.9) 0%,rgba(7,8,21,.6) 40%,transparent 68%)}
+.eva-bn .tx{position:absolute;z-index:2;left:clamp(16px,3.4vw,36px);top:50%;transform:translateY(-50%);max-width:min(470px,60%)}
+.eva-bn .tag{display:inline-block;font:400 10px var(--f-tech);letter-spacing:.2em;padding:5px 9px;border-radius:999px;border:1px solid #FF9AD0;color:#FF9AD0}
+.eva-bn h3{margin:10px 0 0;font:900 clamp(24px,4vw,40px)/1 var(--f-tech);letter-spacing:.02em;background:linear-gradient(180deg,#fff 35%,#FFD9EE 70%,#FF9AD5);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 14px rgba(255,95,184,.45))}
+.eva-bn h3 small{display:block;margin-top:7px;font:900 clamp(12px,1.8vw,15px)/1 var(--f-kr);letter-spacing:.35em;color:#fff;-webkit-text-fill-color:#fff}
+.eva-bn p{margin:10px 0 0;font-size:clamp(12px,1.6vw,14px);line-height:1.6;color:#E2E5FA;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.eva-bn .go{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:9px 16px;border-radius:12px;font-weight:900;font-size:14px;background:linear-gradient(90deg,var(--violet),var(--pink));box-shadow:0 8px 24px rgba(255,95,184,.35)}
+.eva-bn .go svg{width:14px;height:14px}
+@media (max-width:620px){.eva-bn{height:200px}.eva-bn img{object-position:80% 25%}.eva-bn .tx{max-width:68%}.eva-bn p{display:none}}
 .games{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;perspective:1200px}
 .game{--glow:rgba(139,108,255,.5);position:relative;display:flex;flex-direction:column;border-radius:20px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transform-style:preserve-3d;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;will-change:transform}
 .game:hover,.game:focus-visible{box-shadow:0 24px 60px var(--glow),0 0 0 1px rgba(255,255,255,.18)}
@@ -218,6 +231,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offse
 
   <section id="games">
     <div class="wrap">
+      <a class="eva-bn reveal" href="eva/" aria-label="에바 프로젝트 다운로드 페이지로 가기">
+        <img src="eva/banner.webp" alt="에바 프로젝트 대표 그림 — 노을 하늘 아래 분홍 머리 마법 기사 소녀" width="1536" height="1024" loading="lazy" decoding="async">
+        <div class="tx">
+          <span class="tag">NEW · PC / ANDROID</span>
+          <h3>EVA PROJECT<small>에바 프로젝트</small></h3>
+          <p>카드를 모아 팀을 짜고 자동 턴제로 싸우는 수집형 RPG · 공동 보스 · 길드 · 랭킹</p>
+          <span class="go">다운로드 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+      </a>
       <div class="head reveal">
         <div><span class="tech">GAMES</span><h2>지금 바로 플레이</h2></div>
         <p>폰과 PC 모두 돼요. 링크만 누르면 브라우저에서 바로 시작해요.</p>

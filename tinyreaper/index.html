@@ -36,14 +36,14 @@
   try { if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(function (rs) { rs.forEach(function (r) { r.unregister(); }); }); } catch (e) { }
   try { if (window.caches) caches.keys().then(function (ks) { ks.forEach(function (k) { if (k.indexOf('tinyreaper-') === 0) caches.delete(k); }); }); } catch (e) { }
 </script>
-<script src="Build/build_web.loader.js"></script>
+<script src="Build/build_web.loader.js?h=1db680aad493"></script>
 <script>
   var fill = document.getElementById('nv-fill'), msg = document.getElementById('nv-msg');
   if (typeof createUnityInstance !== 'function') nvFail('게임 파일을 받지 못했어요 (인터넷 연결 확인)'); else createUnityInstance(document.querySelector('#unity-canvas'), {
     arguments: [],
-    dataUrl: "Build/build_web.data.unityweb",
-    frameworkUrl: "Build/build_web.framework.js.unityweb",
-    codeUrl: "Build/build_web.wasm.unityweb",
+    dataUrl: "Build/build_web.data.unityweb?h=7b58ae239cef",
+    frameworkUrl: "Build/build_web.framework.js.unityweb?h=9b750eeaa09d",
+    codeUrl: "Build/build_web.wasm.unityweb?h=5339b02a94ab",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "AI Astra",
     productName: "꼬마 저승사자 키우기",

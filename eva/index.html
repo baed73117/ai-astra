@@ -43,6 +43,7 @@ header a:hover{color:#fff}
 .key p{margin:14px 0 0;font-size:clamp(13px,1.9vw,16px);line-height:1.65;color:#E2E5FA;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 
 .dl{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 8px}
+.dlb.web{grid-column:1/-1;justify-content:center;padding:22px 20px}.dlb.web b{font-size:23px}
 .dlb{display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:var(--panel);transition:transform .15s,box-shadow .2s}
 .dlb:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(139,108,255,.3)}
 .dlb.main{border:0;background:linear-gradient(100deg,var(--violet),var(--pink));box-shadow:0 12px 34px rgba(255,95,184,.3)}
@@ -86,14 +87,18 @@ footer a{color:#fff;font-weight:700;text-decoration:underline;text-underline-off
   <div class="key">
     <img src="banner.webp" alt="에바 프로젝트 대표 그림 — 노을 하늘 아래 분홍 머리 마법 기사 소녀" width="1536" height="1024" decoding="async">
     <div class="tx">
-      <span class="tech">NEW GAME · PC / ANDROID</span>
+      <span class="tech">NEW GAME · WEB / PC / ANDROID</span>
       <h1>EVA PROJECT<small>에바 프로젝트</small></h1>
       <p>카드를 모아 팀을 짜고, 자동 턴제 전투로 끝없는 스테이지와 보스에 도전하는 수집형 RPG예요.</p>
     </div>
   </div>
 
   <div class="dl">
-    <a class="dlb main" href="https://github.com/baed73117/ai-astra/releases/download/eva-v1.0/EVA_PROJECT_PC.zip">
+    <a class="dlb main web" href="play/">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.14v13.72a1 1 0 0 0 1.52.85l10.29-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14Z"/></svg>
+      <div><b>웹에서 바로 플레이</b><span>설치 없이 브라우저로 · PC · 폰 (가로 화면)</span></div>
+    </a>
+    <a class="dlb" href="https://github.com/baed73117/ai-astra/releases/download/eva-v1.0/EVA_PROJECT_PC.zip">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.5 10.5 4.4v7.1H3V5.5Zm0 13 7.5 1.1v-7H3v5.9Zm8.4 1.2L21 21v-8.4h-9.6v7.1Zm0-15.4v7.2H21V3l-9.6 1.3Z"/></svg>
       <div><b>PC 다운로드</b><span>윈도우 · 35MB</span></div>
     </a>
@@ -102,7 +107,7 @@ footer a{color:#fff;font-weight:700;text-decoration:underline;text-underline-off
       <div><b>안드로이드 다운로드</b><span>폰 · 29MB · 안드로이드 8.0 이상</span></div>
     </a>
   </div>
-  <p class="note">무료예요. 같은 닉네임·비밀번호로 로그인하면 PC와 폰에서 이어서 할 수 있어요. 처음 켤 때 그림·소리를 조금(약 15MB) 받아요.</p>
+  <p class="note">무료예요. 같은 닉네임·비밀번호로 로그인하면 웹·PC·폰 어디서든 이어서 할 수 있어요. 웹판은 창을 내리거나 다른 창이 가려도 서버가 사냥을 이어 가요. 처음 켤 때 그림·소리를 조금(약 15MB) 받아요.</p>
 
   <section>
     <div class="gift">

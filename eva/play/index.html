@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <title>EVA PROJECT</title>
+    <link rel="icon" href="data:,">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#070a12">
+    <!-- 홈페이지용 틀: 창 전체를 게임 화면으로, 고해상도 화면은 최대 2배로 선명하게 -->
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #070a12; }
+      #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: #070a12; touch-action: none; outline: none; }
+      #eva-load { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; color: #e9edf5; background: #070a12; }
+      #eva-load b { font-size: 22px; }
+      #eva-bar { width: min(60vw, 360px); height: 14px; border-radius: 7px; background: #1b2234; overflow: hidden; margin-top: 16px; }
+      #eva-fill { height: 100%; width: 0; background: #c9a75a; transition: width .2s; }
+      #eva-msg { margin-top: 12px; font-size: 14px; color: #9aa6bd; }
+      /* 폰을 세로로 들면 안내 (게임은 가로 16:9) — 10-26 */
+      #eva-rot { display: none; position: fixed; inset: 0; z-index: 9; background: #070a12; color: #e9edf5; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; }
+      #eva-rot b { font-size: 22px; margin-top: 18px; } #eva-rot div { font-size: 14px; color: #9aa6bd; margin-top: 8px; }
+      #eva-rot svg { width: 72px; height: 72px; animation: evarot 2.4s ease-in-out infinite; }
+      @keyframes evarot { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+      @media (orientation: portrait) and (pointer: coarse) { #eva-rot { display: flex; } }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="eva-rot"><svg viewBox="0 0 24 24" fill="none" stroke="#c9a75a" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18.5" r=".8" fill="#c9a75a"/></svg><b>화면을 가로로 돌려 주세요</b><div>에바 프로젝트는 가로 화면 게임이에요</div></div>
+    <div id="eva-load"><b style="letter-spacing:.2em">EVA PROJECT</b><div id="eva-bar"><div id="eva-fill"></div></div><div id="eva-msg">불러오는 중…</div></div>
+    <script src="Build/build_web.loader.js"></script>
+    <script>
+      // 폰·태블릿 (10-26): 처음 누를 때 전체 화면 + 가로 고정 시도 (안 되는 브라우저는 그냥 넘어감) · 화질 배율은 1.5배까지 (발열·버벅임 줄이기)
+      var evaMobile = matchMedia("(pointer: coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (evaMobile) {
+        var evaFull = function () {
+          document.removeEventListener("pointerup", evaFull, true);
+          var d = document.documentElement;
+          if (document.fullscreenElement || !d.requestFullscreen) return;
+          d.requestFullscreen({ navigationUI: "hide" }).then(function () { if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(function () {}); }).catch(function () {});
+        };
+        document.addEventListener("pointerup", evaFull, true);
+      }
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: "Build/build_web.data.unityweb",
+        frameworkUrl: "Build/build_web.framework.js.unityweb",
+        codeUrl: "Build/build_web.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "AI Astra",
+        productName: "EVA PROJECT",
+        productVersion: "3.0.1026",
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, evaMobile ? 1.5 : 2),
+        autoSyncPersistentDataPath: true,
+      }, (p) => { document.getElementById("eva-fill").style.width = (100 * p) + "%"; })
+      .then(() => { document.getElementById("eva-load").style.display = "none"; })
+      .catch((m) => { document.getElementById("eva-msg").textContent = "불러오지 못했어요: " + m; });
+    </script>
+  </body>
+</html>
